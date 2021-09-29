@@ -1,5 +1,5 @@
-name: realdolmen_stage_flutter
-description: School registration app
+name: schooler
+description: FLutter app die school inschrijvingen vereenvoudigd
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

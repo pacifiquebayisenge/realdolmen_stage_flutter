@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.realdolmen.realdolmen_stage_flutter">
+    package="com.example.schooler">
    <application
-        android:label="realdolmen_stage_flutter"
+        android:label="schooler"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
