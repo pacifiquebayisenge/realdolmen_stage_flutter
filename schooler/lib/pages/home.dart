@@ -8,19 +8,55 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Schooler'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+      ),
       body: SafeArea(
         child: Container(
-            child: Column(
+          child: Column(
+            children: [
+              Button(),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        
+      type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'New',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school_sharp),
+            label: 'Schools',
 
-
-          children: [
-
-            Button(),
-          ],
-        )),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueAccent,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -38,9 +74,7 @@ class Button extends StatelessWidget {
           print('Open new page');
         },
         style: ElevatedButton.styleFrom(
-          shape: CircleBorder(),
-          padding: EdgeInsets.all(5.0)
-        ),
+            shape: CircleBorder(), padding: EdgeInsets.all(5.0)),
         child: const Icon(
           Icons.add,
           color: Colors.white,

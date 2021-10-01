@@ -13,3 +13,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 | Flutter setup      | Flutter basis app aanmaken        |
 | Main Activity   | De main activity is het inschrijven in scholen. Hier ligt de focus dus op vervolgens voegt men de andere eigenschappen toe.        |
 | App ontruimen | De dummy code verwijderen en basisknoppen naar een nieuw venster toevoegen |
+
+| 30/09       | Donderdag |
+| ----------- | ----------- |
+| Bottom navigation bar     | Fknoppen verwijzen nog naar niks => template       |
