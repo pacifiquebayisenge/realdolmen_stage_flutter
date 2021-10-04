@@ -32,31 +32,52 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        
-      type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(bottom: 20.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: -5,
+              blurRadius: 15,
+              offset: Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 20.0,
+            right: 20.0
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'New',
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(30.0)),
+            child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add_circle),
+                  label: 'New',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.notifications),
+                  label: 'Notifications',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.school_sharp),
+                  label: 'Schools',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.blueAccent,
+              onTap: _onItemTapped,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_sharp),
-            label: 'Schools',
-
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
-        onTap: _onItemTapped,
+        ),
       ),
     );
   }
