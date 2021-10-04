@@ -16,4 +16,8 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 | 30/09       | Donderdag |
 | ----------- | ----------- |
-| Bottom navigation bar     | Fknoppen verwijzen nog naar niks => template       |
+| Bottom navigation bar     | Knoppen verwijzen nog naar niks => template       |
+
+| 04/10       | Donderdag |
+| ----------- | ----------- |
+| Bottom navigation bar     | Rounded, floating, box shadow       |
