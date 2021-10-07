@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:page_slider/page_slider.dart';
 import 'package:schooler/widgets/bullet_list.dart';
 
 class New extends StatelessWidget {
@@ -44,6 +45,25 @@ class Questions extends StatefulWidget {
 }
 
 class _QuestionsState extends State<Questions> {
+
+  late GlobalKey<PageSliderState> _slider = GlobalKey();
+
+  Widget _card(String text) =>
+      Card(
+        elevation: 10,
+        child: Padding(
+          padding: EdgeInsets.all(100),
+          child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              )
+          ),
+        ),
+      );
+
+
   // huidide stap
   int currentStep = 0;
 
@@ -293,8 +313,37 @@ class _QuestionsState extends State<Questions> {
     // bron: https://stackoverflow.com/questions/57203505/flutter-stretch-columns-to-full-screen-height
 
     return Expanded(
-      child: Container(
-        child: Stepper(
+      child: Column(
+        children: [
+          PageSlider(
+            key: _slider,
+            duration: Duration(milliseconds: 400),
+            pages: <Widget>[
+              _card('First Page'),
+              _card('Second Page'),
+              _card('Third Page'),
+              _card('Fourth Page'),
+            ],
+          ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          FloatingActionButton(
+            child: Icon(Icons.arrow_back_ios),
+            onPressed: () => print(_slider.currentState),
+          ),
+          FloatingActionButton(
+            child: Icon(Icons.arrow_forward_ios),
+            onPressed: () => print(_slider.currentState),
+          ),
+        ],
+      ),]
+    ));
+  }
+}
+/*
+
+Stepper(
           type: StepperType.horizontal,
           steps: getSteps(),
           currentStep: currentStep,
@@ -344,11 +393,12 @@ class _QuestionsState extends State<Questions> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-/*
+
+
+
+
+
+
 
 Column(
 children: [
