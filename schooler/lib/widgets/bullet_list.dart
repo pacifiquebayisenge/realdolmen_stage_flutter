@@ -13,7 +13,7 @@ class BulletList extends StatefulWidget {
 
 class _BulletListState extends State<BulletList>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animatedController;
+   late AnimationController _animatedController;
 
   @override
   void initState() {

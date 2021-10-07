@@ -45,25 +45,6 @@ class Questions extends StatefulWidget {
 }
 
 class _QuestionsState extends State<Questions> {
-
-  late GlobalKey<PageSliderState> _slider = GlobalKey();
-
-  Widget _card(String text) =>
-      Card(
-        elevation: 10,
-        child: Padding(
-          padding: EdgeInsets.all(100),
-          child: Text(
-              text,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-              )
-          ),
-        ),
-      );
-
-
   // huidide stap
   int currentStep = 0;
 
@@ -307,38 +288,67 @@ class _QuestionsState extends State<Questions> {
     }
   }
 
+  GlobalKey<PageSliderState> _slider = GlobalKey();
+
+  Widget _card(String text) =>
+      Card(
+        elevation: 10,
+        child: Padding(
+          padding: EdgeInsets.all(100),
+          child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              )
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     // Expanded widget gebruikt om de render layout overflow te fixen
     // bron: https://stackoverflow.com/questions/57203505/flutter-stretch-columns-to-full-screen-height
 
     return Expanded(
-      child: Column(
-        children: [
-          PageSlider(
-            key: _slider,
-            duration: Duration(milliseconds: 400),
-            pages: <Widget>[
-              _card('First Page'),
-              _card('Second Page'),
-              _card('Third Page'),
-              _card('Fourth Page'),
-            ],
-          ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FloatingActionButton(
-            child: Icon(Icons.arrow_back_ios),
-            onPressed: () => print(_slider.currentState),
-          ),
-          FloatingActionButton(
-            child: Icon(Icons.arrow_forward_ios),
-            onPressed: () => print(_slider.currentState),
-          ),
-        ],
-      ),]
-    ));
+      child: Container(
+
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            PageSlider(
+              key: _slider,
+              duration: Duration(milliseconds: 400),
+              pages: <Widget>[
+                _card('First Page'),
+                _card('Second Page'),
+                _card('Third Page'),
+                _card('Fourth Page'),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                FloatingActionButton(
+                  child: Icon(Icons.arrow_back_ios),
+                  onPressed: () => _slider.currentState.previous(),
+                ),
+                FloatingActionButton(
+                  child: Icon(Icons.arrow_forward_ios),
+                  onPressed: () => _slider.currentState.next(),
+                ),
+              ],
+            ),
+            MaterialButton(
+              // jump to zero-indexed page number
+              onPressed: () => {}, //_slider.currentState.setPage(3),
+              child: Text('Go to last page'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 /*
