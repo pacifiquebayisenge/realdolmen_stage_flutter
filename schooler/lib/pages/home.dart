@@ -13,9 +13,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          child: Column(
-            children: const [Text('Nog geen inschrijvingen')],
+
+        child: Center(
+
+          child: Container(
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [Text('Nog geen inschrijvingen')],
+            ),
           ),
         ),
       ),

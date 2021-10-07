@@ -35,12 +35,30 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
   ---
 
-#### 05/10 Donderdag ####
+#### 05/10 Maandag ####
 
 * new page popup
   * Popup pagina voor nieuwe inschrijvingen
 
 * Stepper
-  * Stappen per vrqgen onderdeel implementeren
+  * Stappen per vragen onderdeel implementeren
   * Geraamte
   * Issue => layout render overflow
+
+---
+
+#### 06/10 Woensdag ####
+
+* new page popup
+  * Popup pagina voor nieuwe inschrijvingen
+
+* Stepper  
+  * Geraamte opvullen
+  * Issue => layout render overflow => fixed met de expanded widget
+
+---
+  #### 07/10 Woensdag ####
+
+* Stepper  
+  * Geraamte opvullen
+  * Issue => bullet point animatie lanceert ook als de pagina niet wordt weergegeven
