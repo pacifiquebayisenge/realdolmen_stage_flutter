@@ -57,8 +57,18 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * Issue => layout render overflow => fixed met de expanded widget
 
 ---
-  #### 07/10 Woensdag ####
+  #### 07/10 Donderdag ####
 
 * Stepper  
   * Geraamte opvullen
   * Issue => bullet point animatie lanceert ook als de pagina niet wordt weergegeven
+
+  ---
+  #### 08/10 Vrijdag ####
+
+* Page slider  
+  * stepper vervangen door page slider widget
+  * geraamte
+  * geraamte opvullen
+  * Issue => bullet point animatie lanceert niet
+

@@ -28,6 +28,7 @@ class BulletPoint extends StatelessWidget {
       child: FadeTransition(
         opacity: animationController,
         child: Row(
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
@@ -37,8 +38,10 @@ class BulletPoint extends StatelessWidget {
               width: 10,
             ),
             Flexible(
+
               child: Text(
                 text,
+
               ),
             )
           ],

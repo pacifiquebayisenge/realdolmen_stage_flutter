@@ -33,11 +33,12 @@ class _BulletListState extends State<BulletList>
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(widget.strings.length * 2, (index) {
           if (index.isEven) {
             return Flexible(
-              flex: 2,
+              flex: 3,
               child: BulletPoint(
                 text: widget.strings[index ~/ 2],
                 animationController: _animatedController,
