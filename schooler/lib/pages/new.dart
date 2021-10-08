@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:page_slider/page_slider.dart';
+import 'package:progress_stepper/progress_stepper.dart';
 import 'package:schooler/widgets/bullet_list.dart';
 
 class New extends StatelessWidget {
@@ -47,9 +49,9 @@ class Questions extends StatefulWidget {
 }
 
 class _QuestionsState extends State<Questions> {
-  // huidide stap
-  int _currentStep = 0;
+  bool secParent = false;
 
+  // De  form velden controllers
   final voornaam = TextEditingController();
   final naam = TextEditingController();
   final rijksnr = TextEditingController();
@@ -78,15 +80,14 @@ class _QuestionsState extends State<Questions> {
   final berPostcode2 = TextEditingController();
   final berGemeente2 = TextEditingController();
 
-  // de form stappen samen met de vragen
+  // Huidige stap aanwijzing
+  int _currentStep = 0;
+  // Huidige stap aanwijzing
+ late  int? _stepCount = 0 ;
 
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   void nextStep() {
-
-
-    print(
-        '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
     bool isLastStep =
         _currentStep == _slider.currentState!.widget.pages.length - 1;
 
@@ -94,10 +95,20 @@ class _QuestionsState extends State<Questions> {
       print('Completed!');
 
       // TODO:: send data to server
+    }
+    //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
+    else if (_currentStep == 2 && secParent == false) {
+      setState(() => _currentStep += 2);
+      _slider.currentState!.next();
+      _slider.currentState!.next();
     } else {
+      _stepCount = _slider.currentState!.widget.pages.length - 1;
       setState(() => _currentStep += 1);
       _slider.currentState!.next();
     }
+
+    print(
+        '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
 
   // Methode om naar vorige stap te gaan
@@ -107,16 +118,21 @@ class _QuestionsState extends State<Questions> {
 
     if (isFirstStep) {
       Navigator.pop(context);
+    }
+    // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
+    else if (_currentStep == 4 && secParent == false) {
+      setState(() => _currentStep -= 2);
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
     } else {
       setState(() => _currentStep -= 1);
       _slider.currentState!.previous();
     }
+    print(
+        '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
 
   GlobalKey<PageSliderState> _slider = GlobalKey();
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -126,13 +142,27 @@ class _QuestionsState extends State<Questions> {
     return Column(
       children: <Widget>[
         Container(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ProgressStepper(
+              stepCount:   _stepCount ,
+              width: 200,
+              height: 10,
+              padding: 0,
+              currentStep: _currentStep,
+              onClick: (index) {},
+            ),
+          ),
+        ),
+        Container(
           height: 450,
           child: PageSlider(
-            duration: Duration(milliseconds: 400),
+              duration: Duration(milliseconds: 400),
               initialPage: _currentStep,
               pages: [
+                // profiel info
                 Padding(
-                  padding: EdgeInsets.all(50.0),
+                  padding: EdgeInsets.fromLTRB(50.0, 00, 50, 0),
                   child: Column(
                     children: [
                       SizedBox(
@@ -160,6 +190,7 @@ class _QuestionsState extends State<Questions> {
                     ],
                   ),
                 ),
+                // adress info
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SingleChildScrollView(
@@ -211,6 +242,7 @@ class _QuestionsState extends State<Questions> {
                     ),
                   ),
                 ),
+                // eerste ouder info
                 Padding(
                   padding: EdgeInsets.all(20.0),
                   child: SingleChildScrollView(
@@ -218,9 +250,6 @@ class _QuestionsState extends State<Questions> {
                       padding: const EdgeInsets.all(30.0),
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 50,
-                          ),
                           TextFormField(
                             controller: oVoornaam1,
                             decoration:
@@ -285,80 +314,86 @@ class _QuestionsState extends State<Questions> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(30.0),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 50,
-                          ),
-                          TextFormField(
-                            controller: oVoornaam2,
-                            decoration:
-                                InputDecoration(labelText: 'Ouder voornaam'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: oNaam2,
-                            decoration:
-                                InputDecoration(labelText: 'Ouder naam'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: beroep2,
-                            decoration: InputDecoration(labelText: 'Beroep'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: berStraat2,
-                            decoration: InputDecoration(labelText: 'Straat'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: berStrNr2,
-                            decoration:
-                                InputDecoration(labelText: 'Huisnummer'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: berBusNr2,
-                            decoration: InputDecoration(labelText: 'Busnummer'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: berPostcode2,
-                            decoration: InputDecoration(labelText: 'Postcode'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: berGemeente2,
-                            decoration: InputDecoration(labelText: 'Gemeente'),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                // tweede ouder info
+                // enkel zichtbaar als 2e ouder knop wordt geklikt
+                Visibility(
+                  visible: secParent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.all(30.0),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: oVoornaam2,
+                              decoration:
+                                  InputDecoration(labelText: 'Ouder voornaam'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: oNaam2,
+                              decoration:
+                                  InputDecoration(labelText: 'Ouder naam'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: beroep2,
+                              decoration: InputDecoration(labelText: 'Beroep'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: berStraat2,
+                              decoration: InputDecoration(labelText: 'Straat'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: berStrNr2,
+                              decoration:
+                                  InputDecoration(labelText: 'Huisnummer'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: berBusNr2,
+                              decoration:
+                                  InputDecoration(labelText: 'Busnummer'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: berPostcode2,
+                              decoration:
+                                  InputDecoration(labelText: 'Postcode'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: berGemeente2,
+                              decoration:
+                                  InputDecoration(labelText: 'Gemeente'),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
+                // GOK vragen
                 Padding(
                   padding: EdgeInsets.all(50.0),
                   child: Column(
@@ -367,58 +402,96 @@ class _QuestionsState extends State<Questions> {
                       SizedBox(
                         height: 50,
                       ),
-                      Expanded(child:  BulletList(
-                        strings: [
-                          '''The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.''',
-                          '''The mother of the pupil has a diploma of secondary education or a study certificate of the second year of the third degree of the secondary education or an associated equivalent study certificate.'''
-                        ],
-                      ),
+                      Expanded(
+                        child: BulletList(
+                          strings: [
+                            '''The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.''',
+                            '''The mother of the pupil has a diploma of secondary education or a study certificate of the second year of the third degree of the secondary education or an associated equivalent study certificate.'''
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
+                // TN vragen
                 Padding(
-                  padding: EdgeInsets.all(50.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Text('Do any of these statements apply to you?'),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          height: 450,
-                          child: BulletList(strings: [
-                            '''At least a Dutch-language diploma of secondary education or an equivalent Dutch-language study certificate.''',
-                            '''A Dutch-language certificate of the second year of the third stage of secondary education or an equivalent Dutch-language certificate.''',
-                            '''Proof of at least sufficient knowledge of Dutch issued by Selor.''',
-                            '''Proof of that one of them has attended 9 years of regular education in Dutch-language primary and secondary education.''',
-                            '''Proof that one of them masters Dutch at at least level B2''',
-                          ]),
-                        ),
-                      ],
+                  padding: EdgeInsets.all(40),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Text('Do any of these statements apply to you?'),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 450,
+                            child: BulletList(strings: [
+                              '''At least a Dutch-language diploma of secondary education or an equivalent Dutch-language study certificate.''',
+                              '''A Dutch-language certificate of the second year of the third stage of secondary education or an equivalent Dutch-language certificate.''',
+                              '''Proof of at least sufficient knowledge of Dutch issued by Selor.''',
+                              '''Proof of that one of them has attended 9 years of regular education in Dutch-language primary and secondary education.''',
+                              '''Proof that one of them masters Dutch at at least level B2''',
+                            ]),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )
               ],
               key: _slider),
         ),
+        // toon enkel 2 ouder knop als men op de juist pagina zit en 2e ouder nog niet aangeduid werd
+        if (_currentStep == 2 && secParent == false)
+          MaterialButton(
+            elevation: 3,
+            color: Colors.white54,
+            // jump to zero-indexed page number
+            onPressed: () =>
+                {secParent = true,
+                nextStep()}, //_slider.currentState.setPage(3),
+            child: Text(
+              'Second parent',
+              style: TextStyle(fontWeight: FontWeight.w900),
+            ),
+          ),
+        if (_currentStep == 4 || _currentStep == 5)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                // verberg back button wanneer men op de eerste pagina is
+
+                MaterialButton(
+                  color: Colors.red.shade100,
+                  child: Text('No'),
+                  onPressed: () => {nextStep()},
+                ),
+
+                ElevatedButton(
+                  child: Text('Yes'),
+                  onPressed: () => {nextStep()},
+                ),
+              ],
+            ),
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            ElevatedButton(
-              child: Icon(Icons.arrow_back_ios),
-              onPressed: () => {previousStep()},
-            ),
-            ElevatedButton(
-                child: Icon(Icons.arrow_forward_ios),
-                onPressed: () => {nextStep()}),
+            // verberg back button wanneer men op de eerste pagina is
+            if (_currentStep != 0)
+              ElevatedButton(
+                child: Icon(Icons.arrow_back_ios),
+                onPressed: () => {previousStep()},
+              ),
+            if (_currentStep != 4 && _currentStep != 5)
+              ElevatedButton(
+                  child: Icon(Icons.arrow_forward_ios),
+                  onPressed: () => {nextStep()}),
           ],
-        ),
-        MaterialButton(
-          // jump to zero-indexed page number
-          onPressed: () => {}, //_slider.currentState.setPage(3),
-          child: Text('Go to last page'),
         ),
       ],
     );

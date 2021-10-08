@@ -21,8 +21,6 @@ class _BulletListState extends State<BulletList>
         vsync: this, duration: Duration(milliseconds: 1000));
     Timer(Duration(milliseconds: 200), () => _animatedController.forward());
 
-     
-
     super.initState();
 
   }

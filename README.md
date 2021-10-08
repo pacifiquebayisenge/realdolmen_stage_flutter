@@ -67,8 +67,13 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   #### 08/10 Vrijdag ####
 
 * Page slider  
-  * stepper vervangen door page slider widget
-  * geraamte
+  * Stepper vervangen door page slider widget
+  * Geraamte
   * geraamte opvullen
   * Issue => bullet point animatie lanceert niet
+  * TO DO:  2 laatste pagina's opvulllen => school voorkeur + data overzicht
+
+* Progress Stepper
+  * Stappen indicator 
+  * To DO: kleur ???
 
