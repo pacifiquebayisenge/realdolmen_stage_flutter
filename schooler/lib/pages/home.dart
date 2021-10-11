@@ -1,3 +1,4 @@
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:schooler/widgets/widgets.dart';
 
@@ -12,15 +13,22 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
-
         child: Center(
-
           child: Container(
-
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [Text('Nog geen inschrijvingen')],
+            child: DelayedDisplay(
+              delay: Duration(milliseconds: 500),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(image: AssetImage('lib/images/empty_space.gif'),width: 250,),
+                  Text('Nog geen inschrijvingen'),
+                  Text('Klik op '),
+                  Icon(Icons.add_circle),
+                  Text('om een nieuwe inschrijving te maken')
+                ],
+              ),
             ),
           ),
         ),

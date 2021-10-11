@@ -1,60 +1,30 @@
 import 'package:delayed_display/delayed_display.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:page_slider/page_slider.dart';
 import 'package:progress_stepper/progress_stepper.dart';
-import 'package:schooler/widgets/bullet_list.dart';
 
-class New extends StatelessWidget {
-  const New({Key? key}) : super(key: key);
+import 'bullet_list.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.blue,
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30)),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.close),
-        ),
-        title: Padding(
-          padding: const EdgeInsets.only(left: 40.0),
-          child: Text(
-            'New Registration',
-          ),
-        ),
-      ),
-      // Voorkomen dat knoppen mee omhoog springen door het toetstebord
-      // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Questions(),
-      ),
-    );
-  }
-}
+class FormQuestions extends StatefulWidget {
+  const FormQuestions({Key? key}) : super(key: key);
 
-class Questions extends StatefulWidget {
-  const Questions({Key? key}) : super(key: key);
 
   @override
-  _QuestionsState createState() => _QuestionsState();
+  _FormQuestionsState createState() => _FormQuestionsState();
+
+
+
+
+
+
+
 }
 
-class _QuestionsState extends State<Questions> {
-  bool secParent = false;
+class _FormQuestionsState extends State<FormQuestions> {
 
-  // De  form velden controllers
+  // --- De Forms
+
+   // De  form velden controllers
   final voornaam = TextEditingController();
   final naam = TextEditingController();
   final rijksnr = TextEditingController();
@@ -83,15 +53,22 @@ class _QuestionsState extends State<Questions> {
   final berPostcode2 = TextEditingController();
   final berGemeente2 = TextEditingController();
 
+  // bool om te weten of een 2e ouder verwacht wordt
+  bool secParent = false;
+
+  // --- De step indicator
+
   // Huidige stap aanwijzing
   int _currentStep = 0;
+
   // Huidige stap aanwijzing
   late int? _stepCount = 0;
 
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   void nextStep() {
-    _thisForm.currentState!.validate();
+
+    _thisForm.currentState!.save();
 
     bool isLastStep =
         _currentStep == _slider.currentState!.widget.pages.length - 1;
@@ -101,7 +78,7 @@ class _QuestionsState extends State<Questions> {
 
       // TODO:: send data to server
     }
-    //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
+    // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina => dubbele stap vooruit
     else if (_currentStep == 2 && secParent == false) {
       setState(() => _currentStep += 2);
       _slider.currentState!.next();
@@ -124,7 +101,7 @@ class _QuestionsState extends State<Questions> {
     if (isFirstStep) {
       Navigator.pop(context);
     }
-    // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina  => dubbele stap achteruit
+    // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina => dubbele stap achteruit
     else if (_currentStep == 4 && secParent == false) {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
@@ -137,11 +114,8 @@ class _QuestionsState extends State<Questions> {
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
 
-  // key voor de page slider
   GlobalKey<PageSliderState> _slider = GlobalKey();
-
   final _thisForm = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     // Expanded widget gebruikt om de render layout overflow te fixen
@@ -149,7 +123,6 @@ class _QuestionsState extends State<Questions> {
 
     return Column(
       children: <Widget>[
-        // step indicator widget
         Container(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -163,10 +136,10 @@ class _QuestionsState extends State<Questions> {
             ),
           ),
         ),
-        Container(
-          height: 450,
-          child: Form(
-            key: _thisForm,
+        Form(
+          key: _thisForm,
+          child: Container(
+            height: 450,
             child: PageSlider(
                 duration: Duration(milliseconds: 400),
                 initialPage: _currentStep,
@@ -182,54 +155,34 @@ class _QuestionsState extends State<Questions> {
                         DelayedDisplay(
                           delay: Duration(milliseconds: 500),
                           child: TextFormField(
-
                             onSaved: (value) => print(value),
                             controller: voornaam,
                             decoration: InputDecoration(labelText: 'Voornaam'),
-                            validator: (value) {
-                              if (value == '' || value!.isEmpty) {
-                                return 'Dit veld mag niet leeg zijn!';
-                              } else {
-                                return null;
-                              }
-                            },
                           ),
                         ),
                         SizedBox(
                           height: 20,
                         ),
                         DelayedDisplay(
-                          delay: Duration(milliseconds: 700),
+                          delay: Duration(  milliseconds: 700),
                           child: TextFormField(
                             onSaved: (value) => print(value),
                             controller: naam,
                             decoration: InputDecoration(labelText: 'Naam'),
-                            validator: (value) {
-                              if (value == '' || value!.isEmpty) {
-                                return 'Dit veld mag niet leeg zijn!';
-                              } else {
-                                return null;
-                              }
-                            },
                           ),
                         ),
                         SizedBox(
                           height: 20,
+
+
                         ),
                         DelayedDisplay(
                           delay: Duration(milliseconds: 900),
                           child: TextFormField(
                             onSaved: (value) => print(value),
                             controller: rijksnr,
-                            decoration: InputDecoration(
-                                labelText: 'Rijksregisternummer'),
-                            validator: (value) {
-                              if (value == '' || value!.isEmpty) {
-                                return 'Dit veld mag niet leeg zijn!';
-                              } else {
-                                return null;
-                              }
-                            },
+                            decoration:
+                            InputDecoration(labelText: 'Rijksregisternummer'),
                           ),
                         ),
                       ],
@@ -250,13 +203,6 @@ class _QuestionsState extends State<Questions> {
                               onSaved: (value) => print(value),
                               controller: straat,
                               decoration: InputDecoration(labelText: 'Straat'),
-                              validator: (value) {
-                                if (value == '' || value!.isEmpty) {
-                                  return 'Dit veld mag niet leeg zijn!';
-                                } else {
-                                  return null;
-                                }
-                              },
                             ),
                             SizedBox(
                               height: 20,
@@ -265,7 +211,7 @@ class _QuestionsState extends State<Questions> {
                               onSaved: (value) => print(value),
                               controller: strNr,
                               decoration:
-                                  InputDecoration(labelText: 'Huisnummer'),
+                              InputDecoration(labelText: 'Huisnummer'),
                             ),
                             SizedBox(
                               height: 20,
@@ -273,8 +219,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: busNr,
-                              decoration:
-                                  InputDecoration(labelText: 'Busnummer'),
+                              decoration: InputDecoration(labelText: 'Busnummer'),
                             ),
                             SizedBox(
                               height: 20,
@@ -282,8 +227,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: postcode,
-                              decoration:
-                                  InputDecoration(labelText: 'Postcode'),
+                              decoration: InputDecoration(labelText: 'Postcode'),
                             ),
                             SizedBox(
                               height: 20,
@@ -291,8 +235,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: gemeente,
-                              decoration:
-                                  InputDecoration(labelText: 'Gemeente'),
+                              decoration: InputDecoration(labelText: 'Gemeente'),
                             ),
                             SizedBox(
                               height: 20,
@@ -314,7 +257,7 @@ class _QuestionsState extends State<Questions> {
                               onSaved: (value) => print(value),
                               controller: oVoornaam1,
                               decoration:
-                                  InputDecoration(labelText: 'Ouder voornaam'),
+                              InputDecoration(labelText: 'Ouder voornaam'),
                             ),
                             SizedBox(
                               height: 20,
@@ -323,7 +266,7 @@ class _QuestionsState extends State<Questions> {
                               onSaved: (value) => print(value),
                               controller: oNaam1,
                               decoration:
-                                  InputDecoration(labelText: 'Ouder naam'),
+                              InputDecoration(labelText: 'Ouder naam'),
                             ),
                             SizedBox(
                               height: 20,
@@ -348,7 +291,7 @@ class _QuestionsState extends State<Questions> {
                               onSaved: (value) => print(value),
                               controller: berStrNr1,
                               decoration:
-                                  InputDecoration(labelText: 'Huisnummer'),
+                              InputDecoration(labelText: 'Huisnummer'),
                             ),
                             SizedBox(
                               height: 20,
@@ -356,8 +299,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: berBusNr1,
-                              decoration:
-                                  InputDecoration(labelText: 'Busnummer'),
+                              decoration: InputDecoration(labelText: 'Busnummer'),
                             ),
                             SizedBox(
                               height: 20,
@@ -365,8 +307,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: berPostcode1,
-                              decoration:
-                                  InputDecoration(labelText: 'Postcode'),
+                              decoration: InputDecoration(labelText: 'Postcode'),
                             ),
                             SizedBox(
                               height: 20,
@@ -374,8 +315,7 @@ class _QuestionsState extends State<Questions> {
                             TextFormField(
                               onSaved: (value) => print(value),
                               controller: berGemeente1,
-                              decoration:
-                                  InputDecoration(labelText: 'Gemeente'),
+                              decoration: InputDecoration(labelText: 'Gemeente'),
                             ),
                             SizedBox(
                               height: 20,
@@ -399,8 +339,8 @@ class _QuestionsState extends State<Questions> {
                               TextFormField(
                                 onSaved: (value) => print(value),
                                 controller: oVoornaam2,
-                                decoration: InputDecoration(
-                                    labelText: 'Ouder voornaam'),
+                                decoration:
+                                InputDecoration(labelText: 'Ouder voornaam'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -409,7 +349,7 @@ class _QuestionsState extends State<Questions> {
                                 onSaved: (value) => print(value),
                                 controller: oNaam2,
                                 decoration:
-                                    InputDecoration(labelText: 'Ouder naam'),
+                                InputDecoration(labelText: 'Ouder naam'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -417,8 +357,7 @@ class _QuestionsState extends State<Questions> {
                               TextFormField(
                                 onSaved: (value) => print(value),
                                 controller: beroep2,
-                                decoration:
-                                    InputDecoration(labelText: 'Beroep'),
+                                decoration: InputDecoration(labelText: 'Beroep'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -426,8 +365,7 @@ class _QuestionsState extends State<Questions> {
                               TextFormField(
                                 onSaved: (value) => print(value),
                                 controller: berStraat2,
-                                decoration:
-                                    InputDecoration(labelText: 'Straat'),
+                                decoration: InputDecoration(labelText: 'Straat'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -436,7 +374,7 @@ class _QuestionsState extends State<Questions> {
                                 onSaved: (value) => print(value),
                                 controller: berStrNr2,
                                 decoration:
-                                    InputDecoration(labelText: 'Huisnummer'),
+                                InputDecoration(labelText: 'Huisnummer'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -445,7 +383,7 @@ class _QuestionsState extends State<Questions> {
                                 onSaved: (value) => print(value),
                                 controller: berBusNr2,
                                 decoration:
-                                    InputDecoration(labelText: 'Busnummer'),
+                                InputDecoration(labelText: 'Busnummer'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -454,7 +392,7 @@ class _QuestionsState extends State<Questions> {
                                 onSaved: (value) => print(value),
                                 controller: berPostcode2,
                                 decoration:
-                                    InputDecoration(labelText: 'Postcode'),
+                                InputDecoration(labelText: 'Postcode'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -463,7 +401,7 @@ class _QuestionsState extends State<Questions> {
                                 onSaved: (value) => print(value),
                                 controller: berGemeente2,
                                 decoration:
-                                    InputDecoration(labelText: 'Gemeente'),
+                                InputDecoration(labelText: 'Gemeente'),
                               ),
                               SizedBox(
                                 height: 20,
@@ -525,7 +463,6 @@ class _QuestionsState extends State<Questions> {
                 key: _slider),
           ),
         ),
-
         // toon enkel 2 ouder knop als men op de juist pagina zit en 2e ouder nog niet aangeduid werd
         if (_currentStep == 2 && secParent == false)
           MaterialButton(
@@ -576,88 +513,11 @@ class _QuestionsState extends State<Questions> {
               if (_currentStep != 4 && _currentStep != 5)
                 ElevatedButton(
                     child: Icon(Icons.arrow_forward_ios),
-                    onPressed: () => nextStep(),
-                )],
+                    onPressed: () => {nextStep()}),
+            ],
           ),
         ),
       ],
     );
   }
 }
-/*
-
-Stepper(
-          type: StepperType.horizontal,
-          steps: getSteps(),
-          currentStep: currentStep,
-          onStepContinue: () => nextStep(),
-          onStepCancel:
-              // Als het eerste stap is dissable cancel button
-              currentStep == 0 ? null : () => previousStep(),
-          controlsBuilder: (context, {onStepContinue, onStepCancel}) {
-            return Container(
-              margin: EdgeInsets.only(top: 25),
-              child: Column(children: [
-                if (currentStep == 2)
-                  Row(children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text('2e ouder'),
-                        onPressed: onStepCancel,
-                      ),
-                    ),
-                  ]),
-                Row(
-                  children: [
-                    // Back button enkel weergeven qls we niet meer op stap 1 zijn
-                    if (currentStep != 0)
-                      Expanded(
-                        child: ElevatedButton(
-                          child: Text('Back'),
-                          onPressed: onStepCancel,
-                        ),
-                      ),
-                    SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text('Next'),
-                        onPressed: onStepContinue,
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: 100,
-                    )
-                  ],
-                ),
-              ]),
-            );
-          },
-        ),
-
-
-
-
-
-
-
-Column(
-children: [
-Container(
-child: Text(
-'''- The family has received a school allowance in the 2019-2020 school year
-  and/or in the 2020-2021 school year
- '''),
-),
-Container(
-child: Text('''
-  - The mother of the pupil has a diploma of secondary education or a
-  study certificate of the second year of
-  the third degree of the
-  secondary education or an associated
-  equivalent study certificate?'''),
-)
-],
-) */

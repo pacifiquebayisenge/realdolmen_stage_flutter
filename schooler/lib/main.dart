@@ -25,13 +25,11 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-
   // Om de geselecteerde pagina te onthouden
   int _selectedIndex = 0;
 
   // Methode wanneer me nee knop klikt
   void _onItemTapped(int index) {
-
     setState(() {
       switch (index) {
         case 0:
@@ -46,7 +44,7 @@ class _AppState extends State<App> {
             // popup pagina niet in de main body weer geven
             _selectedIndex = 0;
             print("Open new page");
-            Navigator.pushNamed(context, 'new');
+            Navigator.of(context).push(_createRoute());
             return;
           }
           break;
@@ -82,13 +80,20 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Schooler')),
+        title: const Center(
+          child: Text('Schooler'),
+        ),
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50)),
+        ),
       ),
       body: screens[_selectedIndex],
       bottomNavigationBar: Container(
-        padding: EdgeInsets.only(bottom: 20.0),
+        padding: const EdgeInsets.only(bottom: 20.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -131,4 +136,21 @@ class _AppState extends State<App> {
       ),
     );
   }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const New(),
+      transitionsBuilder: (context, animation, secondairyAnimation, child) {
+        var curve = Curves.ease;
+        var curveTween = CurveTween(curve: curve);
+
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+
+
+        return SlideTransition(position: offsetAnimation, child: child);
+      });
 }

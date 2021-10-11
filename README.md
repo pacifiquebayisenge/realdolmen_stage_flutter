@@ -75,5 +75,21 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Progress Stepper
   * Stappen indicator 
-  * To DO: kleur ???
+  * TO DO: kleur ???
+
+
+    ---
+  #### 11/10 Maandag ####
+
+* Widget 
+  * Code leesbaar maken door te splitsen in verschillende widgets
+
+
+* Form
+  * Validatie van de velden
+  * Data efficient kunnen ophalen => voorlopig heel veel if's
+  * Vragen beter organiseren => dynamisch maken voor de volgende use case's
+
+* Homescreen 
+  * Lege pagina opvullen met een call to action
 
