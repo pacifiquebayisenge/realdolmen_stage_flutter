@@ -107,5 +107,29 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * Custom validators om eige logica te creeren -> rijksregisternummer controle
   * Issue => volgende forms global key current state altijd NULL
 
+    ---
 
+#### 14/10 Woensdag ####
 
+* Klassen
+  * Registratie klasse om de data op te slaan en/of naar server te versturen
+  * Issue -> heel slordige constructor -> heel veel arguments
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Validatie van de velden => afgewerkt
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de classe
+  
+* Form validators
+  * Issue => volgende forms global key current state altijd NULL => afgewerkt
+
+* Dummy data
+  * Dummy data file om inkomende data te simuleren
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> nog niet af
+  * Card widget gebruiken ?
+
+* Registratie
+  * Vragen zijn afgewerkt samen met hun validatie
+  * TO DO => scholen rangschikking !!!

@@ -9,14 +9,24 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
+  List<Widget> _list = [
+    CustomCard(),
+    CustomCard(),
+    CustomCard(),
+    CustomCard(),
+  ];
+
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Center(
-        child: Text("Notifications page"),
-      ),
-
+    return const Scaffold(
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: CustomCard(),
+      )
     );
   }
 }

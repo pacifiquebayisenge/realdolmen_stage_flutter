@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:page_slider/page_slider.dart';
 import 'package:progress_stepper/progress_stepper.dart';
-import 'package:schooler/services/user.dart';
+import 'package:schooler/classes/registration.dart';
+import 'package:schooler/services/globals.dart' as globals;
+
 
 import 'bullet_list.dart';
 
@@ -22,7 +24,7 @@ class _FormQuestionsState extends State<FormQuestions> {
   final _thisForm = GlobalKey<FormBuilderState>();
   final voornaam = TextEditingController();
   final naam = TextEditingController();
-  final rijksnr = TextEditingController();
+  final rijksNr = TextEditingController();
 
   final _thisForm2 = GlobalKey<FormBuilderState>();
   final straat = TextEditingController();
@@ -51,6 +53,9 @@ class _FormQuestionsState extends State<FormQuestions> {
   final berPostcode2 = TextEditingController();
   final berGemeente2 = TextEditingController();
 
+  late bool vraagGOK;
+  late bool vraagTN;
+
   // Huidige stap aanwijzing
   int _currentStep = 0;
 
@@ -60,6 +65,36 @@ class _FormQuestionsState extends State<FormQuestions> {
   // bool om aan te duiden dat 2e ouder ook zal ingevoerd worden
   bool secParent = false;
 
+  // methode om de GOK en TN vragen op te vragen
+  // 2 knoppen = ja knop en nee knop
+  // index als parameter om te weten welke knop gedrukt werd
+  // 1 = true, 0 = nee
+  void vraagYesNo(int index) {
+    // aan de hand van welke pagina weten we over welke vragen het gaat
+    switch (_currentStep) {
+      case 4:
+        {
+          vraagGOK = index != 0;
+
+          nextStep();
+          print("vraagGOK $vraagGOK");
+        }
+        break;
+      case 5:
+        {
+          vraagTN = index != 0;
+          nextStep();
+          print("vraagTN $vraagTN");
+        }
+        break;
+      default:
+        {
+          print("Invalid choice");
+        }
+        break;
+    }
+  }
+
   // methode om elke validator van elke formfield na te gaan
   // geeft bool terug om te zien of form juist is ingevoerd
   bool checkStep() {
@@ -68,19 +103,12 @@ class _FormQuestionsState extends State<FormQuestions> {
     switch (_currentStep) {
       case 0:
         {
-
           formSucces = _thisForm.currentState!.validate();
-          if (formSucces) {
-            _thisForm.currentState!.save();
-            var t = json.encode(_thisForm.currentState!.value);
-            print(t);
-          }
         }
         break;
 
       case 1:
         {
-          print(_thisForm2.currentState);
           formSucces = _thisForm2.currentState!.validate();
         }
         break;
@@ -94,6 +122,16 @@ class _FormQuestionsState extends State<FormQuestions> {
       case 3:
         {
           formSucces = _thisForm4.currentState!.validate();
+        }
+        break;
+      case 4:
+        {
+          formSucces = true;
+        }
+        break;
+      case 5:
+        {
+          formSucces = true;
         }
         break;
 
@@ -121,8 +159,43 @@ class _FormQuestionsState extends State<FormQuestions> {
     // als het de laatste stap is, vervoledig de wizart
     if (isLastStep) {
       print('Completed!');
+      _thisForm.currentState!.save();
+      Map<String, String?> stringQueryParameters = _thisForm.currentState!.value
+          .map((key, value) => MapEntry(key, value?.toString()));
+
+      print('${stringQueryParameters['voornaam']}    jjgguf');
 
       // TODO:: send data to server
+      globals.regi = new Registration(
+          voornaam: voornaam.text,
+          naam: naam.text,
+          rijksNr: rijksNr.text,
+          straat: straat.text,
+          huisNr: int.parse(huisNr.text),
+          busNr: busNr.text,
+          postcode: int.parse(postcode.text),
+          gemeente: gemeente.text,
+          oVoornaam1: oVoornaam1.text,
+          oNaam1: oNaam1.text,
+          beroep1: beroep1.text,
+          berStraat1: berStraat1.text,
+          berHuisNr1: int.parse(berHuisNr1.text),
+          berBusNr1: berBusNr1.text,
+          berPostcode1: int.parse(berPostcode1.text),
+          berGemeente1: berGemeente1.text,
+          oVoornaam2: oVoornaam2.text,
+          oNaam2: oNaam2.text,
+          beroep2: beroep2.text,
+          berStraat2: berStraat2.text,
+          berHuisNr2: int.tryParse(berHuisNr2.text),
+          berBusNr2: berBusNr2.text,
+          berPostcode2: int.tryParse(berPostcode2.text),
+          berGemeente2: berGemeente2.text,
+          vraagGOK: vraagGOK,
+          vraagTN: vraagTN);
+
+      Timer(Duration(seconds: 3), () => print(globals.regi.toString()));
+      Navigator.pop(context);
     }
     //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
     else if (_currentStep == 2 && secParent == false) {
@@ -252,8 +325,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                         DelayedDisplay(
                           delay: const Duration(milliseconds: 900),
                           child: FormBuilderTextField(
-                            name: 'rijksnr',
-                            controller: rijksnr,
+                            name: 'rijksNr',
+                            controller: rijksNr,
                             decoration: const InputDecoration(
                                 labelText: 'Rijksregisternummer'),
                             keyboardType: TextInputType.number,
@@ -263,9 +336,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             maxLength: 11,
+
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.numeric(context),
+                              FormBuilderValidators.minLength(context, 11),
                               FormBuilderValidators.maxLength(context, 11),
                               // custom validator om rijksregisternummer te checken
                               (value) {
@@ -334,7 +409,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: busNr,
                               decoration:
                                   const InputDecoration(labelText: 'Busnummer'),
-                              
                             ),
                             const SizedBox(
                               height: 20,
@@ -342,8 +416,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                             FormBuilderTextField(
                               name: 'postcode',
                               controller: postcode,
-                              decoration: const InputDecoration(
-                                  labelText: 'Postcode'),
+                              decoration:
+                                  const InputDecoration(labelText: 'Postcode'),
                               maxLength: 4,
                               keyboardType: TextInputType.number,
                               // enkel nummers kubben ingevoerd worden
@@ -371,7 +445,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                               ]),
                             ),
                             const SizedBox(
-                              height: 20,
+                              height: 120,
                             ),
                           ],
                         ),
@@ -466,10 +540,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: berBusNr1,
                               decoration:
                                   const InputDecoration(labelText: 'Busnummer'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
                             ),
                             const SizedBox(
                               height: 20,
@@ -506,7 +576,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                               ]),
                             ),
                             const SizedBox(
-                              height: 20,
+                              height: 120,
                             ),
                           ],
                         ),
@@ -604,10 +674,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 controller: berBusNr2,
                                 decoration:
                                     InputDecoration(labelText: 'Busnummer'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
                               ),
                               const SizedBox(
                                 height: 20,
@@ -644,7 +710,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 ]),
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 120,
                               ),
                             ],
                           ),
@@ -653,7 +719,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
-
                 // GOK vragen
                 Padding(
                   padding: const EdgeInsets.all(50.0),
@@ -721,6 +786,20 @@ class _FormQuestionsState extends State<FormQuestions> {
               style: TextStyle(fontWeight: FontWeight.w900),
             ),
           ),
+        if (_currentStep == 3 && secParent == true)
+        MaterialButton(
+          elevation: 3,
+          color: Colors.white54,
+          // jump to zero-indexed page number
+          onPressed: () => {
+            secParent = false,
+            previousStep()
+          }, //_slider.currentState.setPage(3),
+          child: const Text(
+            'remove this parent',
+            style: TextStyle(fontWeight: FontWeight.w900),
+          ),
+        ),
         // toon de ja nee vragen enkel bij de GOK en TN vragen
         if (_currentStep == 4 || _currentStep == 5)
           Padding(
@@ -730,15 +809,21 @@ class _FormQuestionsState extends State<FormQuestions> {
               children: <Widget>[
                 // verberg back button wanneer men op de eerste pagina is
 
-                MaterialButton(
-                  color: Colors.red.shade100,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: StadiumBorder(), primary: Colors.redAccent),
+
+                  //color: Colors.red.shade100,
                   child: const Text('No'),
-                  onPressed: () => {nextStep()},
+                  onPressed: () => {vraagYesNo(0)},
                 ),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: StadiumBorder(),
+                  ),
                   child: const Text('Yes'),
-                  onPressed: () => {nextStep()},
+                  onPressed: () => {vraagYesNo(1)},
                 ),
               ],
             ),
@@ -752,11 +837,17 @@ class _FormQuestionsState extends State<FormQuestions> {
               // verberg back button wanneer men op de eerste pagina is
               if (_currentStep != 0)
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: StadiumBorder(),
+                  ),
                   child: const Icon(Icons.arrow_back_ios),
                   onPressed: () => {previousStep()},
                 ),
               if (_currentStep != 4 && _currentStep != 5)
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: StadiumBorder(),
+                  ),
                   child: const Icon(Icons.arrow_forward_ios),
                   onPressed: () => nextStep(),
                 )

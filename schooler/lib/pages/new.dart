@@ -1,14 +1,8 @@
-import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:page_slider/page_slider.dart';
-import 'package:progress_stepper/progress_stepper.dart';
-import 'package:schooler/services/user.dart';
-import 'package:schooler/widgets/bullet_list.dart';
-import 'package:schooler/services/globals.dart' as globals;
-import 'package:schooler/widgets/form_questions.dart';
+import 'package:schooler/widgets/widgets.dart';
 
 class New extends StatelessWidget {
   const New({Key? key}) : super(key: key);
