@@ -105,6 +105,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Form validators
   * Custom validators om eige logica te creeren -> rijksregisternummer controle
+  * Issue => volgende forms global key current state altijd NULL
 
 
 

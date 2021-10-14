@@ -24,14 +24,14 @@ class _FormQuestionsState extends State<FormQuestions> {
   final naam = TextEditingController();
   final rijksnr = TextEditingController();
 
-  final _thisForm2 = GlobalKey<FormState>();
+  final _thisForm2 = GlobalKey<FormBuilderState>();
   final straat = TextEditingController();
   final huisNr = TextEditingController();
   final busNr = TextEditingController();
   final postcode = TextEditingController();
   final gemeente = TextEditingController();
 
-  final _thisForm3 = GlobalKey<FormState>();
+  final _thisForm3 = GlobalKey<FormBuilderState>();
   final oVoornaam1 = TextEditingController();
   final oNaam1 = TextEditingController();
   final beroep1 = TextEditingController();
@@ -41,7 +41,7 @@ class _FormQuestionsState extends State<FormQuestions> {
   final berPostcode1 = TextEditingController();
   final berGemeente1 = TextEditingController();
 
-  final _thisForm4 = GlobalKey<FormState>();
+  final _thisForm4 = GlobalKey<FormBuilderState>();
   final oVoornaam2 = TextEditingController();
   final oNaam2 = TextEditingController();
   final beroep2 = TextEditingController();
@@ -68,6 +68,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     switch (_currentStep) {
       case 0:
         {
+
           formSucces = _thisForm.currentState!.validate();
           if (formSucces) {
             _thisForm.currentState!.save();
@@ -79,7 +80,8 @@ class _FormQuestionsState extends State<FormQuestions> {
 
       case 1:
         {
-          formSucces = _thisForm2.currentState.validate();
+          print(_thisForm2.currentState);
+          formSucces = _thisForm2.currentState!.validate();
         }
         break;
 
