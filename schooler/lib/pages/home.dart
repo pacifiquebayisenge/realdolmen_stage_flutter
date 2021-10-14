@@ -1,6 +1,7 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:schooler/widgets/widgets.dart';
+import 'package:schooler/services/globals.dart' as globals;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,18 +18,32 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: Center(
           child: Container(
-            child: DelayedDisplay(
-              delay: Duration(milliseconds: 500),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(image: AssetImage('lib/images/empty_space.gif'),width: 250,),
-                  Text('Nog geen inschrijvingen'),
-                  Text('Klik op '),
-                  Icon(Icons.add_circle),
-                  Text('om een nieuwe inschrijving te maken')
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:  [
+                DelayedDisplay(
+                  delay: Duration(milliseconds: 500),
+                  child: Image(
+                    image: AssetImage('lib/images/empty_space.gif'),
+                    width: 250,
+                  ),
+                ),
+                DelayedDisplay(
+                  delay: Duration(milliseconds: 900),
+                  child: Text('Nog geen inschrijvingen'),
+                ),
+                DelayedDisplay(
+                  delay: Duration(milliseconds: 900),
+                  child: Text('Klik op '),
+                ),
+                DelayedDisplay(
+                    delay: Duration(milliseconds: 900),
+                    child: Icon(Icons.add_circle)),
+                DelayedDisplay(
+                  delay: Duration(milliseconds: 900),
+                  child: Text('om een nieuwe inschrijving te maken'),
+                ),
+              ],
             ),
           ),
         ),

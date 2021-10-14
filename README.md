@@ -57,14 +57,16 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * Issue => layout render overflow => fixed met de expanded widget
 
 ---
-  #### 07/10 Donderdag ####
+
+#### 07/10 Donderdag ####
 
 * Stepper  
   * Geraamte opvullen
   * Issue => bullet point animatie lanceert ook als de pagina niet wordt weergegeven
 
   ---
-  #### 08/10 Vrijdag ####
+
+#### 08/10 Vrijdag ####
 
 * Page slider  
   * Stepper vervangen door page slider widget
@@ -74,22 +76,35 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * TO DO:  2 laatste pagina's opvulllen => school voorkeur + data overzicht
 
 * Progress Stepper
-  * Stappen indicator 
+  * Stappen indicator
   * TO DO: kleur ???
 
-
     ---
-  #### 11/10 Maandag ####
 
-* Widget 
+#### 11/10 Maandag ####
+
+* Custom Widget
   * Code leesbaar maken door te splitsen in verschillende widgets
-
 
 * Form
   * Validatie van de velden
   * Data efficient kunnen ophalen => voorlopig heel veel if's
   * Vragen beter organiseren => dynamisch maken voor de volgende use case's
 
-* Homescreen 
+* Homescreen
   * Lege pagina opvullen met een call to action
+
+    ---
+
+#### 13/10 Woensdag ####
+
+* Form
+  * Validatie van de velden
+  * Data efficient kunnen ophalen => voorlopig heel veel if's
+  * Helemaal herschrijven met nieuw flutter package
+
+* Form validators
+  * Custom validators om eige logica te creeren -> rijksregisternummer controle
+
+
 
