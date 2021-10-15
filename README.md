@@ -109,7 +109,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
     ---
 
-#### 14/10 Woensdag ####
+#### 14/10 Donderdag ####
 
 * Klassen
   * Registratie klasse om de data op te slaan en/of naar server te versturen
@@ -133,3 +133,28 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * Registratie
   * Vragen zijn afgewerkt samen met hun validatie
   * TO DO => scholen rangschikking !!!
+
+      ---
+
+#### 15/10 Vrijdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Dummy data
+  * Dummy data file om inkomende data te simuleren
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> nog niet af
+  * Card widget gebruiken -> in ontwikkeling -> TO DO: bij klik vergroot animatie met meer info
+  * Animatie bij weergeven van de kaarten
+
+* Registratie
+  * TO DO => scholen rangschikking !!!
+
+* New Popup
+  * Gebruiker kan de popup niet sluiten met de back button van de device

@@ -9,33 +9,37 @@ class New extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.blue,
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30)),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.close),
-        ),
-        title: const Padding(
-          padding: EdgeInsets.only(left: 40.0),
-          child: Text(
-            'New Registration',
+    // ervoor zorgen dat de popup niet wordt gesloten door de back button van de device
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.blue,
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30)),
+          ),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.close),
+          ),
+          title: const Padding(
+            padding: EdgeInsets.only(left: 40.0),
+            child: Text(
+              'New Registration',
+            ),
           ),
         ),
-      ),
-      // Voorkomen dat knoppen mee omhoog springen door het toetstebord
-      // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
-      resizeToAvoidBottomInset: false,
-      body: const SafeArea(
-        child: FormQuestions(),
+        // Voorkomen dat knoppen mee omhoog springen door het toetstebord
+        // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
+        resizeToAvoidBottomInset: false,
+        body: const SafeArea(
+          child: FormQuestions(),
+        ),
       ),
     );
   }
