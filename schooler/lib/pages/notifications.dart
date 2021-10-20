@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'package:schooler/dummy_data/data.dart';
+
+import 'card_detail.dart';
 
 class Notifications extends StatefulWidget {
   Notifications({Key? key}) : super(key: key);
@@ -27,32 +32,40 @@ class _NotificationsState extends State<Notifications> {
     regiList.forEach((element) {
       ft = ft.then((_) {
         return Future.delayed(const Duration(milliseconds: 100), () {
-          cardList.add(CustomCard(
-            voornaam: element.voornaam,
-            naam: element.naam,
-          ));
+          cardList.add(
+            CustomCard(
+              voornaam: element.voornaam,
+              naam: element.naam,
+              navMethod: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CardDetail(
+                    c: CustomCard(
+                      voornaam: element.voornaam,
+                      naam: element.naam,
+                      navMethod: () {},
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
           print('Lijst count ${cardList.length}');
           _listKey.currentState!.insertItem(cardList.length - 1);
-
         });
       });
     });
-
-
-    /*
-    cardList.add(SizedBox(
-      height: 250,
-    ));
-    */
   }
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   void addThis() {
+    Random r = new Random();
+
     regiList.insert(
         0,
         new Registration(
-            voornaam: 'ggggggggg',
+            voornaam: '${r.nextInt(100)}',
             naam: 'Pokers',
             rijksNr: '97042025942',
             straat: 'Winkelstraat',
@@ -87,18 +100,21 @@ class _NotificationsState extends State<Notifications> {
     _listKey.currentState!.removeItem(
         0,
         (context, animation) => SlideTransition(
-            position:
-                animation.drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-            child: InkWell(
-              onTap: () => {
-                print('Lijst count ${regiList.length}'),
-                addThis(),
-                print('Lijst count ${regiList.length}')
-              },
-              child: CustomCard(
+              position: animation
+                  .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+              child: InkWell(
+                onTap: () => {
+                  print('Lijst count ${regiList.length}'),
+                  addThis(),
+                  print('Lijst count ${regiList.length}')
+                },
+                child: CustomCard(
                   voornaam: 'regiList[index].voornaam',
-                  naam: 'regiList[index].naam'),
-            )));
+                  naam: 'regiList[index].naam',
+                  navMethod: () {},
+                ),
+              ),
+            ));
   }
 
   @override
@@ -106,23 +122,32 @@ class _NotificationsState extends State<Notifications> {
     return Scaffold(
       body: AnimatedList(
           key: _listKey,
+          // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
           shrinkWrap: true,
           initialItemCount: cardList.length,
           itemBuilder:
               (BuildContext context, int index, Animation<double> animation) {
             return SlideTransition(
-                position: animation
-                    .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                child: InkWell(
-                  onTap: () => {
-                    print('Lijst count ${regiList.length}'),
-                    removeThis(),
-                    print('Lijst count ${regiList.length}')
-                  },
-                  child: CustomCard(
-                      voornaam: regiList[index].voornaam,
-                      naam: regiList[index].naam),
-                ));
+              position: animation
+                  .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+              child: CustomCard(
+                voornaam: regiList[index].voornaam,
+                naam: regiList[index].naam,
+                navMethod: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardDetail(
+                          c: CustomCard(
+                            voornaam: regiList[index].voornaam,
+                            naam: regiList[index].naam,
+                            navMethod: () {},
+                          ),
+                        ),
+                      ));
+                },
+              ),
+            );
           }),
     );
   }

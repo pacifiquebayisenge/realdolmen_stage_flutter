@@ -79,6 +79,10 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
+      // voorlopig false => moeite met bottom padding in Notification pagina
+      // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
+      extendBody: false,
       appBar: AppBar(
         title: const Center(
           child: Text('Schooler'),
@@ -91,8 +95,10 @@ class _AppState extends State<App> {
       ),
       body: screens[_selectedIndex],
       bottomNavigationBar: Container(
+
         padding: const EdgeInsets.only(bottom: 20.0),
         decoration: BoxDecoration(
+
           borderRadius: const BorderRadius.all(Radius.circular(30.0)),
           boxShadow: [
             BoxShadow(

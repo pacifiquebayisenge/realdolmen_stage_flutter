@@ -8,6 +8,7 @@ import 'package:page_slider/page_slider.dart';
 import 'package:progress_stepper/progress_stepper.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart' as globals;
+import 'package:schooler/dummy_data/data.dart' as data;
 
 
 import 'bullet_list.dart';
@@ -194,6 +195,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           vraagGOK: vraagGOK,
           vraagTN: vraagTN);
 
+      data.regiList.add( globals.regi);
       Timer(Duration(seconds: 3), () => print(globals.regi.toString()));
       Navigator.pop(context);
     }
