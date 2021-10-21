@@ -1,27 +1,32 @@
 import 'dart:math';
+import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:schooler/classes/registration.dart';
+import 'package:schooler/classes/user.dart';
 import 'package:schooler/dummy_data/data.dart' as dummy;
 import 'package:schooler/pages/card_detail.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard(
       {Key? key,
-      required this.voornaam,
-      required this.naam,
+        required this.registration,
+
       required this.navMethod})
       : super(key: key);
 
-  // naam en voornaam van de student
-  final String voornaam;
-  final String naam;
+  // inschrijving van de student
+  final Registration registration;
 
   // void methode als paramater om naar
   // de detail pagina van deze kaart te surfen
   // nullable want we geven niet altijd een methode mee
 
   final VoidCallback? navMethod;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,7 @@ class CustomCard extends StatelessWidget {
         },
         child: Container(
           padding: EdgeInsets.all(16),
-          child: CardContent(voornaam, naam),
+          child: CardContent(registration),
         ),
       ),
     );
@@ -44,9 +49,8 @@ class CustomCard extends StatelessWidget {
 }
 
 class CardContent extends StatefulWidget {
-  const CardContent(this.voornaam, this.naam, {Key? key}) : super(key: key);
-  final String voornaam;
-  final String naam;
+  const CardContent(this._registration, {Key? key}) : super(key: key);
+ final Registration _registration;
 
   @override
   _CardContentState createState() => _CardContentState();
@@ -65,39 +69,36 @@ class _CardContentState extends State<CardContent> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // voer de functie uit na dat de build functie van de widgets afgelopen is
+    // bron: 7:44 => https://www.youtube.com/watch?v=i9g2kSuWutk&list=PL4cUxeGkcC9gP1qg8yj-Jokef29VRCLt1&index=9
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _linearPercWidth = 0.8;
+    });
+  }
+
+  double _linearPercWidth = 0;
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-           right: 0,
-          width: 60,
-          height: 60,
-          child: CircleAvatar(
-            child: Text('Girl/Boy icon',
-            textAlign: TextAlign.center,),
-            backgroundColor: Colors.grey,
-          ),
-        ),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            '${this.widget.voornaam} ${this.widget.naam}',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text('Holleveldweg 56, 1500 Halle \n\n'
-              'Dossier in behandeling: \n'
-              'Scholen voorkeur  '),
-          Wrap(
-            children: [
-              Chip(label: Text('Don Bosco')),
-              Chip(label: Text('Heilig Hart')),
-              Chip(label: Text('Atheneum')),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        '${this.widget._registration.voornaam} ${this.widget._registration.naam}',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 10),
+      Text('Dossier in behandeling: '),
+      // ingeschrijving vooruitgang
+      Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        // om de afmetingen te krijgen van de parent widget
+        // bron: https://stackoverflow.com/questions/41558368/how-can-i-layout-widgets-based-on-the-size-of-the-parent
+        child: FractionallySizedBox(
+          widthFactor: _linearPercWidth,
+          child: SizedBox(
             child: LinearPercentIndicator(
-              padding: EdgeInsets.only(top: 10, bottom: 20),
+              padding: EdgeInsets.only(top: 0, bottom: 10),
               lineHeight: 4.0,
               percent: getProgress(),
               animation: true,
@@ -107,8 +108,53 @@ class _CardContentState extends State<CardContent> {
               progressColor: Colors.blue,
             ),
           ),
-        ]),
-      ],
-    );
+        ),
+      ),
+      // scholen voorkeur
+      Wrap(
+        children: [
+          Chip(
+            avatar: CircleAvatar(
+              radius: 10,
+              backgroundColor: Colors.grey,
+              child: Text(
+                '1',
+                style: TextStyle(
+                    color: Colors.black87, fontWeight: FontWeight.w900),
+              ),
+            ),
+            label: Text('Don Bosco'),
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Chip(
+              avatar: CircleAvatar(
+                radius: 10,
+                backgroundColor: Colors.grey,
+                child: Text(
+                  '2',
+                  style: TextStyle(
+                      color: Colors.black87, fontWeight: FontWeight.w900),
+                ),
+              ),
+              label: Text('Heilig Hart')),
+          SizedBox(
+            width: 5,
+          ),
+          Chip(
+              avatar: CircleAvatar(
+                radius: 10,
+                backgroundColor: Colors.grey,
+                child: Text(
+                  '3',
+                  style: TextStyle(
+                      color: Colors.black87, fontWeight: FontWeight.w900),
+                ),
+              ),
+              label: Text('Atheneum')),
+        ],
+      ),
+    ]);
   }
 }

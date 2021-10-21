@@ -201,3 +201,31 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Registratie
   * TO DO => scholen rangschikking !!!
+
+#### 20/10 Donderdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+  * Klassen methoden -> OOP
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Dummy data
+  * Scholen data simuleren -> scholen lijst -> strings...
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card widget gebruiken -> in ontwikkeling ->  bij klik vergroot animatie met meer info -> Inkwell => niet mooi dus gewoon popup
+  * Nieuwe pagina bij het klikken van de card => afgewerkt
+  * Scholen voorkeur in Card UI => Chips => rangschikking
+  * Geslacht icon ?? -> Circle Avatar => dropped
+
+* Registratie
+  * TO DO => scholen rangschikking !!!
+
+* Code clean up
+  * Onnodige code verwijderen
+  * Methoden en klassen vereenvoudigen
+  * Shortcuts

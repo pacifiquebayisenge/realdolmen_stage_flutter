@@ -66,7 +66,38 @@ class Registration {
       required this.vraagGOK,
       required this.vraagTN});
 
+  // methode om de geboorte datum te bekomen
+  String getBDate() {
+    // de eerste 6 cijfer die de datum voorstellen opsplitsen in hun respectvoolle betekenins
+    String year = this.rijksNr.substring(0, 2);
+    String month = this.rijksNr.substring(2, 4);
+    String day = this.rijksNr.substring(4, 6);
 
+    // Het jaar van de huidige datum omzette naar string
+    // daarvan enkel de 2 laatste cijfer nemen en dan omzette naar int
+    // verminderen met het jaartal uit rijksregister nummer
+    // als het resultaat positief is dan is de persoon geboren VANAF 2000
+    // als negatief dan is de persoon geboren VOOR 2000
+    if (int.parse(DateTime.now().year.toString().substring(3, 4)) -
+            int.parse(year) >
+        0) {
+      year = '20${year}';
+    } else {
+      year = '19${year}';
+    }
+
+    return '$day-$month-$year';
+  }
+
+  // methode om het geslacht van de persoon te achterhalen
+  String getGender() {
+    // de 3 delige cijfers na die van de geboortedatum ophalen
+    String nr = this.rijksNr.substring(6, 9);
+
+    // als getal even is dan is het een vrouw zoniet dan is het een man
+    if (int.parse(nr) % 2 == 0) return 'vrouw';
+    return 'man';
+  }
 
   @override
   String toString() {

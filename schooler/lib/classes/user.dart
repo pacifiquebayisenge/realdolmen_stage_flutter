@@ -1,4 +1,4 @@
-class User {
+abstract class User {
 
   late String voornaam;
   late String naam;
@@ -11,4 +11,7 @@ class User {
     this.naam = nm;
     this.rr = rr;
   }
+
+
+
 }

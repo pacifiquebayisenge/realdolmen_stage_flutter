@@ -16,42 +16,30 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-  List<Widget> cardList = [];
+  // lijst om registraties op te halen
+  List<Registration> registerList = [];
 
   @override
   void initState() {
     super.initState();
+    // voer de functie uit na dat de build functie van de widgets afgelopen is
+    // bron: 7:44 => https://www.youtube.com/watch?v=i9g2kSuWutk&list=PL4cUxeGkcC9gP1qg8yj-Jokef29VRCLt1&index=9
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      getCardsList();
+      getRegisList();
     });
   }
 
-  void getCardsList() {
-    Future ft = Future(() {});
+  void getRegisList() {
+    Future ft = Future(() => {});
 
-    regiList.forEach((element) {
-      ft = ft.then((_) {
+    // omgekeerde lijst zodat laaste ingeschreven van boven wordt weergegeven
+    regiList.reversed.toList().forEach((element) {
+      // een future zodat men een wacht tijd kan simuleren om elke
+      // kaart UI om de beurt te laten verschijnen met een animatie
+      ft = ft.then((value) {
         return Future.delayed(const Duration(milliseconds: 100), () {
-          cardList.add(
-            CustomCard(
-              voornaam: element.voornaam,
-              naam: element.naam,
-              navMethod: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CardDetail(
-                    c: CustomCard(
-                      voornaam: element.voornaam,
-                      naam: element.naam,
-                      navMethod: () {},
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-          print('Lijst count ${cardList.length}');
-          _listKey.currentState!.insertItem(cardList.length - 1);
+          registerList.add(element);
+          _listKey.currentState!.insertItem(registerList.length - 1);
         });
       });
     });
@@ -62,7 +50,7 @@ class _NotificationsState extends State<Notifications> {
   void addThis() {
     Random r = new Random();
 
-    regiList.insert(
+    registerList.insert(
         0,
         new Registration(
             voornaam: '${r.nextInt(100)}',
@@ -102,17 +90,10 @@ class _NotificationsState extends State<Notifications> {
         (context, animation) => SlideTransition(
               position: animation
                   .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-              child: InkWell(
-                onTap: () => {
-                  print('Lijst count ${regiList.length}'),
-                  addThis(),
-                  print('Lijst count ${regiList.length}')
-                },
-                child: CustomCard(
-                  voornaam: 'regiList[index].voornaam',
-                  naam: 'regiList[index].naam',
-                  navMethod: () {},
-                ),
+              child: CustomCard(
+                  registration: registerList[0],
+                navMethod: () {}
+
               ),
             ));
   }
@@ -124,28 +105,34 @@ class _NotificationsState extends State<Notifications> {
           key: _listKey,
           // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
           shrinkWrap: true,
-          initialItemCount: cardList.length,
+          initialItemCount: registerList.length,
           itemBuilder:
               (BuildContext context, int index, Animation<double> animation) {
-            return SlideTransition(
-              position: animation
-                  .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-              child: CustomCard(
-                voornaam: regiList[index].voornaam,
-                naam: regiList[index].naam,
-                navMethod: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CardDetail(
-                          c: CustomCard(
-                            voornaam: regiList[index].voornaam,
-                            naam: regiList[index].naam,
-                            navMethod: () {},
+            return InkWell(
+              onTap: addThis,
+              child: SlideTransition(
+                position: animation
+                    .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                child: CustomCard(
+                  registration: registerList[index],
+                  navMethod: () {
+                    // methode om naar de detail pagina te gaan
+                    // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CardDetail(
+                            c: CustomCard(
+                              registration: registerList[index],
+                              // geven lege methode mee omdat
+                              // het ier enkel om de data gaat
+                              // in de card UI
+                              navMethod: () {}
+                            ),
                           ),
-                        ),
-                      ));
-                },
+                        ));
+                  },
+                ),
               ),
             );
           }),
