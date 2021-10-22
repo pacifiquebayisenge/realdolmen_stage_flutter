@@ -95,18 +95,16 @@ class _CardContentState extends State<CardContent> {
         // om de afmetingen te krijgen van de parent widget
         // bron: https://stackoverflow.com/questions/41558368/how-can-i-layout-widgets-based-on-the-size-of-the-parent
         child: FractionallySizedBox(
-          widthFactor: _linearPercWidth,
-          child: SizedBox(
-            child: LinearPercentIndicator(
-              padding: EdgeInsets.only(top: 0, bottom: 10),
-              lineHeight: 4.0,
-              percent: getProgress(),
-              animation: true,
-              animationDuration: 1000,
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              backgroundColor: Colors.grey,
-              progressColor: Colors.blue,
-            ),
+          widthFactor: 0.8,
+          child: LinearPercentIndicator(
+            padding: EdgeInsets.only(top: 0, bottom: 10),
+            lineHeight: 4.0,
+            percent: getProgress(),
+            animation: true,
+            animationDuration: 1000,
+            linearStrokeCap: LinearStrokeCap.roundAll,
+            backgroundColor: Colors.grey,
+            progressColor: Colors.blue,
           ),
         ),
       ),

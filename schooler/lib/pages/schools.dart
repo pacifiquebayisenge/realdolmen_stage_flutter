@@ -13,8 +13,11 @@ class _SchoolsState extends State<Schools> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: Center(
-        child: Text("schools page"),
+      body: Container(
+        color: Colors.indigo.shade800,
+        child: Center(
+          child: Text("schools page"),
+        ),
       ),
     );
   }

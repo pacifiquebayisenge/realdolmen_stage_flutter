@@ -16,8 +16,11 @@ import 'bullet_list.dart';
 class FormQuestions extends StatefulWidget {
   const FormQuestions({Key? key}) : super(key: key);
 
+
   @override
   _FormQuestionsState createState() => _FormQuestionsState();
+
+
 }
 
 class _FormQuestionsState extends State<FormQuestions> {
@@ -283,10 +286,11 @@ class _FormQuestionsState extends State<FormQuestions> {
               initialPage: _currentStep,
               pages: [
                 // profiel info
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(50.0, 00, 50, 0),
-                  child: FormBuilder(
-                    key: _thisForm,
+                FormBuilder(
+                  key: _thisForm,
+                  child: FractionallySizedBox(
+                    widthFactor:0.9,
+                    heightFactor: 1,
                     child: Column(
                       children: [
                         const SizedBox(
@@ -361,96 +365,93 @@ class _FormQuestionsState extends State<FormQuestions> {
                   ),
                 ),
                 // adress info
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: FormBuilder(
-                        key: _thisForm2,
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            FormBuilderTextField(
-                              name: 'straat',
-                              controller: straat,
-                              decoration:
-                                  const InputDecoration(labelText: 'Straat'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'huisNr',
-                              controller: huisNr,
-                              decoration: const InputDecoration(
-                                  labelText: 'Huisnummer'),
-                              keyboardType: TextInputType.number,
-                              // enkel nummers kubben ingevoerd worden
-                              // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.numeric(context),
-                                FormBuilderValidators.notEqual(context, '0')
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'busNr',
-                              controller: busNr,
-                              decoration:
-                                  const InputDecoration(labelText: 'Busnummer'),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'postcode',
-                              controller: postcode,
-                              decoration:
-                                  const InputDecoration(labelText: 'Postcode'),
-                              maxLength: 4,
-                              keyboardType: TextInputType.number,
-                              // enkel nummers kubben ingevoerd worden
-                              // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.numeric(context),
-                                FormBuilderValidators.maxLength(context, 4)
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'gemeente',
-                              controller: gemeente,
-                              decoration:
-                                  const InputDecoration(labelText: 'Gemeente'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 120,
-                            ),
-                          ],
-                        ),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: FormBuilder(
+                      key: _thisForm2,
+                      child: Column(
+                        children: [
+
+
+                          FormBuilderTextField(
+                            name: 'straat',
+                            controller: straat,
+                            decoration:
+                                const InputDecoration(labelText: 'Straat'),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.notEqual(context, "")
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          
+                          FormBuilderTextField(
+                            name: 'huisNr',
+                            controller: huisNr,
+                            decoration: const InputDecoration(
+                                labelText: 'Huisnummer'),
+                            keyboardType: TextInputType.number,
+                            // enkel nummers kubben ingevoerd worden
+                            // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.numeric(context),
+                              FormBuilderValidators.notEqual(context, '0')
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          FormBuilderTextField(
+                            name: 'busNr',
+                            controller: busNr,
+                            decoration:
+                                const InputDecoration(labelText: 'Busnummer'),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          FormBuilderTextField(
+                            name: 'postcode',
+                            controller: postcode,
+                            decoration:
+                                const InputDecoration(labelText: 'Postcode'),
+                            maxLength: 4,
+                            keyboardType: TextInputType.number,
+                            // enkel nummers kubben ingevoerd worden
+                            // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.numeric(context),
+                              FormBuilderValidators.maxLength(context, 4)
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          FormBuilderTextField(
+                            name: 'gemeente',
+                            controller: gemeente,
+                            decoration:
+                                const InputDecoration(labelText: 'Gemeente'),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.notEqual(context, "")
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 120,
+                          ),
+                        ],
                       ),
                     ),
                   ),

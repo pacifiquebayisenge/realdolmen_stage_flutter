@@ -13,14 +13,11 @@ class New extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: Scaffold(
+        extendBody: true,
+        backgroundColor: Colors.indigo.shade800,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.blue,
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30)),
-          ),
+          backgroundColor: Colors.indigo.shade800,
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -37,14 +34,57 @@ class New extends StatelessWidget {
         // Voorkomen dat knoppen mee omhoog springen door het toetstebord
         // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
         resizeToAvoidBottomInset: false,
-        body: const SafeArea(
-          child: FormQuestions(),
-        ),
-      ),
+        body: ClipRRect(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            child: Container(color: Colors.white, child: FormQuestions())),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -5,
+                  blurRadius: 15,
+                  offset: const Offset(6, 6),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.arrow_forward_sharp),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_circle),
+                    label: 'New',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.notifications),
+                    label: 'Notifications',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.school_sharp),
+                    label: 'Schools',
+                  ),
+                ],
+                currentIndex: 0,
+                selectedItemColor: Colors.indigo.shade800,
+
+              ),
+            ),
+          ),
+        ))
+
     );
   }
 }
-
 
 /*
 class Questions extends StatefulWidget {

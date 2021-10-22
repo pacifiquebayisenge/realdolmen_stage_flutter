@@ -7,6 +7,10 @@ import 'package:schooler/widgets/widgets.dart';
 
 void main() {
   runApp(MaterialApp(
+    color: Colors.red,
+    theme: ThemeData(
+      primaryColor: Colors.indigo.shade800,
+    ),
     home: App(),
     routes: {
       'home': (context) => Home(),
@@ -44,7 +48,8 @@ class _AppState extends State<App> {
             // popup pagina niet in de main body weer geven
             _selectedIndex = 0;
             print("Open new page");
-            Navigator.of(context).push(_createRoute());
+            Navigator.pushNamed(context, 'new');
+            //Navigator.of(context).push(_createRoute());
             return;
           }
           break;
@@ -52,6 +57,7 @@ class _AppState extends State<App> {
         case 2:
           {
             print("Open notification page");
+
             //Navigator.pushReplacementNamed(context, 'notifications');
           }
           break;
@@ -74,35 +80,91 @@ class _AppState extends State<App> {
     });
   }
 
+  PreferredSizeWidget? test() {
+    if (_selectedIndex == 2) {
+      return null;
+    }
+    return AppBar(
+      backgroundColor: Colors.indigo.shade800,
+      elevation: 0,
+      title: const Center(
+        child: Text('Schooler'),
+      ),
+    );
+  }
+
   final screens = [Home(), New(), Notifications(), Schools()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
-      // voorlopig false => moeite met bottom padding in Notification pagina
-      // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
-      extendBody: false,
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Schooler'),
-        ),
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(50),
-              bottomRight: Radius.circular(50)),
-        ),
-      ),
-      body: screens[_selectedIndex],
-      bottomNavigationBar: Container(
+        backgroundColor: Colors.indigo.shade800,
+        // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
+        // voorlopig false => moeite met bottom padding in Notification pagina
+        // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
+        extendBody: true,
+        appBar: test(),
+        body: SafeArea(
+            bottom: false,
+            child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30)),
+                child: screens[_selectedIndex])),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -5,
+                  blurRadius: 15,
+                  offset: const Offset(6, 6),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_circle),
+                    label: 'New',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.notifications),
+                    label: 'Notifications',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.school_sharp),
+                    label: 'Schools',
+                  ),
+                ],
+                currentIndex: _selectedIndex,
+                selectedItemColor: Colors.indigo.shade800,
+                onTap: _onItemTapped,
+              ),
+            ),
+          ),
+        ));
+  }
+}
 
+/*
+Container(
         padding: const EdgeInsets.only(bottom: 20.0),
         decoration: BoxDecoration(
-
           borderRadius: const BorderRadius.all(Radius.circular(30.0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.black.withOpacity(0.5),
               spreadRadius: -5,
               blurRadius: 15,
               offset: const Offset(0, -5),
@@ -114,6 +176,7 @@ class _AppState extends State<App> {
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(30.0)),
             child: BottomNavigationBar(
+
               type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
@@ -140,23 +203,4 @@ class _AppState extends State<App> {
           ),
         ),
       ),
-    );
-  }
-}
-
-Route _createRoute() {
-  return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => const New(),
-      transitionsBuilder: (context, animation, secondairyAnimation, child) {
-        var curve = Curves.ease;
-        var curveTween = CurveTween(curve: curve);
-
-        const begin = Offset(0.0, 1.0);
-        const end = Offset.zero;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-
-
-        return SlideTransition(position: offsetAnimation, child: child);
-      });
-}
+ */

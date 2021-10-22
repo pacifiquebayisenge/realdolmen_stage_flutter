@@ -90,51 +90,80 @@ class _NotificationsState extends State<Notifications> {
         (context, animation) => SlideTransition(
               position: animation
                   .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-              child: CustomCard(
-                  registration: registerList[0],
-                navMethod: () {}
-
-              ),
+              child:
+                  CustomCard(registration: registerList[0], navMethod: () {}),
             ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:  Colors.indigo.shade800,
       body: AnimatedList(
           key: _listKey,
           // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
-          shrinkWrap: true,
+
           initialItemCount: registerList.length,
           itemBuilder:
               (BuildContext context, int index, Animation<double> animation) {
-            return InkWell(
-              onTap: addThis,
-              child: SlideTransition(
-                position: animation
-                    .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                child: CustomCard(
-                  registration: registerList[index],
-                  navMethod: () {
-                    // methode om naar de detail pagina te gaan
-                    // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CardDetail(
-                            c: CustomCard(
-                              registration: registerList[index],
-                              // geven lege methode mee omdat
-                              // het ier enkel om de data gaat
-                              // in de card UI
-                              navMethod: () {}
+            if (index != registerList.length - 1 ) {
+              return InkWell(
+                onTap: addThis,
+                child: SlideTransition(
+                  position: animation
+                      .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                  child: CustomCard(
+                    registration: registerList[index],
+                    navMethod: () {
+                      // methode om naar de detail pagina te gaan
+                      // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CardDetail(
+                              c: CustomCard(
+                                  registration: registerList[index],
+                                  // geven lege methode mee omdat
+                                  // het ier enkel om de data gaat
+                                  // in de card UI
+                                  navMethod: () {}),
                             ),
-                          ),
-                        ));
-                  },
+                          ));
+                    },
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 100.0),
+                child: InkWell(
+                  onTap: addThis,
+                  child: SlideTransition(
+                    position: animation
+                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                    child: CustomCard(
+                      registration: registerList[index],
+                      navMethod: () {
+                        // methode om naar de detail pagina te gaan
+                        // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CardDetail(
+                                c: CustomCard(
+                                    registration: registerList[index],
+                                    // geven lege methode mee omdat
+                                    // het ier enkel om de data gaat
+                                    // in de card UI
+                                    navMethod: () {}),
+                              ),
+                            ));
+                      },
+                    ),
+                  ),
+                ),
+              );
+            }
           }),
     );
   }

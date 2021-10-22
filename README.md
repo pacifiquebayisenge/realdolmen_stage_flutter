@@ -202,7 +202,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * Registratie
   * TO DO => scholen rangschikking !!!
 
-#### 20/10 Donderdag ####
+#### 21/10 Donderdag ####
 
 * Klassen
   * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
@@ -229,3 +229,37 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * Onnodige code verwijderen
   * Methoden en klassen vereenvoudigen
   * Shortcuts
+
+#### 22/10 Vrijdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+  * Klassen methoden -> OOP
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Dummy data
+  * Scholen data simuleren -> scholen lijst -> strings...
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card widget gebruiken -> in ontwikkeling ->  bij klik vergroot animatie met meer info ->  popup
+  
+  * Scholen voorkeur in Card UI => Chips => rangschikking
+
+* Registratie
+  * TO DO => scholen rangschikking !!!
+
+* Notities & aanwijzingen toepassen
+  * Onnodige code verwijderen
+  * Flutter standaard kleur aanpassen
+  * Wit op witte achetergrond onnodig
+  * Minder gebruik maken van Cards
+  * Minder witruimtes? nog te bespreken
+  * Appbar radius vorm
+  * Appbar animatie?
+  * andere manier van data weergeven?
+  * Percentage lijn bij cards onnodig
+  * etc.

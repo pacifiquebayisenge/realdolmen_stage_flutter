@@ -13,40 +13,54 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:  [
-                DelayedDisplay(
-                  delay: Duration(milliseconds: 500),
-                  child: Image(
-                    image: AssetImage('lib/images/empty_space.gif'),
-                    width: 250,
-                  ),
-                ),
-                DelayedDisplay(
-                  delay: Duration(milliseconds: 900),
-                  child: Text('Nog geen inschrijvingen'),
-                ),
-                DelayedDisplay(
-                  delay: Duration(milliseconds: 900),
-                  child: Text('Klik op '),
-                ),
-                DelayedDisplay(
-                    delay: Duration(milliseconds: 900),
-                    child: Icon(Icons.add_circle)),
-                DelayedDisplay(
-                  delay: Duration(milliseconds: 900),
-                  child: Text('om een nieuwe inschrijving te maken'),
-                ),
-              ],
+    return Container(
+      color: Colors.white,
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          DelayedDisplay(
+            delay: Duration(milliseconds: 500),
+            child: Image(
+              image: AssetImage('lib/images/empty_space.gif'),
+              width: 250,
             ),
           ),
-        ),
+          DelayedDisplay(
+            delay: Duration(milliseconds: 900),
+            child: Text('No registrations yet'),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          DelayedDisplay(
+            delay: Duration(milliseconds: 900),
+            child: Text('Create a new registration here'),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          DelayedDisplay(
+            delay: Duration(milliseconds: 900),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(100)),
+              child:  ElevatedButton(
+
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: Colors.indigo.shade800,
+                  shape: StadiumBorder(),
+                ),
+
+
+                onPressed: () {},
+                child: Icon(Icons.add_circle),
+
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
