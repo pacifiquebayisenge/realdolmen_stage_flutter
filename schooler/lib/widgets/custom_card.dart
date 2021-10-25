@@ -58,12 +58,12 @@ class CardContent extends StatefulWidget {
 
 class _CardContentState extends State<CardContent> {
   // methode om random percentage te berekennen
-  double getProgress() {
+  int getRandom() {
     Random rdm = new Random();
     // random getal genereren van 0 (incl.) tot 101 (ecl.)
     // om te delen door 100
     // omdat de LinearPercentIndicator enkel double van 0 tot en met 1 accepteert
-    double progPerc = rdm.nextInt(101) / 100;
+    int progPerc = rdm.nextInt(11);
 
     return progPerc;
   }
@@ -87,8 +87,16 @@ class _CardContentState extends State<CardContent> {
         '${this.widget._registration.voornaam} ${this.widget._registration.naam}',
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
+      const SizedBox(height: 5),
+      Text(
+        '${this.widget._registration.straat} ${this.widget._registration.huisNr}, ${this.widget._registration.postcode} ${this.widget._registration.gemeente}',
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+      ),
       const SizedBox(height: 10),
-      Text('Dossier in behandeling: '),
+      Text('School preferences: ${getRandom()}'),
+      Text('Enrollments state: pending'),
+
+      /*
       // ingeschrijving vooruitgang
       Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -153,6 +161,8 @@ class _CardContentState extends State<CardContent> {
               label: Text('Atheneum')),
         ],
       ),
+
+      */
     ]);
   }
 }

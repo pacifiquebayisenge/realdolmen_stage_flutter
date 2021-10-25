@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:math' as math;
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,17 +10,13 @@ import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart' as globals;
 import 'package:schooler/dummy_data/data.dart' as data;
 
-
 import 'bullet_list.dart';
 
 class FormQuestions extends StatefulWidget {
   const FormQuestions({Key? key}) : super(key: key);
 
-
   @override
   _FormQuestionsState createState() => _FormQuestionsState();
-
-
 }
 
 class _FormQuestionsState extends State<FormQuestions> {
@@ -198,7 +194,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           vraagGOK: vraagGOK,
           vraagTN: vraagTN);
 
-      data.regiList.add( globals.regi);
+      data.regiList.add(globals.regi);
       Timer(Duration(seconds: 3), () => print(globals.regi.toString()));
       Navigator.pop(context);
     }
@@ -289,7 +285,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                 FormBuilder(
                   key: _thisForm,
                   child: FractionallySizedBox(
-                    widthFactor:0.9,
+                    widthFactor: 0.9,
                     heightFactor: 1,
                     child: Column(
                       children: [
@@ -302,7 +298,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                             name: 'voornaam',
                             controller: voornaam,
                             decoration:
-                                const InputDecoration(labelText: 'Voornaam'),
+                                const InputDecoration(labelText: 'Firstname'),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.notEqual(context, "")
@@ -318,7 +314,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                             name: 'naam',
                             controller: naam,
                             decoration:
-                                const InputDecoration(labelText: 'Naam'),
+                                const InputDecoration(labelText: 'Lastname'),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.notEqual(context, "")
@@ -334,7 +330,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                             name: 'rijksNr',
                             controller: rijksNr,
                             decoration: const InputDecoration(
-                                labelText: 'Rijksregisternummer'),
+                                labelText: 'National Insurance number'),
                             keyboardType: TextInputType.number,
                             // enkel nummers kubben ingevoerd worden
                             // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
@@ -365,34 +361,39 @@ class _FormQuestionsState extends State<FormQuestions> {
                   ),
                 ),
                 // adress info
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: FormBuilder(
-                      key: _thisForm2,
-                      child: Column(
-                        children: [
-
-
-                          FormBuilderTextField(
-                            name: 'straat',
-                            controller: straat,
-                            decoration:
-                                const InputDecoration(labelText: 'Straat'),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.notEqual(context, "")
-                            ]),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          
-                          FormBuilderTextField(
+                FormBuilder(
+                  key: _thisForm2,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.9,
+                    heightFactor: 1,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        FormBuilderTextField(
+                          name: 'straat',
+                          controller: straat,
+                          decoration:
+                              const InputDecoration(labelText: 'Street'),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(context),
+                            FormBuilderValidators.notEqual(context, "")
+                          ]),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: FormBuilderTextField(
                             name: 'huisNr',
                             controller: huisNr,
                             decoration: const InputDecoration(
-                                labelText: 'Huisnummer'),
+                                labelText: 'House number'),
                             keyboardType: TextInputType.number,
                             // enkel nummers kubben ingevoerd worden
                             // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
@@ -404,154 +405,53 @@ class _FormQuestionsState extends State<FormQuestions> {
                               FormBuilderValidators.numeric(context),
                               FormBuilderValidators.notEqual(context, '0')
                             ]),
+                        ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          FormBuilderTextField(
+                              SizedBox(width: 20,),
+
+                              Container(
+                            width: MediaQuery.of(context).size.width/2.5,
+                            child: FormBuilderTextField(
                             name: 'busNr',
                             controller: busNr,
                             decoration:
-                                const InputDecoration(labelText: 'Busnummer'),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          FormBuilderTextField(
-                            name: 'postcode',
-                            controller: postcode,
-                            decoration:
-                                const InputDecoration(labelText: 'Postcode'),
-                            maxLength: 4,
-                            keyboardType: TextInputType.number,
-                            // enkel nummers kubben ingevoerd worden
-                            // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.numeric(context),
-                              FormBuilderValidators.maxLength(context, 4)
-                            ]),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          FormBuilderTextField(
-                            name: 'gemeente',
-                            controller: gemeente,
-                            decoration:
-                                const InputDecoration(labelText: 'Gemeente'),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.notEqual(context, "")
-                            ]),
-                          ),
-                          const SizedBox(
-                            height: 120,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                // eerste ouder info
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: FormBuilder(
-                        key: _thisForm3,
-                        child: Column(
+                            const InputDecoration(labelText: 'Additional'),
+                        ),
+                          ),]),
+
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            FormBuilderTextField(
-                              name: 'oVoornaam1',
-                              controller: oVoornaam1,
-                              decoration: const InputDecoration(
-                                  labelText: 'Ouder voornaam'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 22.0),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              child: FormBuilderTextField(
+                                name: 'gemeente',
+                                controller: gemeente,
+                                decoration:
+                                const InputDecoration(labelText: 'City'),
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(context),
+                                  FormBuilderValidators.notEqual(context, "")
+                                ]),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'oNaam1',
-                              controller: oNaam1,
-                              decoration: const InputDecoration(
-                                  labelText: 'Ouder naam'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'beroep1',
-                              controller: beroep1,
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: FormBuilderTextField(
+                              name: 'postcode',
+                              controller: postcode,
                               decoration:
-                                  const InputDecoration(labelText: 'Beroep'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'berStraat1',
-                              controller: berStraat1,
-                              decoration:
-                                  const InputDecoration(labelText: 'Straat'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'berHuisNr1',
-                              controller: berHuisNr1,
-                              decoration: const InputDecoration(
-                                  labelText: 'Huisnummer'),
-                              keyboardType: TextInputType.number,
-                              // enkel nummers kubben ingevoerd worden
-                              // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.numeric(context),
-                                FormBuilderValidators.notEqual(context, '0')
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'berBusNr1',
-                              controller: berBusNr1,
-                              decoration:
-                                  const InputDecoration(labelText: 'Busnummer'),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'berPostcode1',
-                              controller: berPostcode1,
-                              decoration:
-                                  const InputDecoration(labelText: 'Postcode'),
+                              const InputDecoration(labelText: 'Postal code'),
                               maxLength: 4,
                               keyboardType: TextInputType.number,
                               // enkel nummers kubben ingevoerd worden
@@ -565,24 +465,173 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 FormBuilderValidators.maxLength(context, 4)
                               ]),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            FormBuilderTextField(
-                              name: 'berGemeente1',
-                              controller: berGemeente1,
-                              decoration:
-                                  const InputDecoration(labelText: 'Gemeente'),
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.notEqual(context, "")
-                              ]),
-                            ),
-                            const SizedBox(
-                              height: 120,
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],),
+
+
+
+                      ],
+                    ),
+                  ),
+                ),
+                // eerste ouder info
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  heightFactor: 1,
+                  child: SingleChildScrollView(
+                    child: FormBuilder(
+                      key: _thisForm3,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 50,),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  child:  FormBuilderTextField(
+                                    name: 'oVoornaam1',
+                                    controller: oVoornaam1,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Parent firstname'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(context, "")
+                                    ]),
+                                  ),
+                                ),
+                                SizedBox(width: 10,),
+
+                                Container(
+                                  width: MediaQuery.of(context).size.width/ 2.5,
+                                  child:  FormBuilderTextField(
+                                    name: 'oNaam1',
+                                    controller: oNaam1,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Parent lastname'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(context, "")
+                                    ]),
+                                  ),
+                                ),],),
+
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          FormBuilderTextField(
+                            name: 'beroep1',
+                            controller: beroep1,
+                            decoration: const InputDecoration(
+                                labelText: 'Profession'),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.notEqual(context, "")
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          FormBuilderTextField(
+                            name: 'berStraat1',
+                            controller: berStraat1,
+                            decoration:
+                                const InputDecoration(labelText: 'Street'),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.notEqual(context, "")
+                            ]),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  child: FormBuilderTextField(
+                                    name: 'berHuisNr1',
+                                    controller: berHuisNr1,
+                                    decoration: const InputDecoration(
+                                        labelText: 'House number'),
+                                    keyboardType: TextInputType.number,
+                                    // enkel nummers kubben ingevoerd worden
+                                    // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.numeric(context),
+                                      FormBuilderValidators.notEqual(context, '0')
+                                    ]),
+                                  ),
+                                ),
+                                SizedBox(width: 20,),
+
+                                Container(
+                                  width: MediaQuery.of(context).size.width/ 2.5,
+                                  child: FormBuilderTextField(
+                                    name: 'berBusNr1',
+                                    controller: berBusNr1,
+                                    decoration:
+                                    const InputDecoration(labelText: 'Additional'),
+                                  ),
+                                ),]),
+
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 22.0),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  child: FormBuilderTextField(
+                                    name: 'berGemeente1',
+                                    controller: berGemeente1,
+                                    decoration:
+                                    const InputDecoration(labelText: 'City'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(context, "")
+                                    ]),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'berPostcode1',
+                                  controller: berPostcode1,
+                                  decoration:
+                                  const InputDecoration(labelText: 'Postal code'),
+                                  maxLength: 4,
+                                  keyboardType: TextInputType.number,
+                                  // enkel nummers kubben ingevoerd worden
+                                  // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.numeric(context),
+                                    FormBuilderValidators.maxLength(context, 4)
+                                  ]),
+                                ),
+                              ),
+                            ],),
+                          const SizedBox(
+                            height: 120,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -591,132 +640,163 @@ class _FormQuestionsState extends State<FormQuestions> {
                 // enkel zichtbaar als 2e ouder knop wordt geklikt
                 Visibility(
                   visible: secParent,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                  child: FractionallySizedBox(
+                    widthFactor: 0.9,
+                    heightFactor: 1,
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.all(30.0),
-                        child: FormBuilder(
-                          key: _thisForm4,
-                          child: Column(
-                            children: [
-                              FormBuilderTextField(
-                                name: 'oVoornaam2',
-                                controller: oVoornaam2,
-                                decoration: const InputDecoration(
-                                    labelText: 'Ouder voornaam'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'oNaam2',
-                                controller: oNaam2,
-                                decoration: const InputDecoration(
-                                    labelText: 'Ouder naam'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'beroep2',
-                                controller: beroep2,
-                                decoration:
-                                    const InputDecoration(labelText: 'Beroep'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'berStraat2',
-                                controller: berStraat2,
-                                decoration:
-                                    const InputDecoration(labelText: 'Straat'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'berHuisNr2',
-                                controller: berHuisNr2,
-                                decoration: const InputDecoration(
-                                    labelText: 'Huisnummer'),
-                                keyboardType: TextInputType.number,
-                                // enkel nummers kubben ingevoerd worden
-                                // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.numeric(context),
-                                  FormBuilderValidators.notEqual(context, '0')
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'berBusNr2',
-                                controller: berBusNr2,
-                                decoration:
-                                    InputDecoration(labelText: 'Busnummer'),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'berPostcode2',
-                                controller: berPostcode2,
-                                decoration: const InputDecoration(
-                                    labelText: 'Postcode'),
-                                keyboardType: TextInputType.number,
-                                // enkel nummers kubben ingevoerd worden
-                                // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                maxLength: 4,
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.numeric(context),
-                                  FormBuilderValidators.maxLength(context, 4)
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              FormBuilderTextField(
-                                name: 'berGemeente2',
-                                controller: berGemeente2,
-                                decoration: const InputDecoration(
-                                    labelText: 'Gemeente'),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
-                                ]),
-                              ),
-                              const SizedBox(
-                                height: 120,
-                              ),
-                            ],
-                          ),
+                      child: FormBuilder(
+                        key: _thisForm4,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 50,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  child:  FormBuilderTextField(
+                                    name: 'oVoornaam2',
+                                    controller: oVoornaam2,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Parent firstname'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(context, "")
+                                    ]),
+                                  ),
+                                ),
+                                SizedBox(width: 10,),
+
+                                Container(
+                                  width: MediaQuery.of(context).size.width/ 2.5,
+                                  child:  FormBuilderTextField(
+                                    name: 'oNaam2',
+                                    controller: oNaam2,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Parent lastname'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(context, "")
+                                    ]),
+                                  ),
+                                ),],),
+
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            FormBuilderTextField(
+                              name: 'beroep2',
+                              controller: beroep2,
+                              decoration: const InputDecoration(
+                                  labelText: 'Profession'),
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.notEqual(context, "")
+                              ]),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            FormBuilderTextField(
+                              name: 'berStraat2',
+                              controller: berStraat2,
+                              decoration:
+                              const InputDecoration(labelText: 'Street'),
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.notEqual(context, "")
+                              ]),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width / 2.5,
+                                    child: FormBuilderTextField(
+                                      name: 'berHuisNr2',
+                                      controller: berHuisNr2,
+                                      decoration: const InputDecoration(
+                                          labelText: 'House number'),
+                                      keyboardType: TextInputType.number,
+                                      // enkel nummers kubben ingevoerd worden
+                                      // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      validator: FormBuilderValidators.compose([
+                                        FormBuilderValidators.required(context),
+                                        FormBuilderValidators.numeric(context),
+                                        FormBuilderValidators.notEqual(context, '0')
+                                      ]),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+
+                                  Container(
+                                    width: MediaQuery.of(context).size.width/ 2.5,
+                                    child: FormBuilderTextField(
+                                      name: 'berBusNr2',
+                                      controller: berBusNr2,
+                                      decoration:
+                                      const InputDecoration(labelText: 'Additional'),
+                                    ),
+                                  ),]),
+
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 22.0),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width / 2.5,
+                                    child: FormBuilderTextField(
+                                      name: 'berGemeente2',
+                                      controller: berGemeente2,
+                                      decoration:
+                                      const InputDecoration(labelText: 'City'),
+                                      validator: FormBuilderValidators.compose([
+                                        FormBuilderValidators.required(context),
+                                        FormBuilderValidators.notEqual(context, "")
+                                      ]),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  child: FormBuilderTextField(
+                                    name: 'berPostcode2',
+                                    controller: berPostcode2,
+                                    decoration:
+                                    const InputDecoration(labelText: 'Postal code'),
+                                    maxLength: 4,
+                                    keyboardType: TextInputType.number,
+                                    // enkel nummers kubben ingevoerd worden
+                                    // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.numeric(context),
+                                      FormBuilderValidators.maxLength(context, 4)
+                                    ]),
+                                  ),
+                                ),
+                              ],),
+                            const SizedBox(
+                              height: 120,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -790,19 +870,19 @@ class _FormQuestionsState extends State<FormQuestions> {
             ),
           ),
         if (_currentStep == 3 && secParent == true)
-        MaterialButton(
-          elevation: 3,
-          color: Colors.white54,
-          // jump to zero-indexed page number
-          onPressed: () => {
-            secParent = false,
-            previousStep()
-          }, //_slider.currentState.setPage(3),
-          child: const Text(
-            'remove this parent',
-            style: TextStyle(fontWeight: FontWeight.w900),
+          MaterialButton(
+            elevation: 3,
+            color: Colors.white54,
+            // jump to zero-indexed page number
+            onPressed: () => {
+              secParent = false,
+              previousStep()
+            }, //_slider.currentState.setPage(3),
+            child: const Text(
+              'remove this parent',
+              style: TextStyle(fontWeight: FontWeight.w900),
+            ),
           ),
-        ),
         // toon de ja nee vragen enkel bij de GOK en TN vragen
         if (_currentStep == 4 || _currentStep == 5)
           Padding(
@@ -824,6 +904,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     shape: StadiumBorder(),
+                      primary: Colors.indigo.shade800
                   ),
                   child: const Text('Yes'),
                   onPressed: () => {vraagYesNo(1)},
@@ -841,6 +922,43 @@ class _FormQuestionsState extends State<FormQuestions> {
               if (_currentStep != 0)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    shape: StadiumBorder(),
+                    primary: Colors.grey
+                  ),
+                  child: Transform.rotate(
+                      angle: 180 * math.pi / 180,
+                      child: const Icon(Icons.forward)),
+                  onPressed: () => {previousStep()},
+                ),
+              if (_currentStep != 4 && _currentStep != 5)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    alignment: Alignment.center,
+                    shape: StadiumBorder(),
+                    primary: Colors.indigo.shade800
+                  ),
+                  child: const Icon(Icons.forward),
+                  onPressed: () => nextStep(),
+                ),
+
+
+
+
+            ],
+          ),
+
+
+
+
+          /*Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              /*
+              // verberg back button wanneer men op de eerste pagina is
+              if (_currentStep != 0)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
                     shape: StadiumBorder(),
                   ),
                   child: const Icon(Icons.arrow_back_ios),
@@ -853,11 +971,61 @@ class _FormQuestionsState extends State<FormQuestions> {
                   ),
                   child: const Icon(Icons.arrow_forward_ios),
                   onPressed: () => nextStep(),
-                )
+                ),
+
+
+               */
+
             ],
-          ),
+          ),*/
         ),
       ],
     );
   }
 }
+
+/*
+* Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -5,
+                  blurRadius: 15,
+                  offset: const Offset(6, 6),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.arrow_forward_sharp),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_circle),
+                    label: 'New',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.notifications),
+                    label: 'Notifications',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.school_sharp),
+                    label: 'Schools',
+                  ),
+                ],
+                currentIndex: 0,
+                selectedItemColor: Colors.indigo.shade800,
+
+              ),
+            ),
+          ),
+        ))
+* */

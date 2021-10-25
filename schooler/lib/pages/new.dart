@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:schooler/widgets/widgets.dart';
 
@@ -17,6 +18,7 @@ class New extends StatelessWidget {
         backgroundColor: Colors.indigo.shade800,
         appBar: AppBar(
           elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.indigo.shade800),
           backgroundColor: Colors.indigo.shade800,
           leading: IconButton(
             onPressed: () {
@@ -38,6 +40,7 @@ class New extends StatelessWidget {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             child: Container(color: Colors.white, child: FormQuestions())),
+        /*
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
           child: Container(
@@ -81,8 +84,8 @@ class New extends StatelessWidget {
             ),
           ),
         ))
-
-    );
+*/
+    ));
   }
 }
 

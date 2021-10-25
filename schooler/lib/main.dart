@@ -7,7 +7,7 @@ import 'package:schooler/widgets/widgets.dart';
 
 void main() {
   runApp(MaterialApp(
-    color: Colors.red,
+    color: Colors.indigo.shade800,
     theme: ThemeData(
       primaryColor: Colors.indigo.shade800,
     ),
