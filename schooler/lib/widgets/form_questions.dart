@@ -134,6 +134,11 @@ class _FormQuestionsState extends State<FormQuestions> {
           formSucces = true;
         }
         break;
+      case 6:
+        {
+          formSucces = true;
+        }
+        break;
 
       default:
         {
@@ -803,19 +808,21 @@ class _FormQuestionsState extends State<FormQuestions> {
                   ),
                 ),
                 // GOK vragen
-                Padding(
-                  padding: const EdgeInsets.all(50.0),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  heightFactor: 1,
                   child: Column(
                     children: const [
+                      SizedBox(height: 30,),
                       Text('Do any of these statements apply to you?'),
                       SizedBox(
-                        height: 50,
+                        height: 10,
                       ),
                       Expanded(
                         child: BulletList(
                           strings: [
-                            '''The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.''',
-                            '''The mother of the pupil has a diploma of secondary education or a study certificate of the second year of the third degree of the secondary education or an associated equivalent study certificate.'''
+                            'The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.',
+                            'The mother of the pupil has a diploma of secondary education or a study certificate of the second year of the third degree of the secondary education or an associated equivalent study certificate.'
                           ],
                         ),
                       ),
@@ -823,64 +830,85 @@ class _FormQuestionsState extends State<FormQuestions> {
                   ),
                 ),
                 // TN vragen
-                Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const Text(
-                              'Do any of these statements apply to you?'),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 450,
-                            child: const BulletList(strings: [
-                              '''At least a Dutch-language diploma of secondary education or an equivalent Dutch-language study certificate.''',
-                              '''A Dutch-language certificate of the second year of the third stage of secondary education or an equivalent Dutch-language certificate.''',
-                              '''Proof of at least sufficient knowledge of Dutch issued by Selor.''',
-                              '''Proof of that one of them has attended 9 years of regular education in Dutch-language primary and secondary education.''',
-                              '''Proof that one of them masters Dutch at at least level B2''',
-                            ]),
-                          ),
-                        ],
-                      ),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  heightFactor: 1,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 30,),
+                        const Text(
+                            'Do any of these statements apply to you?'),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 450,
+                          child: const BulletList(strings: [
+                            '''At least a Dutch-language diploma of secondary education or an equivalent Dutch-language study certificate.''',
+                            '''A Dutch-language certificate of the second year of the third stage of secondary education or an equivalent Dutch-language certificate.''',
+                            '''Proof of at least sufficient knowledge of Dutch issued by Selor.''',
+                            '''Proof of that one of them has attended 9 years of regular education in Dutch-language primary and secondary education.''',
+                            '''Proof that one of them masters Dutch at at least level B2''',
+                          ]),
+                        ),
+                      ],
                     ),
                   ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  heightFactor: 1,
+
                 )
               ],
               key: _slider),
         ),
 
-        // toon enkel 2 ouder knop als men op de juist pagina zit en 2e ouder nog niet aangeduid werd
+        // toon enkel 2e ouder knop als men op de juiste pagina zit en 2e ouder nog niet aangeduid werd
         if (_currentStep == 2 && secParent == false)
-          MaterialButton(
-            elevation: 3,
-            color: Colors.white54,
-            // jump to zero-indexed page number
-            onPressed: () => {
-              secParent = true,
-              nextStep()
-            }, //_slider.currentState.setPage(3),
-            child: const Text(
-              'Second parent',
-              style: TextStyle(fontWeight: FontWeight.w900),
+          Padding(
+            padding: EdgeInsets.only(top: 10,bottom: 10),
+            child: ElevatedButton(
+
+              style: ElevatedButton.styleFrom(
+
+                  alignment: Alignment.center,
+                  shape: StadiumBorder(),
+                  primary: Colors.grey
+              ),
+
+              onPressed: () => {
+                secParent = true,
+                nextStep()
+              },
+              child: const Text(
+                'Second parent',
+                style: TextStyle(fontWeight: FontWeight.w900),
+              ),
             ),
           ),
+        // toon enkel 2e ouder verwijder knop als men op de juiste pagina zit en 2e ouder al aangeduid werd
         if (_currentStep == 3 && secParent == true)
-          MaterialButton(
-            elevation: 3,
-            color: Colors.white54,
-            // jump to zero-indexed page number
-            onPressed: () => {
-              secParent = false,
-              previousStep()
-            }, //_slider.currentState.setPage(3),
-            child: const Text(
-              'remove this parent',
-              style: TextStyle(fontWeight: FontWeight.w900),
+          Padding(
+            padding: EdgeInsets.only(top: 10,bottom: 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+
+                  alignment: Alignment.center,
+                  shape: StadiumBorder(),
+                  primary: Colors.redAccent
+              ),
+
+
+              onPressed: () => {
+                secParent = false,
+                previousStep()
+              },
+              child: const Text(
+                'remove this parent',
+                style: TextStyle(fontWeight: FontWeight.w900),
+              ),
             ),
           ),
         // toon de ja nee vragen enkel bij de GOK en TN vragen
@@ -890,7 +918,7 @@ class _FormQuestionsState extends State<FormQuestions> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                // verberg back button wanneer men op de eerste pagina is
+
 
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -931,6 +959,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                       child: const Icon(Icons.forward)),
                   onPressed: () => {previousStep()},
                 ),
+              // verberg next button wanneer men op de voorrangsvragen komt
               if (_currentStep != 4 && _currentStep != 5)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

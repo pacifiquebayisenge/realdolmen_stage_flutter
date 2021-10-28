@@ -128,6 +128,7 @@ class _AppState extends State<App> {
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
               child: BottomNavigationBar(
+
                 type: BottomNavigationBarType.fixed,
                 items: const [
                   BottomNavigationBarItem(

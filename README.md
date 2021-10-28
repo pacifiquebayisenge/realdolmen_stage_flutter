@@ -268,7 +268,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 ---
 ---
 
-#### 25/10 Vrijdag ####
+#### 25/10 Maandag ####
 
 * Klassen
   * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
@@ -287,6 +287,72 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Notities & aanwijzingen toepassen
   * Flutter standaard kleur aanpassen
+  * Minder gebruik maken van Cards
+  * Minder witruimtes?  50 % voltooid -> nog te bespreken
+  * Appbar animatie? -> sliver Appbar
+  * andere manier van data weergeven?
+  * etc.
+
+#### 27/10 Woensdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card UI -> nieuwe design zoeken  
+  * Scholen voorkeur in Card UI => Chips => rangschikking => vervangen
+
+* Registratie
+  * TO DO => scholen rangschikking -> in ontwikkeling op Schools pagina!!!
+
+* Schools page
+  * Floating search bar widget onderzoeken
+  * Zoeken naar kaartweergaven
+
+* Firebase
+  * Firebase documentatie onderzoeken
+  * Firebase tutorials
+
+* Notities & aanwijzingen toepassen
+  * Minder gebruik maken van Cards
+  * Minder witruimtes?  50 % voltooid -> nog te bespreken
+  * Appbar animatie? -> sliver Appbar
+  * andere manier van data weergeven?
+  * etc.
+
+#### 28/10 Donderdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card UI -> nieuwe design zoeken  
+  * Scholen voorkeur in Card UI => Chips => rangschikking => vervangen
+
+* Registratie
+  * TO DO => scholen rangschikking -> in ontwikkeling op Schools pagina!!!
+
+* Schools page
+  * Floating search bar widget -> werkt maar problemen met widget overlapping
+  * Zoeken naar kaartweergaven
+  * Lijst weer gaven waar men de rang orde van kan vervangen
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
+  * Firebase documentatie onderzoeken
+  * Firebase tutorials
+
+* Notities & aanwijzingen toepassen
   * Minder gebruik maken van Cards
   * Minder witruimtes?  50 % voltooid -> nog te bespreken
   * Appbar animatie? -> sliver Appbar

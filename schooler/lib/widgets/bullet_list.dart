@@ -13,7 +13,7 @@ class BulletList extends StatefulWidget {
 
 class _BulletListState extends State<BulletList>
     with SingleTickerProviderStateMixin {
-   late AnimationController _animatedController;
+  late AnimationController _animatedController;
 
   @override
   void initState() {
@@ -39,8 +39,7 @@ class _BulletListState extends State<BulletList>
               flex: 3,
               child: BulletPoint(
                 text: widget.strings[index ~/ 2],
-                animationController: _animatedController,
-                index: index ~/ 2,
+
               ),
             );
           } else {
