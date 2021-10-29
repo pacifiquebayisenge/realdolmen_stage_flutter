@@ -102,7 +102,7 @@ class _AppState extends State<App> {
         // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
         // voorlopig false => moeite met bottom padding in Notification pagina
         // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
-        extendBody: true,
+        extendBody:  true,
         appBar: test(),
         body: SafeArea(
             bottom: false,

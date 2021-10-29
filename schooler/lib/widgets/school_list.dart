@@ -1,22 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
-import 'package:schooler/widgets/widgets.dart';
-
-class Schools extends StatelessWidget {
-  const Schools({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        extendBody: true,
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: false,
-        body: SearchPage());
-  }
-}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -66,47 +50,88 @@ class _SearchPageState extends State<SearchPage> {
               Padding(
                 key: ValueKey(schoolList[i]),
                 padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-
-                    title: Text(schoolList[i],
-    maxLines: 2,
-    overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w500)),
-                    subtitle: const Text('Straatnaan 12, stadnaam postcode',
-                        style: TextStyle(fontSize: 11)),
-                    leading: Column(
-                      // verticaal centreren van circle avatar
-                      // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // rangschiknummer
-                        CircleAvatar(
-                          backgroundColor: Color.fromRGBO(234, 144, 16, 1),
-                          radius: 15,
-                          child: Text(
-                            (i + 1).toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 15),
+                child: SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        // verticaal centreren van circle avatar
+                        // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // rangschiknummer
+                          CircleAvatar(
+                            backgroundColor: Color.fromRGBO(234, 144, 16, 1),
+                            radius: 15,
+                            child: Text(
+                              (i + 1).toString(),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    // info button om naar de school info pagina te surfen
-                    trailing: TextButton(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.grey),
-                          overlayColor:
-                              MaterialStateProperty.all(Colors.grey.shade400)),
-                      onPressed: () {
-                        print('school info pagina');
-                      },
-                      child: Icon(
-                        Icons.info_outline_rounded,
+                        ],
                       ),
-                    )),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                        child: Column(
+
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(schoolList[i],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.w500)),
+                            const Text('Straatnaan 12, stadnaam postcode',
+                                style: TextStyle(fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      // info button om naar de school info pagina te surfen
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  print('delete');},
+                                overlayColor: MaterialStateProperty.all(Colors.red),
+                                child: Icon( Icons.close,
+                                  color: Colors.redAccent,),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Container(
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  print('school info pagina');},
+                                overlayColor: MaterialStateProperty.all(Colors.grey),
+                                child: Icon( Icons.info_outline_rounded,
+                                color: Colors.grey,),
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               )
           ],
         ),
@@ -168,7 +193,7 @@ class _SearchPageState extends State<SearchPage> {
                               floatingSearchBarController.close();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 20.0,right: 20.0),
+                              padding: const EdgeInsets.only(right: 20.0,left: 20.0),
                               child: Container(
                                 height: 112,
                                 child: Center(child: Text(scholen[index], maxLines: 2,

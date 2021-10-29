@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'widgets.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,6 +65,8 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   // bool om aan te duiden dat 2e ouder ook zal ingevoerd worden
   bool secParent = false;
+
+  double pageHeight = 450;
 
   // methode om de GOK en TN vragen op te vragen
   // 2 knoppen = ja knop en nee knop
@@ -131,11 +134,14 @@ class _FormQuestionsState extends State<FormQuestions> {
         break;
       case 5:
         {
+          pageHeight = 450;
           formSucces = true;
         }
         break;
       case 6:
         {
+
+
           formSucces = true;
         }
         break;
@@ -150,6 +156,22 @@ class _FormQuestionsState extends State<FormQuestions> {
     return formSucces;
   }
 
+  setpageHeight(int page) {
+
+    print('THIS IS THE ACTUAL PAGE NUMBER $page');
+    if(page == 6 ) {
+      setState(() {
+        pageHeight = 550;
+      });
+    }
+    else {
+      setState(() {
+        pageHeight = 450;
+      });
+    }
+
+  }
+
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   void nextStep() {
@@ -160,6 +182,8 @@ class _FormQuestionsState extends State<FormQuestions> {
 
     bool isLastStep =
         _currentStep == _slider.currentState!.widget.pages.length - 1;
+
+
 
     // als het de laatste stap is, vervoledig de wizart
     if (isLastStep) {
@@ -217,6 +241,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
       _slider.currentState!.next();
     }
+    setpageHeight(_currentStep);
 
     print(
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
@@ -239,6 +264,8 @@ class _FormQuestionsState extends State<FormQuestions> {
       setState(() => _currentStep -= 1);
       _slider.currentState!.previous();
     }
+
+    setpageHeight(_currentStep);
     print(
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
@@ -281,7 +308,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           ),
         ),
         SizedBox(
-          height: 450,
+          height: pageHeight,
           child: PageSlider(
               duration: const Duration(milliseconds: 400),
               initialPage: _currentStep,
@@ -293,39 +320,47 @@ class _FormQuestionsState extends State<FormQuestions> {
                     widthFactor: 0.9,
                     heightFactor: 1,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        DelayedDisplay(
-                          delay: const Duration(milliseconds: 500),
-                          child: FormBuilderTextField(
-                            name: 'voornaam',
-                            controller: voornaam,
-                            decoration:
-                                const InputDecoration(labelText: 'Firstname'),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.notEqual(context, "")
-                            ]),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+
                         DelayedDisplay(
                           delay: const Duration(milliseconds: 700),
-                          child: FormBuilderTextField(
-                            name: 'naam',
-                            controller: naam,
-                            decoration:
-                                const InputDecoration(labelText: 'Lastname'),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.notEqual(context, "")
-                            ]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'voornaam',
+                                  controller: voornaam,
+                                  decoration:
+                                      const InputDecoration(labelText: 'Firstname'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'naam',
+                                  controller: naam,
+                                  decoration:
+                                      const InputDecoration(labelText: 'Lastname'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+
                         const SizedBox(
                           height: 20,
                         ),
@@ -372,10 +407,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                     widthFactor: 0.9,
                     heightFactor: 1,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                          height: 50,
-                        ),
+
                         FormBuilderTextField(
                           name: 'straat',
                           controller: straat,
@@ -392,89 +426,87 @@ class _FormQuestionsState extends State<FormQuestions> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2.5,
-                            child: FormBuilderTextField(
-                            name: 'huisNr',
-                            controller: huisNr,
-                            decoration: const InputDecoration(
-                                labelText: 'House number'),
-                            keyboardType: TextInputType.number,
-                            // enkel nummers kubben ingevoerd worden
-                            // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
-                              FormBuilderValidators.numeric(context),
-                              FormBuilderValidators.notEqual(context, '0')
-                            ]),
-                        ),
-                          ),
-                              SizedBox(width: 20,),
-
                               Container(
-                            width: MediaQuery.of(context).size.width/2.5,
-                            child: FormBuilderTextField(
-                            name: 'busNr',
-                            controller: busNr,
-                            decoration:
-                            const InputDecoration(labelText: 'Additional'),
-                        ),
-                          ),]),
-
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'huisNr',
+                                  controller: huisNr,
+                                  decoration: const InputDecoration(
+                                      labelText: 'House number'),
+                                  keyboardType: TextInputType.number,
+                                  // enkel nummers kubben ingevoerd worden
+                                  // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.numeric(context),
+                                    FormBuilderValidators.notEqual(context, '0')
+                                  ]),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'busNr',
+                                  controller: busNr,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Additional'),
+                                ),
+                              ),
+                            ]),
                         const SizedBox(
                           height: 20,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 22.0),
-                            child: Container(
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 22.0),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'gemeente',
+                                  controller: gemeente,
+                                  decoration:
+                                      const InputDecoration(labelText: 'City'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Container(
                               width: MediaQuery.of(context).size.width / 2.5,
                               child: FormBuilderTextField(
-                                name: 'gemeente',
-                                controller: gemeente,
-                                decoration:
-                                const InputDecoration(labelText: 'City'),
+                                name: 'postcode',
+                                controller: postcode,
+                                decoration: const InputDecoration(
+                                    labelText: 'Postal code'),
+                                maxLength: 4,
+                                keyboardType: TextInputType.number,
+                                // enkel nummers kubben ingevoerd worden
+                                // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: FormBuilderValidators.compose([
                                   FormBuilderValidators.required(context),
-                                  FormBuilderValidators.notEqual(context, "")
+                                  FormBuilderValidators.numeric(context),
+                                  FormBuilderValidators.maxLength(context, 4)
                                 ]),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2.5,
-                            child: FormBuilderTextField(
-                              name: 'postcode',
-                              controller: postcode,
-                              decoration:
-                              const InputDecoration(labelText: 'Postal code'),
-                              maxLength: 4,
-                              keyboardType: TextInputType.number,
-                              // enkel nummers kubben ingevoerd worden
-                              // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.numeric(context),
-                                FormBuilderValidators.maxLength(context, 4)
-                              ]),
-                            ),
-                          ),
-                        ],),
-
-
-
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -487,48 +519,53 @@ class _FormQuestionsState extends State<FormQuestions> {
                     child: FormBuilder(
                       key: _thisForm3,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(height: 50,),
+                          SizedBox(
+                            height: 50,
+                          ),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 2.5,
-                                  child:  FormBuilderTextField(
-                                    name: 'oVoornaam1',
-                                    controller: oVoornaam1,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Parent firstname'),
-                                    validator: FormBuilderValidators.compose([
-                                      FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(context, "")
-                                    ]),
-                                  ),
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'oVoornaam1',
+                                  controller: oVoornaam1,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Parent firstname'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
                                 ),
-                                SizedBox(width: 10,),
-
-                                Container(
-                                  width: MediaQuery.of(context).size.width/ 2.5,
-                                  child:  FormBuilderTextField(
-                                    name: 'oNaam1',
-                                    controller: oNaam1,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Parent lastname'),
-                                    validator: FormBuilderValidators.compose([
-                                      FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(context, "")
-                                    ]),
-                                  ),
-                                ),],),
-
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: FormBuilderTextField(
+                                  name: 'oNaam1',
+                                  controller: oNaam1,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Parent lastname'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(
                             height: 20,
                           ),
                           FormBuilderTextField(
                             name: 'beroep1',
                             controller: beroep1,
-                            decoration: const InputDecoration(
-                                labelText: 'Profession'),
+                            decoration:
+                                const InputDecoration(labelText: 'Profession'),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.notEqual(context, "")
@@ -554,7 +591,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
                                   child: FormBuilderTextField(
                                     name: 'berHuisNr1',
                                     controller: berHuisNr1,
@@ -569,22 +607,25 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
                                       FormBuilderValidators.numeric(context),
-                                      FormBuilderValidators.notEqual(context, '0')
+                                      FormBuilderValidators.notEqual(
+                                          context, '0')
                                     ]),
                                   ),
                                 ),
-                                SizedBox(width: 20,),
-
+                                SizedBox(
+                                  width: 20,
+                                ),
                                 Container(
-                                  width: MediaQuery.of(context).size.width/ 2.5,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
                                   child: FormBuilderTextField(
                                     name: 'berBusNr1',
                                     controller: berBusNr1,
-                                    decoration:
-                                    const InputDecoration(labelText: 'Additional'),
+                                    decoration: const InputDecoration(
+                                        labelText: 'Additional'),
                                   ),
-                                ),]),
-
+                                ),
+                              ]),
                           const SizedBox(
                             height: 20,
                           ),
@@ -594,15 +635,17 @@ class _FormQuestionsState extends State<FormQuestions> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 22.0),
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
                                   child: FormBuilderTextField(
                                     name: 'berGemeente1',
                                     controller: berGemeente1,
-                                    decoration:
-                                    const InputDecoration(labelText: 'City'),
+                                    decoration: const InputDecoration(
+                                        labelText: 'City'),
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(context, "")
+                                      FormBuilderValidators.notEqual(
+                                          context, "")
                                     ]),
                                   ),
                                 ),
@@ -610,14 +653,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                               const SizedBox(
                                 width: 20,
                               ),
-
                               Container(
                                 width: MediaQuery.of(context).size.width / 2.5,
                                 child: FormBuilderTextField(
                                   name: 'berPostcode1',
                                   controller: berPostcode1,
-                                  decoration:
-                                  const InputDecoration(labelText: 'Postal code'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Postal code'),
                                   maxLength: 4,
                                   keyboardType: TextInputType.number,
                                   // enkel nummers kubben ingevoerd worden
@@ -632,7 +674,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   ]),
                                 ),
                               ),
-                            ],),
+                            ],
+                          ),
                           const SizedBox(
                             height: 120,
                           ),
@@ -652,40 +695,49 @@ class _FormQuestionsState extends State<FormQuestions> {
                       child: FormBuilder(
                         key: _thisForm4,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 50,),
+                            SizedBox(
+                              height: 50,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width / 2.5,
-                                  child:  FormBuilderTextField(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
+                                  child: FormBuilderTextField(
                                     name: 'oVoornaam2',
                                     controller: oVoornaam2,
                                     decoration: const InputDecoration(
                                         labelText: 'Parent firstname'),
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(context, "")
+                                      FormBuilderValidators.notEqual(
+                                          context, "")
                                     ]),
                                   ),
                                 ),
-                                SizedBox(width: 10,),
-
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Container(
-                                  width: MediaQuery.of(context).size.width/ 2.5,
-                                  child:  FormBuilderTextField(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
+                                  child: FormBuilderTextField(
                                     name: 'oNaam2',
                                     controller: oNaam2,
                                     decoration: const InputDecoration(
                                         labelText: 'Parent lastname'),
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(context, "")
+                                      FormBuilderValidators.notEqual(
+                                          context, "")
                                     ]),
                                   ),
-                                ),],),
-
+                                ),
+                              ],
+                            ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -706,7 +758,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                               name: 'berStraat2',
                               controller: berStraat2,
                               decoration:
-                              const InputDecoration(labelText: 'Street'),
+                                  const InputDecoration(labelText: 'Street'),
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(context),
                                 FormBuilderValidators.notEqual(context, "")
@@ -716,10 +768,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                               height: 20,
                             ),
                             Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    width: MediaQuery.of(context).size.width / 2.5,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
                                     child: FormBuilderTextField(
                                       name: 'berHuisNr2',
                                       controller: berHuisNr2,
@@ -734,22 +788,25 @@ class _FormQuestionsState extends State<FormQuestions> {
                                       validator: FormBuilderValidators.compose([
                                         FormBuilderValidators.required(context),
                                         FormBuilderValidators.numeric(context),
-                                        FormBuilderValidators.notEqual(context, '0')
+                                        FormBuilderValidators.notEqual(
+                                            context, '0')
                                       ]),
                                     ),
                                   ),
-                                  SizedBox(width: 20,),
-
+                                  SizedBox(
+                                    width: 20,
+                                  ),
                                   Container(
-                                    width: MediaQuery.of(context).size.width/ 2.5,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
                                     child: FormBuilderTextField(
                                       name: 'berBusNr2',
                                       controller: berBusNr2,
-                                      decoration:
-                                      const InputDecoration(labelText: 'Additional'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Additional'),
                                     ),
-                                  ),]),
-
+                                  ),
+                                ]),
                             const SizedBox(
                               height: 20,
                             ),
@@ -759,15 +816,17 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 22.0),
                                   child: Container(
-                                    width: MediaQuery.of(context).size.width / 2.5,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
                                     child: FormBuilderTextField(
                                       name: 'berGemeente2',
                                       controller: berGemeente2,
-                                      decoration:
-                                      const InputDecoration(labelText: 'City'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'City'),
                                       validator: FormBuilderValidators.compose([
                                         FormBuilderValidators.required(context),
-                                        FormBuilderValidators.notEqual(context, "")
+                                        FormBuilderValidators.notEqual(
+                                            context, "")
                                       ]),
                                     ),
                                   ),
@@ -775,14 +834,14 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 const SizedBox(
                                   width: 20,
                                 ),
-
                                 Container(
-                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
                                   child: FormBuilderTextField(
                                     name: 'berPostcode2',
                                     controller: berPostcode2,
-                                    decoration:
-                                    const InputDecoration(labelText: 'Postal code'),
+                                    decoration: const InputDecoration(
+                                        labelText: 'Postal code'),
                                     maxLength: 4,
                                     keyboardType: TextInputType.number,
                                     // enkel nummers kubben ingevoerd worden
@@ -793,11 +852,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
                                       FormBuilderValidators.numeric(context),
-                                      FormBuilderValidators.maxLength(context, 4)
+                                      FormBuilderValidators.maxLength(
+                                          context, 4)
                                     ]),
                                   ),
                                 ),
-                              ],),
+                              ],
+                            ),
                             const SizedBox(
                               height: 120,
                             ),
@@ -812,8 +873,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                   widthFactor: 0.9,
                   heightFactor: 1,
                   child: Column(
+
                     children: const [
-                      SizedBox(height: 30,),
+                      SizedBox(
+                        height: 30,
+                      ),
                       Text('Do any of these statements apply to you?'),
                       SizedBox(
                         height: 10,
@@ -835,10 +899,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                   heightFactor: 1,
                   child: SingleChildScrollView(
                     child: Column(
+
                       children: [
-                        SizedBox(height: 30,),
-                        const Text(
-                            'Do any of these statements apply to you?'),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        const Text('Do any of these statements apply to you?'),
                         const SizedBox(
                           height: 10,
                         ),
@@ -856,10 +922,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
-                FractionallySizedBox(
+                const FractionallySizedBox(
                   widthFactor: 0.9,
                   heightFactor: 1,
-
+                  child: SearchPage()
                 )
               ],
               key: _slider),
@@ -868,20 +934,13 @@ class _FormQuestionsState extends State<FormQuestions> {
         // toon enkel 2e ouder knop als men op de juiste pagina zit en 2e ouder nog niet aangeduid werd
         if (_currentStep == 2 && secParent == false)
           Padding(
-            padding: EdgeInsets.only(top: 10,bottom: 10),
+            padding: EdgeInsets.only(top: 10, bottom: 10),
             child: ElevatedButton(
-
               style: ElevatedButton.styleFrom(
-
                   alignment: Alignment.center,
                   shape: StadiumBorder(),
-                  primary: Colors.grey
-              ),
-
-              onPressed: () => {
-                secParent = true,
-                nextStep()
-              },
+                  primary: Colors.grey),
+              onPressed: () => {secParent = true, nextStep()},
               child: const Text(
                 'Second parent',
                 style: TextStyle(fontWeight: FontWeight.w900),
@@ -891,20 +950,13 @@ class _FormQuestionsState extends State<FormQuestions> {
         // toon enkel 2e ouder verwijder knop als men op de juiste pagina zit en 2e ouder al aangeduid werd
         if (_currentStep == 3 && secParent == true)
           Padding(
-            padding: EdgeInsets.only(top: 10,bottom: 10),
+            padding: EdgeInsets.only(top: 10, bottom: 10),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-
                   alignment: Alignment.center,
                   shape: StadiumBorder(),
-                  primary: Colors.redAccent
-              ),
-
-
-              onPressed: () => {
-                secParent = false,
-                previousStep()
-              },
+                  primary: Colors.redAccent),
+              onPressed: () => {secParent = false, previousStep()},
               child: const Text(
                 'remove this parent',
                 style: TextStyle(fontWeight: FontWeight.w900),
@@ -918,8 +970,6 @@ class _FormQuestionsState extends State<FormQuestions> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-
-
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: StadiumBorder(), primary: Colors.redAccent),
@@ -928,12 +978,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                   child: const Text('No'),
                   onPressed: () => {vraagYesNo(0)},
                 ),
-
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    shape: StadiumBorder(),
-                      primary: Colors.indigo.shade800
-                  ),
+                      shape: StadiumBorder(), primary: Colors.indigo.shade800),
                   child: const Text('Yes'),
                   onPressed: () => {vraagYesNo(1)},
                 ),
@@ -951,9 +998,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
-                    shape: StadiumBorder(),
-                    primary: Colors.grey
-                  ),
+                      shape: StadiumBorder(),
+                      primary: Colors.grey),
                   child: Transform.rotate(
                       angle: 180 * math.pi / 180,
                       child: const Icon(Icons.forward)),
@@ -963,22 +1009,14 @@ class _FormQuestionsState extends State<FormQuestions> {
               if (_currentStep != 4 && _currentStep != 5)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    alignment: Alignment.center,
-                    shape: StadiumBorder(),
-                    primary: Colors.indigo.shade800
-                  ),
+                      alignment: Alignment.center,
+                      shape: StadiumBorder(),
+                      primary: Colors.indigo.shade800),
                   child: const Icon(Icons.forward),
                   onPressed: () => nextStep(),
                 ),
-
-
-
-
             ],
           ),
-
-
-
 
           /*Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

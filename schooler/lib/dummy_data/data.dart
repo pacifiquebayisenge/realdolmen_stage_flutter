@@ -14,8 +14,8 @@ List<String> vragenTN = [
 ];
 
 List<String> scholen = [
-  'eerst',
-  'tweede',
+  'eersteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+  'tweedeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
   'derde',
   'vierde',
   'A-Vision Onderwijsadviesbureau',

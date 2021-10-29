@@ -358,3 +358,37 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * Appbar animatie? -> sliver Appbar
   * andere manier van data weergeven?
   * etc.
+
+
+  #### 29/10 Vrijdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: verschillende onderdeel klassen ??
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card UI -> nieuwe design zoeken  
+  * Scholen voorkeur in Card UI => Chips => rangschikking => vervangen
+
+* Registratie
+  * TO DO => scholen rangschikking -> 80% voltooid!!!
+
+* Schools page
+  * Floating search bar widget -> werkt maar problemen met widget overlapping -> fixed
+  * Zoeken naar kaartweergaven
+  * Lijst weer gaven waar men de rang orde van kan vervangen -> fixzed
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
+  * Firebase documentatie onderzoeken
+  * Firebase tutorials
+
+* Notities & aanwijzingen toepassen
+  * Appbar animatie? -> sliver Appbar
+  * andere manier van data weergeven?
+  * etc.
+
