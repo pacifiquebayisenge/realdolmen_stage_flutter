@@ -195,7 +195,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       print('${stringQueryParameters['voornaam']}    jjgguf');
 
       // TODO:: send data to server
-      globals.regi = new Registration(
+      Registration.newRegi(
           voornaam: voornaam.text,
           naam: naam.text,
           rijksNr: rijksNr.text,
@@ -222,6 +222,35 @@ class _FormQuestionsState extends State<FormQuestions> {
           berGemeente2: berGemeente2.text,
           vraagGOK: vraagGOK,
           vraagTN: vraagTN);
+
+      /* globals.regi = new Registration(
+        id: ,
+          voornaam: voornaam.text,
+          naam: naam.text,
+          rijksNr: rijksNr.text,
+          straat: straat.text,
+          huisNr: int.parse(huisNr.text),
+          busNr: busNr.text,
+          postcode: int.parse(postcode.text),
+          gemeente: gemeente.text,
+          oVoornaam1: oVoornaam1.text,
+          oNaam1: oNaam1.text,
+          beroep1: beroep1.text,
+          berStraat1: berStraat1.text,
+          berHuisNr1: int.parse(berHuisNr1.text),
+          berBusNr1: berBusNr1.text,
+          berPostcode1: int.parse(berPostcode1.text),
+          berGemeente1: berGemeente1.text,
+          oVoornaam2: oVoornaam2.text,
+          oNaam2: oNaam2.text,
+          beroep2: beroep2.text,
+          berStraat2: berStraat2.text,
+          berHuisNr2: int.tryParse(berHuisNr2.text),
+          berBusNr2: berBusNr2.text,
+          berPostcode2: int.tryParse(berPostcode2.text),
+          berGemeente2: berGemeente2.text,
+          vraagGOK: vraagGOK,
+          vraagTN: vraagTN); */
 
       data.regiList.add(globals.regi);
       Timer(Duration(seconds: 3), () => print(globals.regi.toString()));

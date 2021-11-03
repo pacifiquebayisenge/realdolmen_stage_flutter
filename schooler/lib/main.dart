@@ -3,9 +3,12 @@ import 'package:schooler/pages/home.dart';
 import 'package:schooler/pages/new.dart';
 import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:schooler/widgets/widgets.dart';
 
-void main() {
+void main()  {
+  WidgetsFlutterBinding.ensureInitialized();
+ // await Firebase.initializeApp();
   runApp(MaterialApp(
     color: Colors.indigo.shade800,
     theme: ThemeData(
@@ -27,8 +30,52 @@ class App extends StatefulWidget {
   @override
   State<App> createState() => _AppState();
 }
+/*FutureBuilder(
 
+        future: _fbApp,
+      builder: ( context, snapshot) {
+         if (snapshot.hasError) {
+           print('You have an error ! ${snapshot.error.toString()}');
+           return Text('Something went wrong!');
+         } else if (snapshot.hasData) {
+           return App();
+         } else {
+           return Center(
+             child: CircularProgressIndicator(),
+           );
+         }
+      },)*/
 class _AppState extends State<App> {
+
+  // Set default `_initialized` and `_error` state to false
+  bool _initialized = false;
+  bool _error = false;
+
+  // Define an async function to initialize FlutterFire
+  void initializeFlutterFire() async {
+    try {
+      // Wait for Firebase to initialize and set `_initialized` state to true
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch(e) {
+      // Set `_error` state to true if Firebase initialization fails
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
+
+
+
   // Om de geselecteerde pagina te onthouden
   int _selectedIndex = 0;
 
@@ -97,6 +144,18 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(_error) {
+      print('You have an error !');
+      return Text('Something went wrong!');
+    }
+
+    if (!_initialized) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
         backgroundColor: Colors.indigo.shade800,
         // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
@@ -155,6 +214,11 @@ class _AppState extends State<App> {
             ),
           ),
         ));
+
+
+
+
+
   }
 }
 

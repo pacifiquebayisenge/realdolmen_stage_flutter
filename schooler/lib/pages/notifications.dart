@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/widgets/widgets.dart';
@@ -16,21 +17,26 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-  // lijst om registraties op te halen
-  List<Registration> registerList = [];
+
 
   @override
   void initState() {
     super.initState();
     // voer de functie uit na dat de build functie van de widgets afgelopen is
     // bron: 7:44 => https://www.youtube.com/watch?v=i9g2kSuWutk&list=PL4cUxeGkcC9gP1qg8yj-Jokef29VRCLt1&index=9
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_)  {
+
       getRegisList();
     });
   }
 
-  void getRegisList() {
+  // lijst om registraties op te halen
+  List<Registration> registerList = [];
+
+  Future<void> getRegisList()  async {
     Future ft = Future(() => {});
+
+    regiList = await Registration.getRegiList();
 
     // omgekeerde lijst zodat laaste ingeschreven van boven wordt weergegeven
     regiList.reversed.toList().forEach((element) {
@@ -47,12 +53,14 @@ class _NotificationsState extends State<Notifications> {
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
+
   void addThis() {
     Random r = new Random();
 
     registerList.insert(
         0,
         new Registration(
+          id: '${r.nextInt(1000000)}',
             voornaam: '${r.nextInt(100)}',
             naam: 'Pokers',
             rijksNr: '97042025942',
@@ -81,6 +89,41 @@ class _NotificationsState extends State<Notifications> {
             vraagTN: true));
 
     _listKey.currentState!.insertItem(0);
+
+
+
+
+
+    /*
+   Registration.newRegi(
+       voornaam: '${r.nextInt(100)}',
+       naam: 'Pokers',
+       rijksNr: '97042025942',
+       straat: 'Winkelstraat',
+       huisNr: 15,
+       busNr: '',
+       postcode: 1500,
+       gemeente: 'Halle',
+       oVoornaam1: 'Felicien',
+       oNaam1: 'Brabant',
+       beroep1: 'Bakker',
+       berStraat1: 'Bakkerstaat',
+       berHuisNr1: 13,
+       berBusNr1: '',
+       berPostcode1: 1500,
+       berGemeente1: 'Halle',
+       oVoornaam2: 'Melina',
+       oNaam2: 'Hangover',
+       beroep2: 'Tandarts',
+       berStraat2: 'Ziekelaan',
+       berHuisNr2: 12,
+       berBusNr2: '',
+       berPostcode2: 1500,
+       berGemeente2: 'Halle',
+       vraagGOK: true,
+       vraagTN: true);
+
+     */
   }
 
   void removeThis() {
@@ -98,7 +141,7 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Colors.indigo.shade800,
+      backgroundColor: Colors.indigo.shade800,
       body: AnimatedList(
           key: _listKey,
           // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
@@ -106,7 +149,7 @@ class _NotificationsState extends State<Notifications> {
           initialItemCount: registerList.length,
           itemBuilder:
               (BuildContext context, int index, Animation<double> animation) {
-            if (index != registerList.length - 1 ) {
+            if (index != registerList.length - 1) {
               return InkWell(
                 onTap: addThis,
                 child: SlideTransition(
@@ -168,5 +211,5 @@ class _NotificationsState extends State<Notifications> {
     );
   }
 
-  buildItem(item, int index, Animation<double> animation) {}
+
 }

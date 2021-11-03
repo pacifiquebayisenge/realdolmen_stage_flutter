@@ -1,7 +1,15 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/services/globals.dart';
 
 @immutable
 class Registration {
+  // id
+  late final String id;
+
   // basis info voor de ingeschrevende
   late final String voornaam;
   late final String naam;
@@ -39,7 +47,8 @@ class Registration {
   late final bool vraagTN;
 
   Registration(
-      {required this.voornaam,
+      {required this.id,
+      required this.voornaam,
       required this.naam,
       required this.rijksNr,
       required this.straat,
@@ -142,5 +151,126 @@ class Registration {
         vraagTN: $vraagTN
 
         ''';
+  }
+
+
+// statische methode om lijst van registraties op te halen uit de database
+  static Future<List<Registration>> getRegiList() async {
+    List<Registration> regiList = [];
+
+    await FirebaseFirestore.instance
+        .collection('registrations')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+
+
+        Registration regi = Registration(
+            id: doc.id,
+            voornaam: doc['voornaam'],
+            naam: doc['naam'],
+            rijksNr: doc['rijksNr'],
+
+            straat: doc['straat'],
+            huisNr: doc['huisNr'],
+            busNr: doc['busNr'],
+            postcode: doc['postcode'],
+            gemeente: doc['gemeente'],
+
+            oVoornaam1: doc['oVoornaam1'],
+            oNaam1: doc['oNaam1'],
+            beroep1: doc['beroep1'],
+            berStraat1: doc['berStraat1'],
+            berHuisNr1: doc['berHuisNr1'],
+            berBusNr1: doc['berBusNr1'],
+            berPostcode1: doc['berPostcode1'],
+            berGemeente1: doc['berGemeente1'],
+
+            oVoornaam2: doc['oVoornaam2'],
+            oNaam2: doc['oNaam2'],
+            beroep2: doc['beroep2'],
+            berStraat2: doc['berStraat2'],
+            berHuisNr2: doc['berHuisNr2'],
+            berBusNr2: doc['berBusNr2'],
+            berPostcode2: doc['berPostcode2'],
+            berGemeente2: doc['berGemeente2'],
+
+            vraagGOK: doc['vraagGOK'],
+            vraagTN: doc['vraagTN']
+        );
+
+        regiList.add(regi);
+
+
+      });
+    });
+
+    return regiList;
+  }
+
+  // methode om nieuwe registratie naar de server te versturen
+  static Future<void> newRegi(
+      {required voornaam,
+      required naam,
+      required rijksNr,
+      required straat,
+      required huisNr,
+      required busNr,
+      required postcode,
+      required gemeente,
+      required oVoornaam1,
+      required oNaam1,
+      required beroep1,
+      required berStraat1,
+      required berHuisNr1,
+      required berBusNr1,
+      required berPostcode1,
+      required berGemeente1,
+      required oVoornaam2,
+      required oNaam2,
+      required beroep2,
+      required berStraat2,
+      required berHuisNr2,
+      required berBusNr2,
+      required berPostcode2,
+      required berGemeente2,
+      required vraagGOK,
+      required vraagTN}) {
+    // Firestore collectie reference naar de regstratie collectie
+    CollectionReference _regiRef =
+        FirebaseFirestore.instance.collection('registrations');
+
+    // gebruk de collectie reference van registratie om de nieuwe registratie toe te voegen
+    return _regiRef
+        .add({
+          'voornaam': voornaam,
+          'naam': naam,
+          'rijksNr': rijksNr,
+          'straat': straat,
+          'huisNr': huisNr,
+          'busNr': busNr,
+          'postcode': postcode,
+          'gemeente': gemeente,
+          'oVoornaam1': oVoornaam1,
+          'oNaam1': oNaam1,
+          'beroep1': beroep1,
+          'berStraat1': berStraat1,
+          'berHuisNr1': berHuisNr1,
+          'berBusNr1': berBusNr1,
+          'berPostcode1': berPostcode1,
+          'berGemeente1': berGemeente1,
+          'oVoornaam2': oVoornaam2,
+          'oNaam2': oNaam2,
+          'beroep2': beroep2,
+          'berStraat2': berStraat2,
+          'berHuisNr2': berHuisNr2,
+          'berBusNr2': berBusNr2,
+          'berPostcode2': berPostcode2,
+          'berGemeente2': berGemeente2,
+          'vraagGOK': vraagGOK,
+          'vraagTN': vraagTN // 42
+        })
+        .then((value) => print("Registration succesfully added "))
+        .catchError((error) => print("Failed to add Registration: $error"));
   }
 }
