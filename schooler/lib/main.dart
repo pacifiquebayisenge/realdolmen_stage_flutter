@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:schooler/pages/home.dart';
 import 'package:schooler/pages/new.dart';
@@ -5,6 +7,8 @@ import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:schooler/widgets/widgets.dart';
+
+import 'classes/registration.dart';
 
 void main()  {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,11 +84,40 @@ class _AppState extends State<App> {
   int _selectedIndex = 0;
 
   // Methode wanneer me nee knop klikt
-  void _onItemTapped(int index) {
-    setState(() {
+   void _onItemTapped(int index) async {
+      setState(()  {
       switch (index) {
         case 0:
           {
+            Random r = new Random();
+            Registration.newRegi(
+                voornaam: '${r.nextInt(100)}',
+                naam: 'Pokers',
+                rijksNr: '97042025942',
+                straat: 'Winkelstraat',
+                huisNr: 15,
+                busNr: '',
+                postcode: 1500,
+                gemeente: 'Halle',
+                oVoornaam1: 'Felicien',
+                oNaam1: 'Brabant',
+                beroep1: 'Bakker',
+                berStraat1: 'Bakkerstaat',
+                berHuisNr1: 13,
+                berBusNr1: '',
+                berPostcode1: 1500,
+                berGemeente1: 'Halle',
+                oVoornaam2: 'Melina',
+                oNaam2: 'Hangover',
+                beroep2: 'Tandarts',
+                berStraat2: 'Ziekelaan',
+                berHuisNr2: 12,
+                berBusNr2: '',
+                berPostcode2: 1500,
+                berGemeente2: 'Halle',
+                vraagGOK: true,
+                vraagTN: true);
+
             print("Open home page");
             // Navigator.pushReplacementNamed(context, '/');
           }
@@ -162,6 +195,7 @@ class _AppState extends State<App> {
         // voorlopig false => moeite met bottom padding in Notification pagina
         // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
         extendBody:  true,
+
         appBar: test(),
         body: SafeArea(
             bottom: false,
@@ -209,7 +243,7 @@ class _AppState extends State<App> {
                 ],
                 currentIndex: _selectedIndex,
                 selectedItemColor: Colors.indigo.shade800,
-                onTap: _onItemTapped,
+                onTap:  _onItemTapped,
               ),
             ),
           ),

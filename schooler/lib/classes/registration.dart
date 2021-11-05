@@ -153,30 +153,25 @@ class Registration {
         ''';
   }
 
-
 // statische methode om lijst van registraties op te halen uit de database
   static Future<List<Registration>> getRegiList() async {
     List<Registration> regiList = [];
 
     await FirebaseFirestore.instance
-        .collection('registrations')
+        .collection('registrations').orderBy('date')
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-
-
         Registration regi = Registration(
             id: doc.id,
             voornaam: doc['voornaam'],
             naam: doc['naam'],
             rijksNr: doc['rijksNr'],
-
             straat: doc['straat'],
             huisNr: doc['huisNr'],
             busNr: doc['busNr'],
             postcode: doc['postcode'],
             gemeente: doc['gemeente'],
-
             oVoornaam1: doc['oVoornaam1'],
             oNaam1: doc['oNaam1'],
             beroep1: doc['beroep1'],
@@ -185,7 +180,6 @@ class Registration {
             berBusNr1: doc['berBusNr1'],
             berPostcode1: doc['berPostcode1'],
             berGemeente1: doc['berGemeente1'],
-
             oVoornaam2: doc['oVoornaam2'],
             oNaam2: doc['oNaam2'],
             beroep2: doc['beroep2'],
@@ -194,14 +188,10 @@ class Registration {
             berBusNr2: doc['berBusNr2'],
             berPostcode2: doc['berPostcode2'],
             berGemeente2: doc['berGemeente2'],
-
             vraagGOK: doc['vraagGOK'],
-            vraagTN: doc['vraagTN']
-        );
+            vraagTN: doc['vraagTN']);
 
         regiList.add(regi);
-
-
       });
     });
 
@@ -243,6 +233,7 @@ class Registration {
     // gebruk de collectie reference van registratie om de nieuwe registratie toe te voegen
     return _regiRef
         .add({
+          'date': DateTime.now(),
           'voornaam': voornaam,
           'naam': naam,
           'rijksNr': rijksNr,
@@ -268,9 +259,43 @@ class Registration {
           'berPostcode2': berPostcode2,
           'berGemeente2': berGemeente2,
           'vraagGOK': vraagGOK,
-          'vraagTN': vraagTN // 42
+          'vraagTN': vraagTN
+
+          // 42
         })
         .then((value) => print("Registration succesfully added "))
         .catchError((error) => print("Failed to add Registration: $error"));
+  }
+
+  // methode om firestore object om te zette naar een Registratie klas object
+  static Registration toRegi(String id, Map<String, dynamic> data) {
+    return Registration(
+        id: id,
+        voornaam: data['voornaam'],
+        naam: data['naam'],
+        rijksNr: data['rijksNr'],
+        straat: data['straat'],
+        huisNr: data['huisNr'],
+        busNr: data['busNr'],
+        postcode: data['postcode'],
+        gemeente: data['gemeente'],
+        oVoornaam1: data['oVoornaam1'],
+        oNaam1: data['oNaam1'],
+        beroep1: data['beroep1'],
+        berStraat1: data['berStraat1'],
+        berHuisNr1: data['berHuisNr1'],
+        berBusNr1: data['berBusNr1'],
+        berPostcode1: data['berPostcode1'],
+        berGemeente1: data['berGemeente1'],
+        oVoornaam2: data['oVoornaam2'],
+        oNaam2: data['oNaam2'],
+        beroep2: data['beroep2'],
+        berStraat2: data['berStraat2'],
+        berHuisNr2: data['berHuisNr2'],
+        berBusNr2: data['berBusNr2'],
+        berPostcode2: data['berPostcode2'],
+        berGemeente2: data['berGemeente2'],
+        vraagGOK: data['vraagGOK'],
+        vraagTN: data['vraagTN']);
   }
 }

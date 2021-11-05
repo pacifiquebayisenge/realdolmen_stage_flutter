@@ -26,30 +26,13 @@ class _NotificationsState extends State<Notifications> {
     // bron: 7:44 => https://www.youtube.com/watch?v=i9g2kSuWutk&list=PL4cUxeGkcC9gP1qg8yj-Jokef29VRCLt1&index=9
     WidgetsBinding.instance!.addPostFrameCallback((_)  {
 
-      getRegisList();
+
     });
   }
 
   // lijst om registraties op te halen
   List<Registration> registerList = [];
 
-  Future<void> getRegisList()  async {
-    Future ft = Future(() => {});
-
-    regiList = await Registration.getRegiList();
-
-    // omgekeerde lijst zodat laaste ingeschreven van boven wordt weergegeven
-    regiList.reversed.toList().forEach((element) {
-      // een future zodat men een wacht tijd kan simuleren om elke
-      // kaart UI om de beurt te laten verschijnen met een animatie
-      ft = ft.then((value) {
-        return Future.delayed(const Duration(milliseconds: 100), () {
-          registerList.add(element);
-          _listKey.currentState!.insertItem(registerList.length - 1);
-        });
-      });
-    });
-  }
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
@@ -141,73 +124,73 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo.shade800,
-      body: AnimatedList(
-          key: _listKey,
-          // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
+      backgroundColor: Colors.indigo.shade700,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
 
-          initialItemCount: registerList.length,
-          itemBuilder:
-              (BuildContext context, int index, Animation<double> animation) {
-            if (index != registerList.length - 1) {
-              return InkWell(
-                onTap: addThis,
-                child: SlideTransition(
-                  position: animation
-                      .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                  child: CustomCard(
-                    registration: registerList[index],
-                    navMethod: () {
-                      // methode om naar de detail pagina te gaan
-                      // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CardDetail(
-                              c: CustomCard(
-                                  registration: registerList[index],
-                                  // geven lege methode mee omdat
-                                  // het ier enkel om de data gaat
-                                  // in de card UI
-                                  navMethod: () {}),
-                            ),
-                          ));
-                    },
-                  ),
-                ),
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 100.0),
-                child: InkWell(
-                  onTap: addThis,
-                  child: SlideTransition(
-                    position: animation
-                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                    child: CustomCard(
-                      registration: registerList[index],
-                      navMethod: () {
-                        // methode om naar de detail pagina te gaan
-                        // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CardDetail(
-                                c: CustomCard(
-                                    registration: registerList[index],
-                                    // geven lege methode mee omdat
-                                    // het ier enkel om de data gaat
-                                    // in de card UI
-                                    navMethod: () {}),
+            backgroundColor: Colors.indigo.shade800,
+            pinned: false,
+            snap: false,
+            floating: false,
+            expandedHeight: 100.0,
+            flexibleSpace: const FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text('Notifications'),
+              background: FlutterLogo(),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return Container(
+
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30))),
+                  // color: index.isOdd ? Colors.white : Colors.black12,
+                  //height: 100.0,
+                  child: Column(
+                    children: List.generate(
+                      10,
+                          (index) {
+                        if (index == 9) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom:100.0),
+                            child: Container(
+                              color: index.isOdd
+                                  ? Colors.white
+                                  : Colors.black12,
+                              height: 100.0,
+                              child: Center(
+                                child: Text('$index', textScaleFactor: 5),
                               ),
-                            ));
-                      },
+                            ),
+                          );
+                        }
+                        else {
+                          return Container(
+                            color: index.isOdd
+                                ? Colors.white
+                                : Colors.black12,
+                            height: 100.0,
+                            child: Center(
+                              child: Text('$index', textScaleFactor: 5),
+                            ),
+                          );
+                        }
+                      } ,
                     ),
                   ),
-                ),
-              );
-            }
-          }),
+                );
+              },
+              childCount: 1,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
