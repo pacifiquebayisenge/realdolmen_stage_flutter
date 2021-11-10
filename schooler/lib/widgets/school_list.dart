@@ -10,15 +10,32 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+
+  @override
+  initState() {
+    getSchoolList = scholen;
+    super.initState();
+  }
+
   final floatingSearchBarController = FloatingSearchBarController();
   List<String> schoolList = [];
+  List<String> getSchoolList = [];
 
+  // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
     setState(() {
       schoolList.add(school);
     });
   }
 
+  // methode om item uit de lijst te verwijderen
+  _deleteInList(String school) {
+    setState(() {
+      schoolList.removeAt(schoolList.indexOf(school));
+    });
+  }
+
+// methode om de nieuwe rang orde bij te houden
   _update(int oldIndex, int newIndex) {
     if (oldIndex < newIndex) {
       newIndex -= 1;
@@ -29,21 +46,37 @@ class _SearchPageState extends State<SearchPage> {
     schoolList.insert(newIndex, item);
   }
 
+  _queryList(String query) {
+    setState(() {
+      getSchoolList = [];
+      if(query.isEmpty) {
+        getSchoolList = scholen;
+      }
+      else {
+        scholen.forEach((element) {
+          if(element.startsWith(query,0)) {
+            getSchoolList.add(element);
+
+          }
+        });
+      }
+    });
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Stack(children: [
       Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: ReorderableListView(
+
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               _update(oldIndex, newIndex);
             });
-
-            print(scholen);
-            print(newIndex);
-
-            print('list \n ${scholen[0]} \n${scholen[1]} \n${scholen[2]}');
           },
           children: [
             for (var i = 0; i < schoolList.length; i++)
@@ -63,6 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                           CircleAvatar(
                             backgroundColor: Color.fromRGBO(234, 144, 16, 1),
                             radius: 15,
+                            // rang nummer
                             child: Text(
                               (i + 1).toString(),
                               style: const TextStyle(
@@ -73,60 +107,71 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Flexible(
                         child: Column(
-
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(schoolList[i],
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style:
-                                    const TextStyle(fontWeight: FontWeight.w500)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
                             const Text('Straatnaan 12, stadnaam postcode',
                                 style: TextStyle(fontSize: 11)),
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
-                      // info button om naar de school info pagina te surfen
+                      // info & delete button
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // delete button
                           Container(
                             color: Colors.white,
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () {
-                                  print('delete');},
-                                overlayColor: MaterialStateProperty.all(Colors.red),
-                                child: Icon( Icons.close,
-                                  color: Colors.redAccent,),
+                                  _deleteInList(schoolList[i]);
+                                  print('delete');
+                                },
+                                overlayColor:
+                                MaterialStateProperty.all(Colors.red),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.redAccent,
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          // info button
                           Container(
                             color: Colors.white,
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () {
-                                  print('school info pagina');},
-                                overlayColor: MaterialStateProperty.all(Colors.grey),
-                                child: Icon( Icons.info_outline_rounded,
-                                color: Colors.grey,),
+                                  print('school info pagina');
+                                },
+                                overlayColor:
+                                MaterialStateProperty.all(Colors.grey),
+                                child: const Icon(
+                                  Icons.info_outline_rounded,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ),
-
                         ],
                       )
                     ],
@@ -137,6 +182,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       FloatingSearchBar(
+        backdropColor: Colors.black26,
         closeOnBackdropTap: true,
         borderRadius: BorderRadius.all(Radius.circular(30)),
         controller: floatingSearchBarController,
@@ -148,11 +194,11 @@ class _SearchPageState extends State<SearchPage> {
         axisAlignment: 0.0,
         openAxisAlignment: 0.0,
         width: 600,
-
+        automaticallyImplyBackButton: false,
         debounceDelay: const Duration(milliseconds: 500),
         onQueryChanged: (query) {
           // Call your model, bloc, controller here.
-          print(query);
+          _queryList(query);
         },
         // Specify a custom transition to be used for
         // animating between opened and closed stated.
@@ -167,7 +213,9 @@ class _SearchPageState extends State<SearchPage> {
             showIfOpened: false,
             child: CircularButton(
               icon: const Icon(Icons.place),
-              onPressed: () {},
+              onPressed: () {
+                print('map');
+              },
             ),
           ),
           FloatingSearchBarAction.searchToClear(
@@ -176,28 +224,33 @@ class _SearchPageState extends State<SearchPage> {
         ],
         builder: (context, transition) {
           return ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
+            borderRadius: const BorderRadius.all(Radius.circular(30)),
             child: Container(
               color: Colors.white,
               child: Column(
-                children: List.generate(scholen.length, (index) {
-                  if (!schoolList.contains(scholen[index])) {
+                children: List.generate(getSchoolList.length, (index) {
+                  if(schoolList.isEmpty) {
                     return Center(
                       child: Container(
                         child: Material(
                           child: InkWell(
                             splashColor: Colors.grey,
                             onTap: () {
-                              _addToList(scholen[index]);
+                              _addToList(getSchoolList[index]);
 
                               floatingSearchBarController.close();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 20.0,left: 20.0),
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, left: 20.0),
                               child: Container(
                                 height: 112,
-                                child: Center(child: Text(scholen[index], maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,)),
+                                child: Center(
+                                    child: Text(
+                                      getSchoolList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
                               ),
                             ),
                           ),
@@ -206,9 +259,42 @@ class _SearchPageState extends State<SearchPage> {
                         color: Colors.white,
                       ),
                     );
-                  } else {
+                  }
+                  else if (!schoolList.contains(getSchoolList[index]))  {
+                    return Center(
+                      child: Container(
+                        child: Material(
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            onTap: () {
+                              _addToList(getSchoolList[index]);
+
+                              floatingSearchBarController.close();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, left: 20.0),
+                              child: Container(
+                                height: 112,
+                                child: Center(
+                                    child: Text(
+                                      getSchoolList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
+                              ),
+                            ),
+                          ),
+                          color: Colors.transparent,
+                        ),
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                  else {
                     return SizedBox();
                   }
+
                 }),
               ),
             ),

@@ -30,18 +30,36 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      shadowColor: Colors.lightBlueAccent,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: InkWell(
-        onLongPress: () {
-          navMethod!();
-        },
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: CardContent(registration),
+    return Container(
+      decoration: BoxDecoration(    boxShadow: [
+        BoxShadow(
+          color: Colors.black38.withOpacity(.5),
+          blurRadius: 5.0, // soften the shadow
+          spreadRadius: -5.0, //extend the shadow
+          offset: Offset(
+            15.0, // Move to right 10  horizontally
+            5.0, // Move to bottom 10 Vertically
+          ),
+        )
+      ],),
+      child: Card(
+
+        elevation: 14,
+        shadowColor: Colors.black38,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),
+        ),
+
+        child: InkWell(
+          onLongPress: () {
+            navMethod!();
+          },
+          child: Container(
+
+            padding: EdgeInsets.all(16),
+            child: CardContent(registration),
+
+          ),
         ),
       ),
     );

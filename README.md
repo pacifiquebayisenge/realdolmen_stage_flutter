@@ -463,3 +463,78 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * TO DO
   * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+
+---
+---
+---
+
+#### 08/11 Maandag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: Firestore methodes ?
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse -> 60% opgelost
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * TO DO => scholen rangschikking -> 80% voltooid!!!
+
+* Schools page
+  * Zoeken naar kaartweergaven
+  * info pagina om scholen info weer te geven
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
+  * Firebase issue -> crashing with animations -> fix
+  * Firebase issue -> meerdere malen ophalen van data -> fix
+  * Firebase issue -> realtime change crasht volledige app -> fix
+  * Firestore issue -> random ophaling -> geen volgorde -> fix
+
+* Notities & aanwijzingen toepassen
+  * Appbar animatie? -> sliver Appbar -> 80%
+  * andere manier van data weergeven?
+  * etc.
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+
+#### 10/11 Maandag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: Firestore methodes ?
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse -> 60% opgelost
+
+* Notification page
+  * Inschrijving UI design ontwikkeling -> 80% voltooid
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * TO DO => scholen rangschikking -> 90% voltooid!!!
+  * zoeken naar manier om data door te geven tussen widgets
+
+* Schools page
+  * Zoeken naar kaartweergaven
+  * info pagina om scholen info weer te geven
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
+  * Firebase issue -> crashing with animations -> fix
+  * Firebase issue -> meerdere malen ophalen van data -> fix
+  * Firebase issue -> realtime change crasht volledige app -> fix
+  * Firestore issue -> random ophaling -> geen volgorde -> fix
+
+* Notities & aanwijzingen toepassen
+  * Appbar animatie? -> sliver Appbar -> 80%
+  * andere manier van data weergeven?
+  * etc.
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen

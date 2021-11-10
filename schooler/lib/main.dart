@@ -126,7 +126,7 @@ class _AppState extends State<App> {
         case 1:
           {
             // popup pagina niet in de main body weer geven
-            _selectedIndex = 0;
+            //_selectedIndex = 0;
             print("Open new page");
             Navigator.pushNamed(context, 'new');
             //Navigator.of(context).push(_createRoute());

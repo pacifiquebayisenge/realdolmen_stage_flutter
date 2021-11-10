@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/widgets/widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:schooler/services/globals.dart' as globals;
 
 import 'card_detail.dart';
@@ -17,13 +18,30 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<QuerySnapshot<Object?>> futureRegiRef;
+  late Stream<QuerySnapshot> streamList;
 
   @override
   void initState() {
     // bron: https://stackoverflow.com/questions/58664293/futurebuilder-runs-twice
     futureRegiRef = futureFetch();
+    // stream reference om te gebruiken voor de real time changes
 
+streamList = streamFetch();
     super.initState();
+  }
+
+  Stream<QuerySnapshot> streamFetch() {
+    return FirebaseFirestore.instance
+        .collection('registrations')
+        .orderBy('date', descending: true).snapshots();
+  }
+
+  // future reference methode om mee te geven aan de Future builder widget
+  Future<QuerySnapshot<Object?>> futureFetch() async {
+    return await FirebaseFirestore.instance
+        .collection('registrations')
+        .orderBy('date', descending: true)
+        .get();
   }
 
   // key voor de animatie lijst
@@ -46,188 +64,111 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final Stream<QuerySnapshot> list = FirebaseFirestore.instance
-      .collection('registrations')
-      .orderBy('date', descending: true)
-      .snapshots();
+  // methode pm de realtime changes in de database op te volgen
+  void realtime() {
+    print('done');
 
-  Future<QuerySnapshot<Object?>> futureFetch() async {
-    return await FirebaseFirestore.instance
-        .collection('registrations')
-        .orderBy('date', descending: true)
-        .get();
+    streamList.listen((event) {
+      // als er een inschrijving wordt toegevoegd
+      if (event.docChanges.first.type == DocumentChangeType.added) {
+        // kijken of het maar om 1 data gaat
+        if (event.docChanges.length < 2) {
+          // nieuwe inschrijving toevoegen aan de lijst
+          regiList.insert(
+              0,
+              Registration.toRegi(event.docs.first.id,
+                  event.docs.first.data() as Map<String, dynamic>));
+
+          // toevoeg animatie aan de animated list widget
+          _listKey.currentState!.insertItem(0);
+        }
+      }
+
+      // wanneer een inschrijving wordt verwijderd
+      if (event.docChanges.first.type == DocumentChangeType.removed) {
+        // kijken of het maar om 1 data gaat
+        if (event.docChanges.length < 2) {
+          // verwijder animatie aan de animated list widget
+          _listKey.currentState!.removeItem(
+              event.docChanges.first.oldIndex,
+              (context, animation) => SlideTransition(
+                    position: animation
+                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                    child:
+                        CustomCard(registration: regiList[0], navMethod: () {}),
+                  ));
+
+          //  inschrijving verwijderen uit de lijst
+          regiList.removeAt(event.docChanges.first.oldIndex);
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
+    return Container(
+      child: FutureBuilder<QuerySnapshot>(
         future: futureRegiRef,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.none) print('none');
+
+          if (snapshot.connectionState == ConnectionState.active)
+            print('active');
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print('waiting');
+            return Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 150.0),
+                child: Column(
+
+                  children: const [
+                    SpinKitSpinningLines(
+                      color: Color.fromRGBO(234, 144, 16, 1),
+                      size: 150,
+                    ),
+                    SizedBox(height: 30,),
+                    Text('Loading...'),
+                  ],
+                ),
+              ),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            print('done');
+            realtime();
+          }
+
           if (snapshot.hasData) {
-            final List<DocumentSnapshot> documents = snapshot.data!.docs;
-            getRegisList(documents);
-            return AnimatedList(
-              key: _listKey,
-              initialItemCount: regiList.length,
-              itemBuilder: (BuildContext context, int index,
-                  Animation<double> animation) {
-                if (index != regiList.length - 1) {
-                  return SlideTransition(
-                    position: animation
-                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                    child: CustomCard(
-                      registration: regiList[index],
-                      navMethod: () {
-                        // methode om naar de detail pagina te gaan
-                        // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+            if (snapshot.data!.docs.length > 0) {
+              final List<DocumentSnapshot> documents = snapshot.data!.docs;
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CardDetail(
-                              c: CustomCard(
-                                registration: regiList[index],
-                                // geven lege methode mee omdat
-                                // het ier enkel om de data gaat
-                                // in de card UI
-                                navMethod: () {},
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 100.0),
-                    child: SlideTransition(
-                      position: animation
-                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                      child: CustomCard(
-                        registration: regiList[index],
-                        navMethod: () {
-                          // methode om naar de detail pagina te gaan
-                          // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+              getRegisList(documents);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CardDetail(
-                                c: CustomCard(
-                                  registration: regiList[index],
-                                  // geven lege methode mee omdat
-                                  // het ier enkel om de data gaat
-                                  // in de card UI
-                                  navMethod: () {},
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                }
-              },
-            );
-            /*
-            return ListView(
+              return DelayedDisplay(
+                delay: Duration(milliseconds: 200),
+                child: AnimatedList(
+                  key: _listKey,
+                  initialItemCount: regiList.length,
+                  itemBuilder: (BuildContext context, int index,
+                      Animation<double> animation) {
+                    if (index != regiList.length - 1) {
+                      return SlideTransition(
+                        position: animation.drive(
+                            Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                        child: CustomCard(
+                          registration: regiList[index],
+                          navMethod: () {
+                            // methode om naar de detail pagina te gaan
+                            // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
 
-                children: documents
-                    .map((doc) => CustomCard(registration: Registration.toRegi(doc.id, doc.data() as Map<String,dynamic>), navMethod: (){}))
-                    .toList());
-            */
-          } else if (snapshot.hasError) {
-            return Text('It s Error!');
-          }
-
-          return Center(child: CircularProgressIndicator());
-        });
-
-    /*
-    return StreamBuilder<QuerySnapshot>(
-        stream: list,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.none) {
-            return Center(
-              child: Text('Something went wrong'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData) {}
-
-/*
-            list.listen((event) {
-
-              if (event.docChanges.first.type == DocumentChangeType.removed) {
-
-                _listKey.currentState!.removeItem(
-                    event.docChanges.first.oldIndex,
-                        (context, animation) => SlideTransition(
-                      position: animation.drive(
-                          Tween(begin: Offset(0, 0), end: Offset(1, 0))),
-                      child: CustomCard(
-                          registration: regiList[0], navMethod: () {}),
-                    ));
-
-                regiList.removeAt(event.docChanges.first.oldIndex);
-
-
-
-
-                print(event.docChanges.first.oldIndex);
-              }
-
-              if (event.docChanges.first.type == DocumentChangeType.added) {
-                print('added');
-                // zet data om naar een Map<String,dynamic>
-                Map<String, dynamic> data =
-                    event.docChanges.first.doc.data() as Map<String, dynamic>;
-
-                // zet om naar een Registration klasse object
-                Registration newRegi =
-                    Registration.toRegi(event.docChanges.first.doc.id, data);
-
-                // voeg toe aan de regsitratielijst
-                regiList.insert(0, newRegi);
-
-                _listKey.currentState!.insertItem(0);
-
-              }
-              if (event.docChanges.first.type == DocumentChangeType.modified) {
-                print('modified');
-              }
-            });
-
-*/
-
-            // haal de inschrijvingen uit de database
-            getRegisList(snapshot.data!.docs);
-
-            return AnimatedList(
-              key: _listKey,
-              // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
-              initialItemCount: regiList.length,
-              itemBuilder: (BuildContext context, int index,
-                  Animation<double> animation) {
-                //Map<String, dynamic> snapshotData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                if (index != regiList.length - 1) {
-                  return SlideTransition(
-                    position: animation
-                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                    child: CustomCard(
-                        registration: regiList[index],
-                        navMethod: () {
-                          // methode om naar de detail pagina te gaan
-                          // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-
-                          Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => CardDetail(
-                                  c: CustomCard(
+                                  card: CustomCard(
                                     registration: regiList[index],
                                     // geven lege methode mee omdat
                                     // het ier enkel om de data gaat
@@ -235,26 +176,31 @@ class _HomeState extends State<Home> {
                                     navMethod: () {},
                                   ),
                                 ),
-                              ));
-                        }),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 100.0),
-                    child: SlideTransition(
-                      position: animation
-                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                      child: CustomCard(
-                          registration: regiList[index],
-                          navMethod: () {
-                            // methode om naar de detail pagina te gaan
-                            // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      // als het de laatste kaart is
+                      // geef een kaart terug met 100 bottom padding
+                      // zodat bottom nav bar niet overlap wordt
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 100.0),
+                        child: SlideTransition(
+                          position: animation.drive(
+                              Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                          child: CustomCard(
+                            registration: regiList[index],
+                            navMethod: () {
+                              // methode om naar de detail pagina te gaan
+                              // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
 
-                            Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => CardDetail(
-                                    c: CustomCard(
+                                    card: CustomCard(
                                       registration: regiList[index],
                                       // geven lege methode mee omdat
                                       // het ier enkel om de data gaat
@@ -262,114 +208,17 @@ class _HomeState extends State<Home> {
                                       navMethod: () {},
                                     ),
                                   ),
-                                ));
-                          }),
-                    ),
-                  );
-                }
-              },
-            );
-/*
-            return ListView(
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
-
-                Map<String, dynamic> data = document.data()! as Map<String,dynamic>;
-                return CustomCard(registration: Registration.toRegi(document.id, data), navMethod: () {  },);
-              }).toList(),
-            );
-            */
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Text('Something is  waiting'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return ListView(
-                children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                  Map<String, dynamic> data =
-                      document.data()! as Map<String, dynamic>;
-                  return ListTile(
-                    title: Text(data['voornaam']),
-                    subtitle: Text(data['naam']),
-                  );
-                }).toList(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
               );
-              /*
-              return Scaffold(
-                backgroundColor: Colors.indigo.shade800,
-                body: AnimatedList(
-                    key: _listKey,
-                    // bron  https://stackoverflow.com/questions/65673773/why-do-i-get-the-error-renderbox-was-not-laid-out-renderviewporta3518-needs-l
-
-                    initialItemCount: registerList.length,
-                    itemBuilder:
-                        (BuildContext context, int index, Animation<double> animation) {
-                      if (index != registerList.length - 1) {
-                        return InkWell(
-                          //onTap: addThis,
-                          child: SlideTransition(
-                            position: animation
-                                .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                            child: CustomCard(
-                              registration: registerList[index],
-                              navMethod: () {
-                                // methode om naar de detail pagina te gaan
-                                // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CardDetail(
-                                        c: CustomCard(
-                                            registration: registerList[index],
-                                            // geven lege methode mee omdat
-                                            // het ier enkel om de data gaat
-                                            // in de card UI
-                                            navMethod: () {}),
-                                      ),
-                                    ));
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 100.0),
-                          child: InkWell(
-                            //onTap: addThis,
-                            child: SlideTransition(
-                              position: animation
-                                  .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                              child: CustomCard(
-                                registration: registerList[index],
-                                navMethod: () {
-                                  // methode om naar de detail pagina te gaan
-                                  // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CardDetail(
-                                          c: CustomCard(
-                                              registration: registerList[index],
-                                              // geven lege methode mee omdat
-                                              // het ier enkel om de data gaat
-                                              // in de card UI
-                                              navMethod: () {}),
-                                        ),
-                                      ));
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    }),
-              );*/
             } else {
-              // geen data => call to action pagina
               return Container(
                 color: Colors.white,
                 height: MediaQuery.of(context).size.height,
@@ -377,41 +226,42 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DelayedDisplay(
+                    const DelayedDisplay(
                       delay: Duration(milliseconds: 500),
                       child: Image(
                         image: AssetImage('lib/images/empty_space.gif'),
                         width: 250,
                       ),
                     ),
-                    DelayedDisplay(
+                    const DelayedDisplay(
                       delay: Duration(milliseconds: 900),
                       child: Text('No registrations yet'),
                     ),
-                    SizedBox(
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const DelayedDisplay(
+                      delay: Duration(milliseconds: 900),
+                      child: Text('Create a new registration here2'),
+                    ),
+                    const SizedBox(
                       height: 10,
                     ),
                     DelayedDisplay(
-                      delay: Duration(milliseconds: 900),
-                      child: Text('Create a new registration here'),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    DelayedDisplay(
-                      delay: Duration(milliseconds: 900),
+                      delay: const Duration(milliseconds: 900),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(100)),
+                        borderRadius:
+                            BorderRadius.all(const Radius.circular(100)),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             primary: Colors.indigo.shade800,
-                            shape: StadiumBorder(),
+                            shape: const StadiumBorder(),
                           ),
                           onPressed: () {
                             Navigator.pushNamed(context, 'new');
                           },
-                          child: Icon(Icons.add_circle),
+                          child: const Icon(Icons.add_circle),
                         ),
                       ),
                     )
@@ -420,14 +270,66 @@ class _HomeState extends State<Home> {
               );
             }
           }
+          if (snapshot.hasError) {
+            return Container(
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.only(top:100.0),
+                child: Column(
 
-          return Center(
-            child: Text('Something went wrong'),
+                  children: const [
+                    DelayedDisplay(
+                      delay: Duration(milliseconds: 500),
+                      child: Image(
+                        image: AssetImage('lib/images/error.gif'),
+                        width: 350,
+                      ),
+                    ),
+                    DelayedDisplay(
+                      delay: Duration(milliseconds: 900),
+                      child: Text('Something went wrong'),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    DelayedDisplay(
+                      delay: Duration(milliseconds: 900),
+                      child: Text('Please try again later'),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 150.0),
+              child: Column(
+
+                children: const [
+                  SpinKitSpinningLines(
+                    color: Color.fromRGBO(234, 144, 16, 1),
+                    size: 150,
+                  ),
+                  SizedBox(height: 30,),
+                  Text('Loading...'),
+                ],
+              ),
+            ),
           );
-        });
-    */
+        },
+      ),
+    );
   }
 }
+
 /*
 *
 *

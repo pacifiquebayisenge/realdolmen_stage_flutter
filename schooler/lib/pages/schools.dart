@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
-import 'package:schooler/widgets/widgets.dart';
-
 class Schools extends StatelessWidget {
   const Schools({Key? key}) : super(key: key);
 
@@ -26,15 +24,32 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+
+  @override
+  initState() {
+    getSchoolList = scholen;
+    super.initState();
+}
+
   final floatingSearchBarController = FloatingSearchBarController();
   List<String> schoolList = [];
+  List<String> getSchoolList = [];
 
+  // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
     setState(() {
       schoolList.add(school);
     });
   }
 
+  // methode om item uit de lijst te verwijderen
+  _deleteInList(String school) {
+    setState(() {
+      schoolList.removeAt(schoolList.indexOf(school));
+    });
+  }
+
+// methode om de nieuwe rang orde bij te houden
   _update(int oldIndex, int newIndex) {
     if (oldIndex < newIndex) {
       newIndex -= 1;
@@ -45,73 +60,143 @@ class _SearchPageState extends State<SearchPage> {
     schoolList.insert(newIndex, item);
   }
 
+  _queryList(String query) {
+    setState(() {
+      getSchoolList = [];
+      if(query.isEmpty) {
+        getSchoolList = scholen;
+      }
+      else {
+        scholen.forEach((element) {
+          if(element.startsWith(query,0)) {
+            getSchoolList.add(element);
+
+          }
+        });
+      }
+    });
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Stack(children: [
       Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: ReorderableListView(
+
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               _update(oldIndex, newIndex);
             });
-
-            print(scholen);
-            print(newIndex);
-
-            print('list \n ${scholen[0]} \n${scholen[1]} \n${scholen[2]}');
           },
           children: [
             for (var i = 0; i < schoolList.length; i++)
               Padding(
                 key: ValueKey(schoolList[i]),
                 padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-
-                    title: Text(schoolList[i],
-    maxLines: 2,
-    overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w500)),
-                    subtitle: const Text('Straatnaan 12, stadnaam postcode',
-                        style: TextStyle(fontSize: 11)),
-                    leading: Column(
-                      // verticaal centreren van circle avatar
-                      // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // rangschiknummer
-                        CircleAvatar(
-                          backgroundColor: Color.fromRGBO(234, 144, 16, 1),
-                          radius: 15,
-                          child: Text(
-                            (i + 1).toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 15),
+                child: SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        // verticaal centreren van circle avatar
+                        // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // rangschiknummer
+                          CircleAvatar(
+                            backgroundColor: Color.fromRGBO(234, 144, 16, 1),
+                            radius: 15,
+                            // rang nummer
+                            child: Text(
+                              (i + 1).toString(),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    // info button om naar de school info pagina te surfen
-                    trailing: TextButton(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.grey),
-                          overlayColor:
-                              MaterialStateProperty.all(Colors.grey.shade400)),
-                      onPressed: () {
-                        print('school info pagina');
-                      },
-                      child: Icon(
-                        Icons.info_outline_rounded,
+                        ],
                       ),
-                    )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(schoolList[i],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
+                            const Text('Straatnaan 12, stadnaam postcode',
+                                style: TextStyle(fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      // info & delete button
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // delete button
+                          Container(
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  _deleteInList(schoolList[i]);
+                                  print('delete');
+                                },
+                                overlayColor:
+                                MaterialStateProperty.all(Colors.red),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          // info button
+                          Container(
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  print('school info pagina');
+                                },
+                                overlayColor:
+                                MaterialStateProperty.all(Colors.grey),
+                                child: const Icon(
+                                  Icons.info_outline_rounded,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               )
           ],
         ),
       ),
       FloatingSearchBar(
+        backdropColor: Colors.black26,
         closeOnBackdropTap: true,
         borderRadius: BorderRadius.all(Radius.circular(30)),
         controller: floatingSearchBarController,
@@ -123,11 +208,11 @@ class _SearchPageState extends State<SearchPage> {
         axisAlignment: 0.0,
         openAxisAlignment: 0.0,
         width: 600,
-
+        automaticallyImplyBackButton: false,
         debounceDelay: const Duration(milliseconds: 500),
         onQueryChanged: (query) {
           // Call your model, bloc, controller here.
-          print(query);
+          _queryList(query);
         },
         // Specify a custom transition to be used for
         // animating between opened and closed stated.
@@ -142,7 +227,9 @@ class _SearchPageState extends State<SearchPage> {
             showIfOpened: false,
             child: CircularButton(
               icon: const Icon(Icons.place),
-              onPressed: () {},
+              onPressed: () {
+                print('map');
+              },
             ),
           ),
           FloatingSearchBarAction.searchToClear(
@@ -151,28 +238,33 @@ class _SearchPageState extends State<SearchPage> {
         ],
         builder: (context, transition) {
           return ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
+            borderRadius: const BorderRadius.all(Radius.circular(30)),
             child: Container(
               color: Colors.white,
               child: Column(
-                children: List.generate(scholen.length, (index) {
-                  if (!schoolList.contains(scholen[index])) {
+                children: List.generate(getSchoolList.length, (index) {
+                  if(schoolList.isEmpty) {
                     return Center(
                       child: Container(
                         child: Material(
                           child: InkWell(
                             splashColor: Colors.grey,
                             onTap: () {
-                              _addToList(scholen[index]);
+                              _addToList(getSchoolList[index]);
 
                               floatingSearchBarController.close();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 20.0,right: 20.0),
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, left: 20.0),
                               child: Container(
                                 height: 112,
-                                child: Center(child: Text(scholen[index], maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,)),
+                                child: Center(
+                                    child: Text(
+                                      getSchoolList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
                               ),
                             ),
                           ),
@@ -181,9 +273,42 @@ class _SearchPageState extends State<SearchPage> {
                         color: Colors.white,
                       ),
                     );
-                  } else {
+                  }
+                  else if (!schoolList.contains(getSchoolList[index]))  {
+                    return Center(
+                      child: Container(
+                        child: Material(
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            onTap: () {
+                              _addToList(getSchoolList[index]);
+
+                              floatingSearchBarController.close();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, left: 20.0),
+                              child: Container(
+                                height: 112,
+                                child: Center(
+                                    child: Text(
+                                      getSchoolList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
+                              ),
+                            ),
+                          ),
+                          color: Colors.transparent,
+                        ),
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                  else {
                     return SizedBox();
                   }
+
                 }),
               ),
             ),

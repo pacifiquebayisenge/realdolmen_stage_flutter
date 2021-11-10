@@ -14,15 +14,12 @@ List<String> vragenTN = [
 ];
 
 List<String> scholen = [
-  'eersteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-  'tweedeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-  'derde',
-  'vierde',
+
   'A-Vision Onderwijsadviesbureau',
   'Adriaan Roland Holstschool po',
   'Aldoende Openbare Basisschool',
   'Algemene basisschool Comenius',
-/*
+
   'Amalia-Astroschool',
   'Montessori Basisschool',
   'Anne Frank school',
@@ -61,7 +58,7 @@ List<String> scholen = [
   'brede Basisschool St. Lukas te Amsterdam',
   'BS De Kastanjelaar Milheeze',
   'Burg. Verschoorschool'
-  */
+
 ];
 
 List<Registration> regiList = [
