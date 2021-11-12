@@ -21,11 +21,11 @@ class BulletPoint extends StatelessWidget {
       children: [
         Text(
           String.fromCharCode(0x2022),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Flexible(

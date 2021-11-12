@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/widgets/widgets.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+ static List<String> schoolList = [];
+   SearchPage({Key? key}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -11,27 +13,31 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
+
+
   @override
   initState() {
-    getSchoolList = scholen;
+    resultList = scholen;
     super.initState();
+
+
   }
 
   final floatingSearchBarController = FloatingSearchBarController();
-  List<String> schoolList = [];
-  List<String> getSchoolList = [];
+
+  List<String> resultList = [];
 
   // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
     setState(() {
-      schoolList.add(school);
+      SearchPage.schoolList.add(school);
     });
   }
 
   // methode om item uit de lijst te verwijderen
   _deleteInList(String school) {
     setState(() {
-      schoolList.removeAt(schoolList.indexOf(school));
+      SearchPage.schoolList.removeAt(SearchPage.schoolList.indexOf(school));
     });
   }
 
@@ -41,21 +47,21 @@ class _SearchPageState extends State<SearchPage> {
       newIndex -= 1;
     }
 
-    var item = schoolList.removeAt(oldIndex);
+    String school = SearchPage.schoolList.removeAt(oldIndex);
 
-    schoolList.insert(newIndex, item);
+    SearchPage.schoolList.insert(newIndex, school);
   }
 
   _queryList(String query) {
     setState(() {
-      getSchoolList = [];
+      resultList = [];
       if(query.isEmpty) {
-        getSchoolList = scholen;
+        resultList = scholen;
       }
       else {
         scholen.forEach((element) {
           if(element.startsWith(query,0)) {
-            getSchoolList.add(element);
+            resultList.add(element);
 
           }
         });
@@ -79,9 +85,9 @@ class _SearchPageState extends State<SearchPage> {
             });
           },
           children: [
-            for (var i = 0; i < schoolList.length; i++)
+            for (var i = 0; i < SearchPage.schoolList.length; i++)
               Padding(
-                key: ValueKey(schoolList[i]),
+                key: ValueKey(SearchPage.schoolList[i]),
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                   child: Row(
@@ -115,7 +121,7 @@ class _SearchPageState extends State<SearchPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(schoolList[i],
+                            Text(SearchPage.schoolList[i],
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -139,7 +145,7 @@ class _SearchPageState extends State<SearchPage> {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () {
-                                  _deleteInList(schoolList[i]);
+                                  _deleteInList(SearchPage.schoolList[i]);
                                   print('delete');
                                 },
                                 overlayColor:
@@ -228,15 +234,15 @@ class _SearchPageState extends State<SearchPage> {
             child: Container(
               color: Colors.white,
               child: Column(
-                children: List.generate(getSchoolList.length, (index) {
-                  if(schoolList.isEmpty) {
+                children: List.generate(resultList.length, (index) {
+                  if(SearchPage.schoolList.isEmpty) {
                     return Center(
                       child: Container(
                         child: Material(
                           child: InkWell(
                             splashColor: Colors.grey,
                             onTap: () {
-                              _addToList(getSchoolList[index]);
+                              _addToList(resultList[index]);
 
                               floatingSearchBarController.close();
                             },
@@ -247,7 +253,7 @@ class _SearchPageState extends State<SearchPage> {
                                 height: 112,
                                 child: Center(
                                     child: Text(
-                                      getSchoolList[index],
+                                      resultList[index],
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     )),
@@ -260,14 +266,14 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     );
                   }
-                  else if (!schoolList.contains(getSchoolList[index]))  {
+                  else if (!SearchPage.schoolList.contains(resultList[index]))  {
                     return Center(
                       child: Container(
                         child: Material(
                           child: InkWell(
                             splashColor: Colors.grey,
                             onTap: () {
-                              _addToList(getSchoolList[index]);
+                              _addToList(resultList[index]);
 
                               floatingSearchBarController.close();
                             },
@@ -278,7 +284,7 @@ class _SearchPageState extends State<SearchPage> {
                                 height: 112,
                                 child: Center(
                                     child: Text(
-                                      getSchoolList[index],
+                                      resultList[index],
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     )),
@@ -292,7 +298,7 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   }
                   else {
-                    return SizedBox();
+                    return const SizedBox();
                   }
 
                 }),

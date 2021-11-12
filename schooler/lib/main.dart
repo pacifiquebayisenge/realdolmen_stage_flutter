@@ -116,7 +116,7 @@ class _AppState extends State<App> {
                 berPostcode2: 1500,
                 berGemeente2: 'Halle',
                 vraagGOK: true,
-                vraagTN: true);
+                vraagTN: true, schoolList: null);
 
             print("Open home page");
             // Navigator.pushReplacementNamed(context, '/');

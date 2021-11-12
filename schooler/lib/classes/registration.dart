@@ -158,7 +158,8 @@ class Registration {
     List<Registration> regiList = [];
 
     await FirebaseFirestore.instance
-        .collection('registrations').orderBy('date')
+        .collection('registrations')
+        .orderBy('date')
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -225,7 +226,8 @@ class Registration {
       required berPostcode2,
       required berGemeente2,
       required vraagGOK,
-      required vraagTN}) {
+      required vraagTN,
+      required schoolList}) {
     // Firestore collectie reference naar de regstratie collectie
     CollectionReference _regiRef =
         FirebaseFirestore.instance.collection('registrations');
@@ -259,9 +261,10 @@ class Registration {
           'berPostcode2': berPostcode2,
           'berGemeente2': berGemeente2,
           'vraagGOK': vraagGOK,
-          'vraagTN': vraagTN
+          'vraagTN': vraagTN,
+      'schoolList': schoolList
 
-          // 42
+
         })
         .then((value) => print("Registration succesfully added "))
         .catchError((error) => print("Failed to add Registration: $error"));

@@ -12,14 +12,12 @@ class BulletList extends StatefulWidget {
 }
 
 class _BulletListState extends State<BulletList>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animatedController;
+    {
+
 
   @override
   void initState() {
-    _animatedController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1000));
-    Timer(Duration(milliseconds: 200), () => _animatedController.forward());
+
 
     super.initState();
 
@@ -43,7 +41,7 @@ class _BulletListState extends State<BulletList>
               ),
             );
           } else {
-            return Spacer(
+            return const Spacer(
               flex: 1,
             );
           }

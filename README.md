@@ -503,7 +503,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * TO DO
   * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
 
-#### 10/11 Maandag ####
+#### 10/11 Woensdag ####
 
 * Klassen
   * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: Firestore methodes ?
@@ -534,6 +534,38 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * Notities & aanwijzingen toepassen
   * Appbar animatie? -> sliver Appbar -> 80%
   * andere manier van data weergeven?
+  * etc.
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+
+#### 12/11 Vrijdag ####
+
+* Klassen
+  * Issue -> heel slordige constructor -> heel veel arguments -> oplossing: Firestore methodes ?
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Form
+  * Data efficient kunnen ophalen => voorlopig heel slordige opvraag contructor van de klasse -> 80% opgelost
+
+* Notification page
+  * app baar animatie
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * scholen rangschikking voltooid!!!
+  * zoeken naar manier om data door te geven tussen widgets -> fixed
+
+* Schools page
+  * Zoeken naar kaartweergaven
+  * info pagina om scholen info weer te geven
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
+  * issue -> lijst in dezeflde volgorde opslaan als in de app
+
+* Notities & aanwijzingen toepassen
+  * Appbar animatie? -> sliver Appbar -> 80%
   * etc.
 
 * TO DO
