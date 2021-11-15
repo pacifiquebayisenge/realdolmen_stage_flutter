@@ -14,6 +14,7 @@ void main()  {
   WidgetsFlutterBinding.ensureInitialized();
  // await Firebase.initializeApp();
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     color: Colors.indigo.shade800,
     theme: ThemeData(
       primaryColor: Colors.indigo.shade800,
@@ -184,7 +185,7 @@ class _AppState extends State<App> {
     }
 
     if (!_initialized) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -200,7 +201,7 @@ class _AppState extends State<App> {
         body: SafeArea(
             bottom: false,
             child: ClipRRect(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30)),
                 child: screens[_selectedIndex])),
@@ -212,7 +213,7 @@ class _AppState extends State<App> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(1),
-                  spreadRadius: -5,
+                  //spreadRadius: -5,
                   blurRadius: 15,
                   offset: const Offset(6, 6),
                 ),

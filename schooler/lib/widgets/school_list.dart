@@ -3,15 +3,15 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/widgets/widgets.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchSchool extends StatefulWidget {
  static List<String> schoolList = [];
-   SearchPage({Key? key}) : super(key: key);
+   SearchSchool({Key? key}) : super(key: key);
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _SearchSchoolState createState() => _SearchSchoolState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchSchoolState extends State<SearchSchool> {
 
 
 
@@ -30,14 +30,14 @@ class _SearchPageState extends State<SearchPage> {
   // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
     setState(() {
-      SearchPage.schoolList.add(school);
+      SearchSchool.schoolList.add(school);
     });
   }
 
   // methode om item uit de lijst te verwijderen
   _deleteInList(String school) {
     setState(() {
-      SearchPage.schoolList.removeAt(SearchPage.schoolList.indexOf(school));
+      SearchSchool.schoolList.removeAt(SearchSchool.schoolList.indexOf(school));
     });
   }
 
@@ -47,9 +47,9 @@ class _SearchPageState extends State<SearchPage> {
       newIndex -= 1;
     }
 
-    String school = SearchPage.schoolList.removeAt(oldIndex);
+    String school = SearchSchool.schoolList.removeAt(oldIndex);
 
-    SearchPage.schoolList.insert(newIndex, school);
+    SearchSchool.schoolList.insert(newIndex, school);
   }
 
   _queryList(String query) {
@@ -85,9 +85,9 @@ class _SearchPageState extends State<SearchPage> {
             });
           },
           children: [
-            for (var i = 0; i < SearchPage.schoolList.length; i++)
+            for (var i = 0; i < SearchSchool.schoolList.length; i++)
               Padding(
-                key: ValueKey(SearchPage.schoolList[i]),
+                key: ValueKey(SearchSchool.schoolList[i]),
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                   child: Row(
@@ -121,7 +121,7 @@ class _SearchPageState extends State<SearchPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(SearchPage.schoolList[i],
+                            Text(SearchSchool.schoolList[i],
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -145,7 +145,7 @@ class _SearchPageState extends State<SearchPage> {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () {
-                                  _deleteInList(SearchPage.schoolList[i]);
+                                  _deleteInList(SearchSchool.schoolList[i]);
                                   print('delete');
                                 },
                                 overlayColor:
@@ -235,7 +235,7 @@ class _SearchPageState extends State<SearchPage> {
               color: Colors.white,
               child: Column(
                 children: List.generate(resultList.length, (index) {
-                  if(SearchPage.schoolList.isEmpty) {
+                  if(SearchSchool.schoolList.isEmpty) {
                     return Center(
                       child: Container(
                         child: Material(
@@ -266,7 +266,7 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     );
                   }
-                  else if (!SearchPage.schoolList.contains(resultList[index]))  {
+                  else if (!SearchSchool.schoolList.contains(resultList[index]))  {
                     return Center(
                       child: Container(
                         child: Material(

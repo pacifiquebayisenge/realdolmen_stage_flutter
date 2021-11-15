@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'widgets.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -22,6 +23,7 @@ class FormQuestions extends StatefulWidget {
 }
 
 class _FormQuestionsState extends State<FormQuestions> {
+
   // De  form velden controllers + keys
   final _thisForm = GlobalKey<FormBuilderState>();
   final voornaam = TextEditingController();
@@ -67,7 +69,13 @@ class _FormQuestionsState extends State<FormQuestions> {
   // bool om aan te duiden dat 2e ouder ook zal ingevoerd worden
   bool secParent = false;
 
+  // standaard pagina hoogte
   double pageHeight = 450;
+
+  bool regiSucces = false;
+   String resultImg = '';
+
+
 
   // methode om de GOK en TN vragen op te vragen
   // 2 knoppen = ja knop en nee knop
@@ -99,7 +107,20 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
   }
 
-  // methode om elke validator van elke formfield na te gaan
+  // methode om de pagina hoogte aan te passen naar gelang de pagina nummer
+  void setpageHeight(int page) {
+    print('THIS IS THE ACTUAL PAGE NUMBER $page');
+    if (page == 6 || page == 7) {
+      setState(() {
+        pageHeight = 550;
+      });
+    } else {
+      setState(() {
+        pageHeight = 450;
+      });
+    }
+  }
+// methode om elke validator van elke formfield na te gaan
   // geeft bool terug om te zien of form juist is ingevoerd
   bool checkStep() {
     bool formSucces = false;
@@ -160,29 +181,17 @@ class _FormQuestionsState extends State<FormQuestions> {
     return formSucces;
   }
 
-  setpageHeight(int page) {
-    print('THIS IS THE ACTUAL PAGE NUMBER $page');
-    if (page == 6 || page == 7) {
-      setState(() {
-        pageHeight = 550;
-      });
-    } else {
-      setState(() {
-        pageHeight = 450;
-      });
-    }
-  }
-
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   void nextStep() {
+
     print(checkStep());
 
     // als form op deze pagina niet juist is ingevoerd dan kan men niet verder
     if (!checkStep()) return;
 
     bool isLastStep =
-        _currentStep == _slider.currentState!.widget.pages.length - 1;
+        _currentStep == _slider.currentState!.widget.pages.length - 2;
 
     // als het de laatste stap is, vervoledig de wizart
     if (isLastStep) {
@@ -218,47 +227,34 @@ class _FormQuestionsState extends State<FormQuestions> {
           berGemeente2: berGemeente2.text,
           vraagGOK: vraagGOK,
           vraagTN: vraagTN,
-          schoolList: SearchPage.schoolList
+          schoolList: SearchSchool.schoolList
 
       ).then((value)  {
 
-        print('Succes animatie ');
+        setState(()  {
+          _currentStep += 1;
+          _slider.currentState!.next();
+          regiSucces = true;
+        });
 
-      }).catchError(() {
-        print('Error animatie');
+
+        Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+
+      }).catchError((value) {
+        setState(() {
+
+          _currentStep += 1;
+          _slider.currentState!.next();
+          regiSucces = false;
+
+        });
+
+
       });
 
-      /* globals.regi = new Registration(
-        id: ,
-          voornaam: voornaam.text,
-          naam: naam.text,
-          rijksNr: rijksNr.text,
-          straat: straat.text,
-          huisNr: int.parse(huisNr.text),
-          busNr: busNr.text,
-          postcode: int.parse(postcode.text),
-          gemeente: gemeente.text,
-          oVoornaam1: oVoornaam1.text,
-          oNaam1: oNaam1.text,
-          beroep1: beroep1.text,
-          berStraat1: berStraat1.text,
-          berHuisNr1: int.parse(berHuisNr1.text),
-          berBusNr1: berBusNr1.text,
-          berPostcode1: int.parse(berPostcode1.text),
-          berGemeente1: berGemeente1.text,
-          oVoornaam2: oVoornaam2.text,
-          oNaam2: oNaam2.text,
-          beroep2: beroep2.text,
-          berStraat2: berStraat2.text,
-          berHuisNr2: int.tryParse(berHuisNr2.text),
-          berBusNr2: berBusNr2.text,
-          berPostcode2: int.tryParse(berPostcode2.text),
-          berGemeente2: berGemeente2.text,
-          vraagGOK: vraagGOK,
-          vraagTN: vraagTN); */
 
 
-      //Navigator.pop(context);
+
     }
     //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
     else if (_currentStep == 2 && secParent == false) {
@@ -316,6 +312,68 @@ class _FormQuestionsState extends State<FormQuestions> {
     int check = 97 - mod;
 
     return check;
+  }
+
+  // methode om terug te gaan naar de pagina waar men de informatie wilt wijzigen
+  void overzichtEdit(String page) {
+setState(() {
+
+
+    switch(page) {
+      case 'profile':
+        {
+          _currentStep -= 7;
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+
+          _slider.currentState!.previous();
+          //formSucces = _thisForm.currentState!.validate();
+        }
+        break;
+      case 'parents':
+        {
+          _currentStep -= 5;
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          //formSucces = _thisForm.currentState!.validate();
+        }
+        break;
+      case 'parents2':
+        {
+          //formSucces = _thisForm.currentState!.validate();
+        }
+        break;
+      case 'statements':
+        {
+          _currentStep -= 3;
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          _slider.currentState!.previous();
+          //formSucces = _thisForm.currentState!.validate();
+        }
+        break;
+      case 'schoollist':
+        {
+          _currentStep -= 1;
+          _slider.currentState!.previous();
+          //formSucces = _thisForm.currentState!.validate();
+        }
+        break;
+    }
+
+
+    setpageHeight(_currentStep);
+});
+
   }
 
   // key voor de page slider
@@ -960,12 +1018,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                 ),
                 // school rangschik lijst
                 FractionallySizedBox(
-                    widthFactor: 0.9, heightFactor: 1, child: SearchPage()),
+                    widthFactor: 0.9, heightFactor: 1, child: SearchSchool()),
                 // overzicht
                 FractionallySizedBox(
                     widthFactor: 0.9,
                     heightFactor: 1,
-                    child: SingleChildScrollView(
+                    child:
+                    SingleChildScrollView(
                       child: Column(
                         children: [
                           Padding(
@@ -981,7 +1040,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                             ),
                           ),
                           const Divider(
-                            thickness: 1,
+                            thickness: 3,
                             height: 20,
                             indent: 50,
                             endIndent: 50,
@@ -996,64 +1055,67 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     borderRadius: BorderRadius.circular(20)),
                                 child: InkWell(
                                   onLongPress: () {
-                                    print('edit');
+                                    overzichtEdit('profile');
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      children: [
-                                        TableRow(children: [
-                                          TableCell(child: Text('Birthdate:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
-                                            child: Text(
-                                                '${rijksNr.text.substring(4, 6)}/${rijksNr.text.substring(2, 4)}/${rijksNr.text.substring(0, 2)}'),
-                                          ),
-                                          const TableCell(
+                                  padding: const EdgeInsets.symmetric(vertical:20.0, horizontal: 30.0),
+                                  child: Table(
+                                    defaultColumnWidth:
+                                        const IntrinsicColumnWidth(),
+                                    defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    children: [
+                                      TableRow(children: [
+                                        const TableCell(child: Text('Birthdate:')),
+                                        const TableCell(
                                             child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Address:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    '${straat.text} ${huisNr.text} ${busNr.text}'),
-                                                Text(
-                                                    '${gemeente.text} ${postcode.text}  ')
-                                              ],
-                                            ),
+                                          width: 10,
+                                        )),
+                                        TableCell(
+                                          child:  rijksNr.text.isNotEmpty ?
+                                          Text(
+                                              '${rijksNr.text.substring(4, 6)}/${rijksNr.text.substring(2, 4)}/${rijksNr.text.substring(0, 2)}')
+                                          : const Text(""),
+                                        ),
+                                        const TableCell(
+                                          child: SizedBox(
+                                            height: 30,
                                           ),
-                                          const TableCell(
+                                        )
+                                      ]),
+                                      TableRow(children: [
+                                        const TableCell(
+                                            child: Text('Address:')),
+                                        const TableCell(
                                             child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ])
-                                      ],
-                                    ),
+                                          width: 10,
+                                        )),
+                                        TableCell(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  '${straat.text} ${huisNr.text} ${busNr.text}'),
+                                              Text(
+                                                  '${gemeente.text} ${postcode.text}  ')
+                                            ],
+                                          ),
+                                        ),
+                                        const TableCell(
+                                          child: SizedBox(
+                                            height: 30,
+                                          ),
+                                        )
+                                      ])
+                                    ],
                                   ),
+                                    ),
                                 ),
                               ),
+                              // titel: Parent
                               Padding(
                                 padding: const EdgeInsets.only(top: 30.0),
                                 child: FractionallySizedBox(
@@ -1066,7 +1128,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                               fontSize: 17,
                                               fontWeight: FontWeight.w500)),
                                       const Divider(
-                                        thickness: 1,
+                                        thickness: 2,
                                       ),
                                     ],
                                   ),
@@ -1080,10 +1142,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     borderRadius: BorderRadius.circular(20)),
                                 child: InkWell(
                                   onLongPress: () {
-                                    print('edit');
+                                    overzichtEdit('parents');
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
+                                    padding: const EdgeInsets.symmetric(vertical:20.0, horizontal: 30.0),
                                     child: Table(
                                       defaultColumnWidth:
                                           IntrinsicColumnWidth(),
@@ -1112,9 +1174,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                                           const TableCell(
                                               child: SizedBox(
                                             width: 10,
-                                          )),
+                                          ),),
                                           TableCell(
-                                              child: Text('${beroep1.text}')),
+                                              child: Text(beroep1.text)),
                                           const TableCell(
                                             child: SizedBox(
                                               height: 30,
@@ -1164,10 +1226,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                                       borderRadius: BorderRadius.circular(20)),
                                   child: InkWell(
                                     onLongPress: () {
-                                      print('edit');
+                                      overzichtEdit('parents');
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
+                                      padding: const EdgeInsets.symmetric(vertical:20.0, horizontal: 30.0),
                                       child: Table(
                                         defaultColumnWidth:
                                             const IntrinsicColumnWidth(),
@@ -1199,7 +1261,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                               ),
                                             ),
                                             TableCell(
-                                                child: Text('${beroep2.text}')),
+                                                child: Text(beroep2.text)),
                                             const TableCell(
                                               child: SizedBox(
                                                 height: 30,
@@ -1252,7 +1314,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                               fontSize: 17,
                                               fontWeight: FontWeight.w500)),
                                       const Divider(
-                                        thickness: 1,
+                                        thickness: 2,
                                       ),
                                     ],
                                   ),
@@ -1266,10 +1328,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     borderRadius: BorderRadius.circular(20)),
                                 child: InkWell(
                                   onLongPress: () {
-                                    print('edit');
+                                    overzichtEdit('statements');
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: const EdgeInsets.symmetric(vertical:20.0, horizontal: 40.0),
                                     child: Table(
                                       defaultColumnWidth:
                                           const IntrinsicColumnWidth(),
@@ -1282,7 +1344,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                           const TableCell(
                                               child: SizedBox(
                                             width: 10,
-                                          )),
+                                          ),),
                                           TableCell(
                                             child: vraagGOK == true
                                                 ? Icon(
@@ -1342,8 +1404,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                               color: Colors.grey.shade700,
                                               fontSize: 17,
                                               fontWeight: FontWeight.w500)),
-                                      Divider(
-                                        thickness: 1,
+                                      const Divider(
+                                        thickness: 2,
                                       ),
                                     ],
                                   ),
@@ -1361,13 +1423,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                                         borderRadius: BorderRadius.circular(20)),
                                     child: InkWell(
                                       onLongPress: () {
-                                        print('edit');
+                                        overzichtEdit('schoollist');
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(16),
                                         child: Column(
                                           children: List.generate(
-                                            SearchPage.schoolList.length,
+                                            SearchSchool.schoolList.length,
                                             (index) => Padding(
                                               padding: const EdgeInsets.only(
                                                   bottom: 20.0),
@@ -1413,7 +1475,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                               .stretch,
                                                       children: [
                                                         Text(
-                                                            SearchPage.schoolList[
+                                                            SearchSchool.schoolList[
                                                                 index],
                                                             maxLines: 2,
                                                             overflow: TextOverflow
@@ -1446,7 +1508,66 @@ class _FormQuestionsState extends State<FormQuestions> {
                           ),
                         ],
                       ),
-                    ))
+                    )
+                  ),
+                // succes / error pagina
+                FractionallySizedBox(
+                    widthFactor: 0.9, heightFactor: 1, child:
+                regiSucces == true ?
+                Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:  const [
+                      DelayedDisplay(
+                        delay: Duration(milliseconds: 500),
+                        child: Image(
+                          image: AssetImage('lib/images/succes.gif'),
+                          width: 250,
+                        ),
+                      ),
+                      DelayedDisplay(
+                        delay: Duration(milliseconds: 900),
+                        child: Text('Registration completed successfully'),
+                      ),
+
+                    ],
+                  ),
+                )
+                :
+                Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:  const [
+                      DelayedDisplay(
+                        delay: Duration(milliseconds: 500),
+                        child: Image(
+                          image: AssetImage('lib/images/error.gif'),
+                          width: 250,
+                        ),
+                      ),
+                      DelayedDisplay(
+                        delay: Duration(milliseconds: 900),
+                        child: Text('Something went wrong'),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DelayedDisplay(
+                        delay: Duration(milliseconds: 900),
+                        child: Text('Please try again later'),
+                      ),
+
+                    ],
+                  ),
+                )
+                ),
+
               ],
               key: _slider),
         ),
@@ -1470,11 +1591,11 @@ class _FormQuestionsState extends State<FormQuestions> {
         // toon enkel 2e ouder verwijder knop als men op de juiste pagina zit en 2e ouder al aangeduid werd
         if (_currentStep == 3 && secParent == true)
           Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 10),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   alignment: Alignment.center,
-                  shape: StadiumBorder(),
+                  shape: const StadiumBorder(),
                   primary: Colors.redAccent),
               onPressed: () => {secParent = false, previousStep()},
               child: const Text(
@@ -1492,7 +1613,7 @@ class _FormQuestionsState extends State<FormQuestions> {
               children: <Widget>[
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      shape: StadiumBorder(), primary: Colors.redAccent),
+                      shape: const StadiumBorder(), primary: Colors.redAccent),
 
                   //color: Colors.red.shade100,
                   child: const Text('No'),
@@ -1500,7 +1621,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      shape: StadiumBorder(), primary: Colors.indigo.shade800),
+                      shape: const StadiumBorder(), primary: Colors.indigo.shade800),
                   child: const Text('Yes'),
                   onPressed: () => {vraagYesNo(1)},
                 ),
@@ -1508,6 +1629,8 @@ class _FormQuestionsState extends State<FormQuestions> {
             ),
           ),
         // back en next buttons
+        //verberg als de registratie voltooid is
+        if(regiSucces != true)
         DelayedDisplay(
           delay: const Duration(milliseconds: 1000),
           child: Row(
@@ -1518,15 +1641,15 @@ class _FormQuestionsState extends State<FormQuestions> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
-                      shape: StadiumBorder(),
+                      shape: const StadiumBorder(),
                       primary: Colors.grey),
                   child: Transform.rotate(
                       angle: 180 * math.pi / 180,
                       child: const Icon(Icons.forward)),
                   onPressed: () => {previousStep()},
                 ),
-              // verberg next button wanneer men op de voorrangsvragen komt
-              if (_currentStep != 4 && _currentStep != 5 && _currentStep != 7)
+              // verberg next button wanneer men op de voorrangsvragen en de 2 laatste pagina's komt
+              if (_currentStep != 4 && _currentStep != 5 && _currentStep != 7 && _currentStep != 8)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
@@ -1541,7 +1664,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                     alignment: Alignment.center,
                     shape: const StadiumBorder(),
                     primary: Colors.indigo.shade800),
-                child: Text('Finish'),
+                child: const Text('Finish'),
                 onPressed: () => nextStep(),
               ),
             ],
@@ -1580,48 +1703,4 @@ class _FormQuestionsState extends State<FormQuestions> {
   }
 }
 
-/*
-* Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(1),
-                  spreadRadius: -5,
-                  blurRadius: 15,
-                  offset: const Offset(6, 6),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              child: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.arrow_forward_sharp),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.add_circle),
-                    label: 'New',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.notifications),
-                    label: 'Notifications',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.school_sharp),
-                    label: 'Schools',
-                  ),
-                ],
-                currentIndex: 0,
-                selectedItemColor: Colors.indigo.shade800,
 
-              ),
-            ),
-          ),
-        ))
-* */

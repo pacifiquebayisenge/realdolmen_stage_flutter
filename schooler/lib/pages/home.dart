@@ -19,6 +19,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late Future<QuerySnapshot<Object?>> futureRegiRef;
   late Stream<QuerySnapshot> streamList;
+  int dataCount = 0;
+  late bool _hasMore;
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _HomeState extends State<Home> {
     // stream reference om te gebruiken voor de real time changes
 
 streamList = streamFetch();
+_hasMore = true;
     super.initState();
   }
 
@@ -38,6 +41,19 @@ streamList = streamFetch();
 
   // future reference methode om mee te geven aan de Future builder widget
   Future<QuerySnapshot<Object?>> futureFetch() async {
+
+    await FirebaseFirestore.instance
+        .collection('registrations')
+        .orderBy('date', descending: true)
+        .get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          dataCount += 1;
+        });
+      });
+    });
+
+
     return await FirebaseFirestore.instance
         .collection('registrations')
         .orderBy('date', descending: true)
@@ -45,7 +61,7 @@ streamList = streamFetch();
   }
 
   // key voor de animatie lijst
-  GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   // future methode om de delay animatie te simuleren
   void getRegisList(List<DocumentSnapshot> data) async {
@@ -66,7 +82,7 @@ streamList = streamFetch();
 
   // methode pm de realtime changes in de database op te volgen
   void realtime() {
-    print('done');
+
 
     streamList.listen((event) {
       // als er een inschrijving wordt toegevoegd
@@ -88,6 +104,7 @@ streamList = streamFetch();
       if (event.docChanges.first.type == DocumentChangeType.removed) {
         // kijken of het maar om 1 data gaat
         if (event.docChanges.length < 2) {
+          print(event.docs.first.id);
           // verwijder animatie aan de animated list widget
           _listKey.currentState!.removeItem(
               event.docChanges.first.oldIndex,
@@ -95,7 +112,7 @@ streamList = streamFetch();
                     position: animation
                         .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
                     child:
-                        CustomCard(registration: regiList[0], navMethod: () {}),
+                        CustomCard(registration: regiList[event.docChanges.first.oldIndex], navMethod: () {}),
                   ));
 
           //  inschrijving verwijderen uit de lijst
@@ -151,7 +168,7 @@ streamList = streamFetch();
                 delay: Duration(milliseconds: 200),
                 child: AnimatedList(
                   key: _listKey,
-                  initialItemCount: regiList.length,
+                  initialItemCount: documents.length,
                   itemBuilder: (BuildContext context, int index,
                       Animation<double> animation) {
                     if (index != regiList.length - 1) {
@@ -242,7 +259,7 @@ streamList = streamFetch();
                     ),
                     const DelayedDisplay(
                       delay: Duration(milliseconds: 900),
-                      child: Text('Create a new registration here2'),
+                      child: Text('Create a new registration here'),
                     ),
                     const SizedBox(
                       height: 10,
@@ -251,7 +268,7 @@ streamList = streamFetch();
                       delay: const Duration(milliseconds: 900),
                       child: ClipRRect(
                         borderRadius:
-                            BorderRadius.all(const Radius.circular(100)),
+                            const BorderRadius.all(Radius.circular(100)),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
