@@ -575,7 +575,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 ---
 ---
 
-#### 12/11 Vrijdag ####
+#### 15/11 Maandag ####
 
 * Klassen
   * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
@@ -596,6 +596,38 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Firebase
   * issue -> lijst in dezeflde volgorde opslaan als in de app -> fixed
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Notities & aanwijzingen toepassen
+  * Appbar animatie? -> sliver Appbar -> 80%
+  * etc.
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+
+#### 16/11 Disndag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> bestaande data hergebruiken bij (her)inschrijvingen
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven
+
+* Schools page
+* Google maps implentatie documentatie
+  * Google maps implentatie
+  * Google maps locaties en route beschrijving
+  * Google maps cloud platform budgetering
+  * Google cloud platform cloud functions
+  * info pagina om scholen info weer te geven
+  * Comments -> voorlopig heel slordige code
+
+* Firebase
   * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
 
 * Notities & aanwijzingen toepassen

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/pages/schools.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 class SearchSchool extends StatefulWidget {
@@ -17,6 +18,7 @@ class _SearchSchoolState extends State<SearchSchool> {
 
   @override
   initState() {
+    SearchPage.schoolList = [];
     resultList = scholen;
     super.initState();
 

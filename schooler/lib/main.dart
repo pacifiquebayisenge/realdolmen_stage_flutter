@@ -213,7 +213,7 @@ class _AppState extends State<App> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(1),
-                  //spreadRadius: -5,
+                  spreadRadius: -5,
                   blurRadius: 15,
                   offset: const Offset(6, 6),
                 ),
