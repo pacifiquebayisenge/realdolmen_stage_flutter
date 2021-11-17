@@ -76,6 +76,28 @@ class _FormQuestionsState extends State<FormQuestions> {
    String resultImg = '';
 
 
+   void t () {
+     FirebaseFirestore.instance
+         .collection('registrations')
+         .orderBy('date',descending: true)
+         .get()
+         .then((QuerySnapshot querySnapshot) {
+       querySnapshot.docs.forEach((doc) {
+
+         Timestamp timestamp;
+         timestamp   = doc['date'];
+
+         if (timestamp.toDate().day == 17) {
+           FirebaseFirestore.instance
+               .collection('registrations')
+               .doc(doc.id)
+               .delete();
+         }
+
+       });
+     });
+   }
+
 
   // methode om de GOK en TN vragen op te vragen
   // 2 knoppen = ja knop en nee knop
@@ -185,6 +207,7 @@ class _FormQuestionsState extends State<FormQuestions> {
   // ALs laatste stap is verstuur data naar server
   void nextStep() {
 
+     t();
     print(checkStep());
 
     // als form op deze pagina niet juist is ingevoerd dan kan men niet verder
@@ -238,7 +261,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         });
 
 
-        Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+       //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
 
       }).catchError((value) {
         setState(() {
@@ -283,6 +306,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
     if (isFirstStep) {
       Navigator.pop(context);
+
     }
     // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina  => dubbele stap achteruit
     else if (_currentStep == 4 && secParent == false) {

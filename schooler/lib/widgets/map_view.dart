@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -7,17 +8,19 @@ import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/services/directions_model.dart';
 import 'package:schooler/services/directions_repository.dart';
 
-const LatLng SOURCE_LOCATION = LatLng(42.7477863, -71.1699932);
+const LatLng SOURCE_LOCATION = LatLng(50.8454872, 4.3570163);
 const LatLng DEST_LOCATION = LatLng(42.744421, -71.1698939);
-const double CAMERA_ZOOM = 16;
-const double CAMERA_TILT = 20;
-const double CAMERA_BEARING = 30;
+const double CAMERA_ZOOM = 11;
+const double CAMERA_TILT = 80;
+const double CAMERA_BEARING = 0;
 const double INFO_BAR_VISIBLE = 70;
 const double INFO_BAR_INVISIBLE = -200;
+const double DISTANCE_BAR_VISIBLE = 60;
+const double DISTANCE_BAR_INVISIBLE = -200;
 
 class MapView extends StatefulWidget {
-  const MapView({Key? key}) : super(key: key);
-
+  const MapView({Key? key, required this.modeChanger }) : super(key: key);
+  final Function modeChanger;
   @override
   _MapViewState createState() => _MapViewState();
 }
@@ -30,9 +33,11 @@ class _MapViewState extends State<MapView> {
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
   Set<Marker> _markers = Set<Marker>();
+
   late LatLng currentLocation;
   late LatLng destinationLocation;
   double infoBarPosition = INFO_BAR_VISIBLE;
+  double distanceBarPos = DISTANCE_BAR_VISIBLE;
 
   List<String> resultList = [];
   final floatingSearchBarController = FloatingSearchBarController();
@@ -47,6 +52,7 @@ class _MapViewState extends State<MapView> {
       // Origin is not set OR Origin/Destination are both set
       // Set origin
       setState(() {
+        distanceBarPos = DISTANCE_BAR_INVISIBLE;
         _markers.clear();
         _info = null;
         _origin = Marker(
@@ -70,6 +76,7 @@ class _MapViewState extends State<MapView> {
             onTap: () {
               setState(() {
                 infoBarPosition = INFO_BAR_VISIBLE;
+
               });
             });
 
@@ -81,6 +88,7 @@ class _MapViewState extends State<MapView> {
           origin: _origin.position, destination: _destination.position);
       setState(() {
         _info = directions!;
+        distanceBarPos = DISTANCE_BAR_VISIBLE;
       });
     }
   }
@@ -109,20 +117,38 @@ class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.topCenter,
       children: [
         Positioned.fill(
           child: GoogleMap(
-            myLocationEnabled: false,
-            compassEnabled: false,
+
+            zoomControlsEnabled: false,
+
+
+
             tiltGesturesEnabled: false,
             markers: _markers,
             mapType: MapType.normal,
             initialCameraPosition: initialCameraPosition,
+            polylines: {
+              if (_markers.length == 2 && _info != null)
+                Polyline(
+                  polylineId: const PolylineId('overview_polyline'),
+                  color: Colors.red,
+                  width: 5,
+                  points: _info!.polylinePoints
+                      .map((e) => LatLng(e.latitude, e.longitude))
+                      .toList(),
+                ),
+
+            },
             onLongPress: _addMarker,
             onTap: (LatLng loc) {
               // als men op de map klikt zal de info bar verdwijnen
               setState(() {
                 infoBarPosition = INFO_BAR_INVISIBLE;
+
+
               });
             },
             onMapCreated: (GoogleMapController controller) {
@@ -131,87 +157,7 @@ class _MapViewState extends State<MapView> {
             },
           ),
         ),
-        FloatingSearchBar(
-          border: BorderSide(color: Colors.black12),
-          backdropColor: Colors.black26,
-          closeOnBackdropTap: true,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-          controller: floatingSearchBarController,
-          hint: 'Search...',
-          scrollPadding: const EdgeInsets.only(top: 6, bottom: 56),
-          transitionDuration: const Duration(milliseconds: 800),
-          transitionCurve: Curves.easeInOut,
-          physics: const BouncingScrollPhysics(),
-          axisAlignment: 0.0,
-          openAxisAlignment: 0.0,
-          width: 600,
-          automaticallyImplyBackButton: false,
-          debounceDelay: const Duration(milliseconds: 500),
-          onQueryChanged: (query) {
-            _queryList(query);
-          },
-          transition: CircularFloatingSearchBarTransition(),
-          leadingActions: [
-            FloatingSearchBarAction.back(
-              showIfClosed: false,
-            ),
-          ],
-          actions: [
-            FloatingSearchBarAction(
-              showIfOpened: false,
-              child: CircularButton(
-                icon: const Icon(Icons.place),
-                onPressed: () {
-                  print('map');
-                },
-              ),
-            ),
-            FloatingSearchBarAction.searchToClear(
-              showIfClosed: false,
-            ),
-          ],
-          builder: (context, transition) {
-            return ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: List.generate(resultList.length, (index) {
-                    return Center(
-                      child: Container(
-                        child: Material(
-                          child: InkWell(
-                            splashColor: Colors.grey,
-                            onTap: () {
-                              //_addToList(resultList[index]);
 
-                              floatingSearchBarController.close();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 20.0, left: 20.0),
-                              child: Container(
-                                height: 112,
-                                child: Center(
-                                    child: Text(
-                                  resultList[index],
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                )),
-                              ),
-                            ),
-                          ),
-                          color: Colors.transparent,
-                        ),
-                        color: Colors.white,
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            );
-          },
-        ),
         AnimatedPositioned(
           left: 0,
           right: 0,
@@ -252,13 +198,12 @@ class _MapViewState extends State<MapView> {
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: const [
                             Text(
                               'Schoolnaam',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             Text('Straatnaan 12\nstadnaam postcode',
                                 style: TextStyle(fontSize: 11)),
@@ -284,7 +229,115 @@ class _MapViewState extends State<MapView> {
               ],
             ),
           ),
-        )
+        ),
+
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            top: distanceBarPos,
+            child: Visibility(
+              visible: _markers.length == 2 && _info != null,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+                decoration: BoxDecoration(
+                    color: Colors.yellowAccent,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 2),
+                          blurRadius: 6.0)
+                    ]),
+                child: Text( _markers.length == 2 && _info != null ?
+                  '  ${_info!.totalDistance}, ${_info!.totalDuration}' : '',
+                  style: const TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
+        FloatingSearchBar(
+          border: BorderSide(color: Colors.black12),
+          backdropColor: Colors.black26,
+          closeOnBackdropTap: true,
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          controller: floatingSearchBarController,
+          hint: 'Search...',
+          scrollPadding: const EdgeInsets.only(top: 6, bottom: 56),
+          transitionDuration: const Duration(milliseconds: 800),
+          transitionCurve: Curves.easeInOut,
+          physics: const BouncingScrollPhysics(),
+          axisAlignment: 0.0,
+          openAxisAlignment: 0.0,
+          width: 600,
+          automaticallyImplyBackButton: false,
+          debounceDelay: const Duration(milliseconds: 500),
+          onQueryChanged: (query) {
+            _queryList(query);
+          },
+          transition: CircularFloatingSearchBarTransition(),
+          leadingActions: [
+            FloatingSearchBarAction.back(
+              showIfClosed: false,
+            ),
+          ],
+          actions: [
+            FloatingSearchBarAction(
+              showIfOpened: false,
+              child: CircularButton(
+                icon: const Icon(Icons.list),
+                onPressed: () {
+                  widget.modeChanger();
+                },
+              ),
+            ),
+            FloatingSearchBarAction.searchToClear(
+              showIfClosed: false,
+            ),
+          ],
+          builder: (context, transition) {
+            return ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: List.generate(resultList.length, (index) {
+                    return Center(
+                      child: Container(
+                        child: Material(
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            onTap: () {
+                              //_addToList(resultList[index]);
+
+                              floatingSearchBarController.close();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, left: 20.0),
+                              child: Container(
+                                height: 112,
+                                child: Center(
+                                    child: Text(
+                                      resultList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
+                              ),
+                            ),
+                          ),
+                          color: Colors.transparent,
+                        ),
+                        color: Colors.white,
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

@@ -168,7 +168,7 @@ _hasMore = true;
                 delay: Duration(milliseconds: 200),
                 child: AnimatedList(
                   key: _listKey,
-                  initialItemCount: documents.length,
+                  initialItemCount: regiList.length,
                   itemBuilder: (BuildContext context, int index,
                       Animation<double> animation) {
                     if (index != regiList.length - 1) {

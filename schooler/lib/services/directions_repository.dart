@@ -5,7 +5,7 @@ import 'package:schooler/services/env.dart';
 
 class DirectionsRepository {
 
-  static const _baseUrl = 'https://maps.googleapis.com/maps/directions/json?';
+  static const _baseUrl = 'https://maps.googleapis.com/maps/api/directions/json?';
 
   final Dio _dio;
 
