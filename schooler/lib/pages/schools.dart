@@ -5,6 +5,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/widgets/map_view.dart';
 import 'package:schooler/widgets/school_search.dart';
+
 class Schools extends StatefulWidget {
   const Schools({Key? key}) : super(key: key);
 
@@ -13,20 +14,28 @@ class Schools extends StatefulWidget {
 }
 
 class _SchoolsState extends State<Schools> {
-
+  late Widget currWidget;
   bool mapMode = false;
 
-  void changeMode() {
-    if(mapMode == false){
+  @override
+  initState() {
+    currWidget = SchoolSearch(modeChanger: changeMode);
+
+    super.initState();
+  }
+
+  changeMode() {
+    if (mapMode == false) {
       setState(() {
         mapMode = true;
+        currWidget = MapView(modeChanger: changeMode);
       });
-    }else {
+    } else {
       setState(() {
         mapMode = false;
+        currWidget = SchoolSearch(modeChanger: changeMode);
       });
     }
-
   }
 
   @override
@@ -35,11 +44,16 @@ class _SchoolsState extends State<Schools> {
         extendBody: true,
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
-        body: mapMode == true ? MapView(modeChanger: changeMode,) : SchoolSearch(modeChanger: changeMode)
-    );
+        body: AnimatedSwitcher(
+
+            transitionBuilder: (Widget child, Animation<double> animation) =>
+                ScaleTransition(child: child, scale: animation),
+
+
+            duration: Duration(milliseconds: 1000),
+            child: currWidget));
   }
 }
-
 
 /*
 

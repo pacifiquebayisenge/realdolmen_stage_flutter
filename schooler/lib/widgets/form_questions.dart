@@ -138,7 +138,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       });
     } else {
       setState(() {
-        pageHeight = 450;
+        pageHeight = 470;
       });
     }
   }
@@ -208,10 +208,10 @@ class _FormQuestionsState extends State<FormQuestions> {
   void nextStep() {
 
      t();
-    print(checkStep());
+    //print(checkStep());
 
     // als form op deze pagina niet juist is ingevoerd dan kan men niet verder
-    if (!checkStep()) return;
+    //if (!checkStep()) return;
 
     bool isLastStep =
         _currentStep == _slider.currentState!.widget.pages.length - 2;
@@ -435,15 +435,33 @@ setState(() {
                     widthFactor: 0.9,
                     heightFactor: 1,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+
                       children: [
+                        const Text('Profile information',
+                          style: TextStyle(
+
+                              fontSize: 16,
+                             fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline
+                          ),),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Please fill in your private information',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.black54
+                        ),),
+                        const SizedBox(
+                          height: 100,
+                        ),
                         DelayedDisplay(
                           delay: const Duration(milliseconds: 700),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 child: FormBuilderTextField(
                                   name: 'voornaam',
                                   controller: voornaam,
@@ -456,10 +474,10 @@ setState(() {
                                 ),
                               ),
                               const SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.3,
                                 child: FormBuilderTextField(
                                   name: 'naam',
                                   controller: naam,
@@ -520,8 +538,26 @@ setState(() {
                     widthFactor: 0.9,
                     heightFactor: 1,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      
                       children: [
+                        const Text('Address information',
+                          style: TextStyle(
+
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline
+                          ),),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Please fill in your private address',
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54
+                          ),),
+                        const SizedBox(
+                          height: 100,
+                        ),
                         FormBuilderTextField(
                           name: 'straat',
                           controller: straat,
@@ -536,10 +572,10 @@ setState(() {
                           height: 20,
                         ),
                         Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 child: FormBuilderTextField(
                                   name: 'huisNr',
                                   controller: huisNr,
@@ -559,10 +595,10 @@ setState(() {
                                 ),
                               ),
                               const SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.3,
                                 child: FormBuilderTextField(
                                   name: 'busNr',
                                   controller: busNr,
@@ -575,29 +611,10 @@ setState(() {
                           height: 20,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 22.0),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                child: FormBuilderTextField(
-                                  name: 'gemeente',
-                                  controller: gemeente,
-                                  decoration:
-                                      const InputDecoration(labelText: 'City'),
-                                  validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(context),
-                                    FormBuilderValidators.notEqual(context, "")
-                                  ]),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
                             Container(
-                              width: MediaQuery.of(context).size.width / 2.5,
+                              width: MediaQuery.of(context).size.width / 2.4,
                               child: FormBuilderTextField(
                                 name: 'postcode',
                                 controller: postcode,
@@ -617,6 +634,26 @@ setState(() {
                                 ]),
                               ),
                             ),
+
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 22.0),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 2.3,
+                                child: FormBuilderTextField(
+                                  name: 'gemeente',
+                                  controller: gemeente,
+                                  decoration:
+                                  const InputDecoration(labelText: 'City'),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.notEqual(context, "")
+                                  ]),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -631,16 +668,33 @@ setState(() {
                     child: FormBuilder(
                       key: _thisForm3,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+
                         children: [
+                          const Text('Parent information',
+                            style: TextStyle(
+
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline
+                            ),),
                           const SizedBox(
-                            height: 50,
+                            height: 10,
                           ),
+                          const Text("Please fill in your parent information together\nwith the profession and it's address",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.black54
+                            ),),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 child: FormBuilderTextField(
                                   name: 'oVoornaam1',
                                   controller: oVoornaam1,
@@ -656,7 +710,7 @@ setState(() {
                                 width: 10,
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.3,
                                 child: FormBuilderTextField(
                                   name: 'oNaam1',
                                   controller: oNaam1,
@@ -700,11 +754,11 @@ setState(() {
                             height: 20,
                           ),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                               children: [
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 2.5,
+                                      MediaQuery.of(context).size.width / 2.4,
                                   child: FormBuilderTextField(
                                     name: 'berHuisNr1',
                                     controller: berHuisNr1,
@@ -725,11 +779,11 @@ setState(() {
                                   ),
                                 ),
                                 const SizedBox(
-                                  width: 20,
+                                  width: 10
                                 ),
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 2.5,
+                                      MediaQuery.of(context).size.width / 2.3,
                                   child: FormBuilderTextField(
                                     name: 'berBusNr1',
                                     controller: berBusNr1,
@@ -742,31 +796,10 @@ setState(() {
                             height: 20,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 22.0),
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 2.5,
-                                  child: FormBuilderTextField(
-                                    name: 'berGemeente1',
-                                    controller: berGemeente1,
-                                    decoration: const InputDecoration(
-                                        labelText: 'City'),
-                                    validator: FormBuilderValidators.compose([
-                                      FormBuilderValidators.required(context),
-                                      FormBuilderValidators.notEqual(
-                                          context, "")
-                                    ]),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
                               Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 child: FormBuilderTextField(
                                   name: 'berPostcode1',
                                   controller: berPostcode1,
@@ -784,6 +817,28 @@ setState(() {
                                     FormBuilderValidators.numeric(context),
                                     FormBuilderValidators.maxLength(context, 4)
                                   ]),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 22.0),
+                                child: Container(
+                                  width:
+                                  MediaQuery.of(context).size.width / 2.3,
+                                  child: FormBuilderTextField(
+                                    name: 'berGemeente1',
+                                    controller: berGemeente1,
+                                    decoration: const InputDecoration(
+                                        labelText: 'City'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(context),
+                                      FormBuilderValidators.notEqual(
+                                          context, "")
+                                    ]),
+                                  ),
                                 ),
                               ),
                             ],
@@ -809,15 +864,31 @@ setState(() {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const Text('Parent information',
+                              style: TextStyle(
+
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline
+                              ),),
                             const SizedBox(
-                              height: 50,
+                              height: 10,
+                            ),
+                            const Text("Please fill in your parent information together\nwith the profession and it's address",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.black54
+                              ),),
+                            const SizedBox(
+                              height: 10,
                             ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                               children: [
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 2.5,
+                                      MediaQuery.of(context).size.width / 2.4,
                                   child: FormBuilderTextField(
                                     name: 'oVoornaam2',
                                     controller: oVoornaam2,
@@ -835,7 +906,7 @@ setState(() {
                                 ),
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 2.5,
+                                      MediaQuery.of(context).size.width / 2.3,
                                   child: FormBuilderTextField(
                                     name: 'oNaam2',
                                     controller: oNaam2,
@@ -880,12 +951,11 @@ setState(() {
                               height: 20,
                             ),
                             Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+
                                 children: [
                                   Container(
                                     width:
-                                        MediaQuery.of(context).size.width / 2.5,
+                                        MediaQuery.of(context).size.width / 2.4,
                                     child: FormBuilderTextField(
                                       name: 'berHuisNr2',
                                       controller: berHuisNr2,
@@ -906,11 +976,11 @@ setState(() {
                                     ),
                                   ),
                                   const SizedBox(
-                                    width: 20,
+                                    width: 10,
                                   ),
                                   Container(
                                     width:
-                                        MediaQuery.of(context).size.width / 2.5,
+                                        MediaQuery.of(context).size.width / 2.3,
                                     child: FormBuilderTextField(
                                       name: 'berBusNr2',
                                       controller: berBusNr2,
@@ -923,32 +993,11 @@ setState(() {
                               height: 20,
                             ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 22.0),
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 2.5,
-                                    child: FormBuilderTextField(
-                                      name: 'berGemeente2',
-                                      controller: berGemeente2,
-                                      decoration: const InputDecoration(
-                                          labelText: 'City'),
-                                      validator: FormBuilderValidators.compose([
-                                        FormBuilderValidators.required(context),
-                                        FormBuilderValidators.notEqual(
-                                            context, "")
-                                      ]),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 2.5,
+                                  MediaQuery.of(context).size.width / 2.4,
                                   child: FormBuilderTextField(
                                     name: 'berPostcode2',
                                     controller: berPostcode2,
@@ -967,6 +1016,28 @@ setState(() {
                                       FormBuilderValidators.maxLength(
                                           context, 4)
                                     ]),
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 22.0),
+                                  child: Container(
+                                    width:
+                                    MediaQuery.of(context).size.width / 2.3,
+                                    child: FormBuilderTextField(
+                                      name: 'berGemeente2',
+                                      controller: berGemeente2,
+                                      decoration: const InputDecoration(
+                                          labelText: 'City'),
+                                      validator: FormBuilderValidators.compose([
+                                        FormBuilderValidators.required(context),
+                                        FormBuilderValidators.notEqual(
+                                            context, "")
+                                      ]),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -1096,7 +1167,7 @@ setState(() {
                                           width: 10,
                                         )),
                                         TableCell(
-                                          child:  rijksNr.text.isNotEmpty ?
+                                          child:  rijksNr.text.isNotEmpty && rijksNr.text.length == 11 ?
                                           Text(
                                               '${rijksNr.text.substring(4, 6)}/${rijksNr.text.substring(2, 4)}/${rijksNr.text.substring(0, 2)}')
                                           : const Text(""),

@@ -11,10 +11,7 @@ import 'package:schooler/pages/card_detail.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard(
-      {Key? key,
-        required this.registration,
-
-      required this.navMethod})
+      {Key? key, required this.registration, required this.navMethod})
       : super(key: key);
 
   // inschrijving van de student
@@ -26,39 +23,40 @@ class CustomCard extends StatelessWidget {
 
   final VoidCallback? navMethod;
 
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(    boxShadow: [
-        BoxShadow(
-          color: Colors.black38.withOpacity(.5),
-          blurRadius: 5.0, // soften the shadow
-          spreadRadius: -5.0, //extend the shadow
-          offset: Offset(
-            15.0, // Move to right 10  horizontally
-            5.0, // Move to bottom 10 Vertically
-          ),
-        )
-      ],),
-      child: Card(
+      decoration: BoxDecoration(
 
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black38.withOpacity(.5),
+            blurRadius: 5.0, // soften the shadow
+            spreadRadius: -5.0, //extend the shadow
+            offset: const Offset(
+              15.0, // Move to right 10  horizontally
+              5.0, // Move to bottom 10 Vertically
+            ),
+          )
+        ],
+      ),
+      child: Card(
         elevation: 14,
         shadowColor: Colors.black38,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-
         child: InkWell(
           onLongPress: () {
             navMethod!();
           },
           child: Container(
+            decoration: const BoxDecoration(
 
-            padding: EdgeInsets.all(16),
+            ),
+            padding: const EdgeInsets.all(16),
             child: CardContent(registration),
-
           ),
         ),
       ),
@@ -68,7 +66,7 @@ class CustomCard extends StatelessWidget {
 
 class CardContent extends StatefulWidget {
   const CardContent(this._registration, {Key? key}) : super(key: key);
- final Registration _registration;
+  final Registration _registration;
 
   @override
   _CardContentState createState() => _CardContentState();
@@ -125,7 +123,7 @@ class _CardContentState extends State<CardContent> {
           child: LinearPercentIndicator(
             padding: EdgeInsets.only(top: 0, bottom: 10),
             lineHeight: 4.0,
-            percent: getProgress(),
+            percent: getRandom().floorToDouble()/10,
             animation: true,
             animationDuration: 1000,
             linearStrokeCap: LinearStrokeCap.roundAll,
@@ -134,6 +132,7 @@ class _CardContentState extends State<CardContent> {
           ),
         ),
       ),
+
       // scholen voorkeur
       Wrap(
         children: [

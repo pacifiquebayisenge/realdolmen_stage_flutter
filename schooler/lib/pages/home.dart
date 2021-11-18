@@ -125,6 +125,7 @@ _hasMore = true;
   @override
   Widget build(BuildContext context) {
     return Container(
+
       child: FutureBuilder<QuerySnapshot>(
         future: futureRegiRef,
         builder: (context, snapshot) {

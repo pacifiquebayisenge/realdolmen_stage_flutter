@@ -158,7 +158,7 @@ class _SearchSchoolState extends State<SearchSchool> {
                                 overlayColor:
                                 MaterialStateProperty.all(Colors.red),
                                 child: const Icon(
-                                  Icons.close,
+                                  Icons.delete_rounded,
                                   color: Colors.redAccent,
                                 ),
                               ),
@@ -254,15 +254,22 @@ class _SearchSchoolState extends State<SearchSchool> {
                               floatingSearchBarController.close();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 20.0, left: 20.0),
+                              padding: const EdgeInsets.symmetric( horizontal: 20, vertical: 25),
                               child: Container(
-                                height: 112,
+
                                 child: Center(
-                                    child: Text(
-                                      resultList[index],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          resultList[index],
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 5,),
+                                        const Text('Straatnaan 12, stadnaam postcode',
+                                            style: TextStyle(
+                                                fontSize: 11, color: Colors.black54)),
+                                      ],
                                     )),
                               ),
                             ),
@@ -285,15 +292,23 @@ class _SearchSchoolState extends State<SearchSchool> {
                               floatingSearchBarController.close();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 20.0, left: 20.0),
+                              padding: const EdgeInsets.symmetric(
+                                 vertical: 25, horizontal: 20.0),
                               child: Container(
-                                height: 112,
+
                                 child: Center(
-                                    child: Text(
-                                      resultList[index],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          resultList[index],
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 5,),
+                                        const Text('Straatnaan 12, stadnaam postcode',
+                                            style: TextStyle(
+                                                fontSize: 11, color: Colors.black54)),
+                                      ],
                                     )),
                               ),
                             ),
