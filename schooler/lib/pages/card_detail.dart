@@ -442,7 +442,7 @@ class CardDetail extends StatelessWidget {
                                         padding: const EdgeInsets.all(16),
                                         child: Column(
                                           children: List.generate(
-                                            SearchSchool.schoolList.length,
+                                            SchoolList.schoolList.length,
                                                 (index) => Padding(
                                               padding: const EdgeInsets.only(
                                                   bottom: 20.0),
@@ -488,7 +488,7 @@ class CardDetail extends StatelessWidget {
                                                           .stretch,
                                                       children: [
                                                         Text(
-                                                            SearchSchool.schoolList[
+                                                            SchoolList.schoolList[
                                                             index],
                                                             maxLines: 2,
                                                             overflow: TextOverflow

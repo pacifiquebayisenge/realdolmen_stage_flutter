@@ -166,11 +166,19 @@ class _AppState extends State<App> {
       return null;
     }
     return AppBar(
+
+      actions: [
+        if(_selectedIndex == 3)
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.more_vert),
+
+        )
+      ],
       backgroundColor: Colors.indigo.shade800,
       elevation: 0,
-      title: const Center(
-        child: Text('Schooler'),
-      ),
+      centerTitle: true,
+      title: Text('Schooler'),
     );
   }
 

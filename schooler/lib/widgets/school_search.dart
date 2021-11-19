@@ -12,18 +12,14 @@ class SchoolSearch extends StatefulWidget {
 }
 
 class _SchoolSearchState extends State<SchoolSearch> {
-
   final floatingSearchBarController = FloatingSearchBarController();
   List<String> resultList = [];
 
-
   @override
   initState() {
-    resultList  = scholen;
+    resultList = scholen;
     super.initState();
   }
-
-
 
   // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
@@ -129,7 +125,6 @@ class _SchoolSearchState extends State<SchoolSearch> {
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                         const SizedBox(
@@ -154,6 +149,13 @@ class _SchoolSearchState extends State<SchoolSearch> {
                         const SizedBox(
                           width: 10,
                         ),
+                        IconButton(
+                          splashColor: Colors.redAccent.withOpacity(0.4),
+                          onPressed: () {
+                            print('like');
+                          },
+                          icon: Icon(Icons.favorite_border_rounded),
+                        )
                       ],
                     ),
                   ),

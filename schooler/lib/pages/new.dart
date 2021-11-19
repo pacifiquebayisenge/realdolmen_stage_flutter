@@ -12,35 +12,43 @@ class New extends StatelessWidget {
   Widget build(BuildContext context) {
     // ervoor zorgen dat de popup niet wordt gesloten door de back button van de device
     return WillPopScope(
-      onWillPop: () => Future.value(false),
-      child: Scaffold(
-        extendBody: true,
-        backgroundColor: Colors.indigo.shade800,
-        appBar: AppBar(
-          elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.indigo.shade800),
+        onWillPop: () => Future.value(false),
+        child: Scaffold(
+          extendBody: true,
           backgroundColor: Colors.indigo.shade800,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.close),
-          ),
-          title: const Padding(
-            padding: EdgeInsets.only(left: 40.0),
-            child: Text(
-              'New Registration',
+          appBar: AppBar(
+            /*actions: [
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.more_vert),
+
+              )
+            ],*/
+            elevation: 0,
+            systemOverlayStyle:
+                SystemUiOverlayStyle(statusBarColor: Colors.indigo.shade800),
+            backgroundColor: Colors.indigo.shade800,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.close),
+            ),
+            title: const Padding(
+              padding: EdgeInsets.only(left: 40.0),
+              child: Text(
+                'New Registration',
+              ),
             ),
           ),
-        ),
-        // Voorkomen dat knoppen mee omhoog springen door het toetstebord
-        // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
-        resizeToAvoidBottomInset: false,
-        body: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            child: Container(color: Colors.white, child: FormQuestions())),
-        /*
+          // Voorkomen dat knoppen mee omhoog springen door het toetstebord
+          // bron https://stackoverflow.com/questions/54115269/keyboard-is-pushing-the-floatingactionbutton-upward-in-flutter-app/56196712
+          resizeToAvoidBottomInset: false,
+          body: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              child: Container(color: Colors.white, child: FormQuestions())),
+          /*
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
           child: Container(
@@ -85,7 +93,7 @@ class New extends StatelessWidget {
           ),
         ))
 */
-    ));
+        ));
   }
 }
 

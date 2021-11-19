@@ -5,46 +5,37 @@ import 'package:schooler/pages/schools.dart';
 import 'package:schooler/widgets/school_search.dart';
 import 'package:schooler/widgets/widgets.dart';
 
-class SearchSchool extends StatefulWidget {
- static List<String> schoolList = [];
-   SearchSchool({Key? key}) : super(key: key);
+class SchoolList extends StatefulWidget {
+  static List<String> schoolList = [];
+  SchoolList({Key? key}) : super(key: key);
 
   @override
-  _SearchSchoolState createState() => _SearchSchoolState();
+  _SchoolListState createState() => _SchoolListState();
 }
 
-class _SearchSchoolState extends State<SearchSchool> {
-
-
-
+class _SchoolListState extends State<SchoolList> {
   @override
   initState() {
-    SchoolSearch.schoolList = [];
+    SchoolList.schoolList = [];
     resultList = scholen;
     super.initState();
-
-
   }
-
 
   final floatingSearchBarController = FloatingSearchBarController();
 
   List<String> resultList = [];
 
-
-
-
   // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
     setState(() {
-      SearchSchool.schoolList.add(school);
+      SchoolList.schoolList.add(school);
     });
   }
 
   // methode om item uit de lijst te verwijderen
   _deleteInList(String school) {
     setState(() {
-      SearchSchool.schoolList.removeAt(SearchSchool.schoolList.indexOf(school));
+      SchoolList.schoolList.removeAt(SchoolList.schoolList.indexOf(school));
     });
   }
 
@@ -54,140 +45,119 @@ class _SearchSchoolState extends State<SearchSchool> {
       newIndex -= 1;
     }
 
-    String school = SearchSchool.schoolList.removeAt(oldIndex);
+    String school = SchoolList.schoolList.removeAt(oldIndex);
 
-    SearchSchool.schoolList.insert(newIndex, school);
+    SchoolList.schoolList.insert(newIndex, school);
   }
 
   _queryList(String query) {
     setState(() {
       resultList = [];
-      if(query.isEmpty) {
+      if (query.isEmpty) {
         resultList = scholen;
-      }
-      else {
+      } else {
         scholen.forEach((element) {
-          if(element.startsWith(query,0)) {
+          if (element.startsWith(query, 0)) {
             resultList.add(element);
-
           }
         });
       }
     });
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(children: [
       Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: ReorderableListView(
-
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               _update(oldIndex, newIndex);
             });
           },
           children: [
-            for (var i = 0; i < SearchSchool.schoolList.length; i++)
+            for (var i = 0; i < SchoolList.schoolList.length; i++)
               Padding(
-                key: ValueKey(SearchSchool.schoolList[i]),
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        // verticaal centreren van circle avatar
-                        // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
-                        mainAxisAlignment: MainAxisAlignment.center,
+                key: ValueKey(SchoolList.schoolList[i]),
+                padding: const EdgeInsets.symmetric (horizontal: 8.0, vertical: 15),
+                child: Container(
+                  color: Colors.white,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashColor: Colors.grey,
+                      onTap: () {
+                        print('info');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // rangschiknummer
-                          CircleAvatar(
-                            backgroundColor: Color.fromRGBO(234, 144, 16, 1),
-                            radius: 15,
-                            // rang nummer
-                            child: Text(
-                              (i + 1).toString(),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 15),
+                          Column(
+                            // verticaal centreren van circle avatar
+                            // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // rangschiknummer
+                              CircleAvatar(
+                                backgroundColor:
+                                    Color.fromRGBO(234, 144, 16, 1),
+                                radius: 15,
+                                // rang nummer
+                                child: Text(
+                                  (i + 1).toString(),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(SchoolList.schoolList[i],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500)),
+                                const Text('Straatnaan 12, stadnaam postcode',
+                                    style: TextStyle(fontSize: 11)),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Flexible(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(SearchSchool.schoolList[i],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
-                            const Text('Straatnaan 12, stadnaam postcode',
-                                style: TextStyle(fontSize: 11)),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      // info & delete button
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // delete button
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          // info & delete button
                           Container(
                             color: Colors.white,
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
+                                splashColor: Colors.red,
                                 onTap: () {
-                                  _deleteInList(SearchSchool.schoolList[i]);
+                                  _deleteInList(SchoolList.schoolList[i]);
                                   print('delete');
                                 },
                                 overlayColor:
-                                MaterialStateProperty.all(Colors.red),
+                                    MaterialStateProperty.all(Colors.red),
                                 child: const Icon(
                                   Icons.delete_rounded,
                                   color: Colors.redAccent,
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          // info button
-                          Container(
-                            color: Colors.white,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  print('school info pagina');
-                                },
-                                overlayColor:
-                                MaterialStateProperty.all(Colors.grey),
-                                child: const Icon(
-                                  Icons.info_outline_rounded,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ),
+                          )
                         ],
-                      )
-                    ],
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -242,45 +212,7 @@ class _SearchSchoolState extends State<SearchSchool> {
               color: Colors.white,
               child: Column(
                 children: List.generate(resultList.length, (index) {
-                  if(SearchSchool.schoolList.isEmpty) {
-                    return Center(
-                      child: Container(
-                        child: Material(
-                          child: InkWell(
-                            splashColor: Colors.grey,
-                            onTap: () {
-                              _addToList(resultList[index]);
-
-                              floatingSearchBarController.close();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric( horizontal: 20, vertical: 25),
-                              child: Container(
-
-                                child: Center(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          resultList[index],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(height: 5,),
-                                        const Text('Straatnaan 12, stadnaam postcode',
-                                            style: TextStyle(
-                                                fontSize: 11, color: Colors.black54)),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                          ),
-                          color: Colors.transparent,
-                        ),
-                        color: Colors.white,
-                      ),
-                    );
-                  }
-                  else if (!SearchSchool.schoolList.contains(resultList[index]))  {
+                  if (SchoolList.schoolList.isEmpty) {
                     return Center(
                       child: Container(
                         child: Material(
@@ -293,23 +225,26 @@ class _SearchSchoolState extends State<SearchSchool> {
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                 vertical: 25, horizontal: 20.0),
+                                  horizontal: 20, vertical: 25),
                               child: Container(
-
                                 child: Center(
                                     child: Column(
-                                      children: [
-                                        Text(
-                                          resultList[index],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(height: 5,),
-                                        const Text('Straatnaan 12, stadnaam postcode',
-                                            style: TextStyle(
-                                                fontSize: 11, color: Colors.black54)),
-                                      ],
-                                    )),
+                                  children: [
+                                    Text(
+                                      resultList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    const Text(
+                                        'Straatnaan 12, stadnaam postcode',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.black54)),
+                                  ],
+                                )),
                               ),
                             ),
                           ),
@@ -318,11 +253,51 @@ class _SearchSchoolState extends State<SearchSchool> {
                         color: Colors.white,
                       ),
                     );
-                  }
-                  else {
+                  } else if (!SchoolList.schoolList
+                      .contains(resultList[index])) {
+                    return Center(
+                      child: Container(
+                        child: Material(
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            onTap: () {
+                              _addToList(resultList[index]);
+
+                              floatingSearchBarController.close();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 25, horizontal: 20.0),
+                              child: Container(
+                                child: Center(
+                                    child: Column(
+                                  children: [
+                                    Text(
+                                      resultList[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    const Text(
+                                        'Straatnaan 12, stadnaam postcode',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.black54)),
+                                  ],
+                                )),
+                              ),
+                            ),
+                          ),
+                          color: Colors.transparent,
+                        ),
+                        color: Colors.white,
+                      ),
+                    );
+                  } else {
                     return const SizedBox();
                   }
-
                 }),
               ),
             ),
