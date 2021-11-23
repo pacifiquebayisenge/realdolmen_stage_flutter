@@ -69,7 +69,7 @@ class _NotificationsState extends State<Notifications> {
             berPostcode2: 1500,
             berGemeente2: 'Halle',
             vraagGOK: true,
-            vraagTN: true));
+            vraagTN: true, schoolList: []));
 
     _listKey.currentState!.insertItem(0);
 
@@ -137,7 +137,11 @@ class _NotificationsState extends State<Notifications> {
             flexibleSpace: const FlexibleSpaceBar(
               centerTitle: true,
               title: Text('Notifications'),
-              background: FlutterLogo(),
+              background:   Image(
+                image: AssetImage('lib/images/81.png'),
+        fit: BoxFit.cover,
+                repeat: ImageRepeat.repeat,
+      ),
             ),
           ),
           SliverList(
@@ -145,43 +149,47 @@ class _NotificationsState extends State<Notifications> {
                   (BuildContext context, int index) {
                 return Container(
 
-                  decoration: BoxDecoration(
-                      color: Colors.white,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(image: AssetImage('lib/images/81.png'),fit: BoxFit.scaleDown,repeat: ImageRepeat.repeat,),
+
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30))),
                   // color: index.isOdd ? Colors.white : Colors.black12,
                   //height: 100.0,
-                  child: Column(
-                    children: List.generate(
-                      10,
-                          (index) {
-                        if (index == 9) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom:100.0),
-                            child: Container(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
+                    child: Column(
+                      children: List.generate(
+                        10,
+                            (index) {
+                          if (index == 9) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom:100.0),
+                              child: Container(
+                                color: index.isOdd
+                                    ? Colors.white
+                                    : Colors.grey,
+                                height: 100.0,
+                                child: Center(
+                                  child: Text('$index', textScaleFactor: 5),
+                                ),
+                              ),
+                            );
+                          }
+                          else {
+                            return Container(
                               color: index.isOdd
                                   ? Colors.white
-                                  : Colors.black12,
+                                  : Colors.grey,
                               height: 100.0,
                               child: Center(
                                 child: Text('$index', textScaleFactor: 5),
                               ),
-                            ),
-                          );
-                        }
-                        else {
-                          return Container(
-                            color: index.isOdd
-                                ? Colors.white
-                                : Colors.black12,
-                            height: 100.0,
-                            child: Center(
-                              child: Text('$index', textScaleFactor: 5),
-                            ),
-                          );
-                        }
-                      } ,
+                            );
+                          }
+                        } ,
+                      ),
                     ),
                   ),
                 );

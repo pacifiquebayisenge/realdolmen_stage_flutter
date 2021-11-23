@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:schooler/widgets/school_list.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'widgets.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -10,14 +11,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:page_slider/page_slider.dart';
 import 'package:progress_stepper/progress_stepper.dart';
 import 'package:schooler/classes/registration.dart';
-import 'package:schooler/services/globals.dart' as globals;
-import 'package:schooler/dummy_data/data.dart' as data;
 
 import 'bullet_list.dart';
 
 class FormQuestions extends StatefulWidget {
-  const FormQuestions({Key? key}) : super(key: key);
-
+  FormQuestions({Key? key, this.editRegi}) : super(key: key);
+  Registration? editRegi;
   @override
   _FormQuestionsState createState() => _FormQuestionsState();
 }
@@ -74,6 +73,51 @@ class _FormQuestionsState extends State<FormQuestions> {
   bool regiSucces = false;
   String resultImg = '';
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) => editRegistration());
+  }
+
+  void editRegistration() {
+    if (widget.editRegi != null) {
+      voornaam.text = widget.editRegi!.voornaam;
+      naam.text = widget.editRegi!.naam;
+      rijksNr.text = widget.editRegi!.rijksNr;
+      straat.text = widget.editRegi!.straat;
+      huisNr.text = widget.editRegi!.huisNr.toString();
+      busNr.text = widget.editRegi!.busNr!;
+      postcode.text = widget.editRegi!.postcode.toString();
+      gemeente.text = widget.editRegi!.gemeente;
+
+      oVoornaam1.text = widget.editRegi!.oVoornaam1!;
+      oNaam1.text = widget.editRegi!.oNaam1!;
+      beroep1.text = widget.editRegi!.beroep1!;
+      berStraat1.text = widget.editRegi!.berStraat1!;
+      berHuisNr1.text = widget.editRegi!.berHuisNr1!.toString();
+      berBusNr1.text = widget.editRegi!.berBusNr1!;
+      berPostcode1.text = widget.editRegi!.berPostcode1!.toString();
+      berGemeente1.text = widget.editRegi!.berGemeente1!;
+
+      if (widget.editRegi!.oVoornaam2 != null) {
+        secParent = true;
+
+        oVoornaam2.text = widget.editRegi!.oVoornaam2!;
+        oNaam2.text = widget.editRegi!.oNaam2!;
+        beroep2.text = widget.editRegi!.beroep2!;
+        berStraat2.text = widget.editRegi!.berStraat2!.toString();
+        berHuisNr2.text = widget.editRegi!.berHuisNr2!.toString();
+        berBusNr2.text = widget.editRegi!.berBusNr2!;
+        berPostcode2.text = widget.editRegi!.berPostcode2!.toString();
+        berGemeente2.text = widget.editRegi!.berGemeente2!;
+      }
+
+      widget.editRegi!.schoolList.forEach((element) {
+        SchoolList.schoolList.add(element);
+      });
+    }
+  }
+
   void t() {
     FirebaseFirestore.instance
         .collection('registrations')
@@ -84,7 +128,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         Timestamp timestamp;
         timestamp = doc['date'];
 
-        if (timestamp.toDate().day == 17) {
+        if (timestamp.toDate().day == 23) {
           FirebaseFirestore.instance
               .collection('registrations')
               .doc(doc.id)
@@ -212,7 +256,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
-  void nextStep() {
+  Future<void> nextStep() async {
     t();
     //print(checkStep());
 
@@ -227,50 +271,101 @@ class _FormQuestionsState extends State<FormQuestions> {
       print('Completed!');
       _thisForm.currentState!.save();
 
-      //  verstuur data naar de server
-      Registration.newRegi(
-              voornaam: voornaam.text,
-              naam: naam.text,
-              rijksNr: rijksNr.text,
-              straat: straat.text,
-              huisNr: int.parse(huisNr.text),
-              busNr: busNr.text,
-              postcode: int.parse(postcode.text),
-              gemeente: gemeente.text,
-              oVoornaam1: oVoornaam1.text,
-              oNaam1: oNaam1.text,
-              beroep1: beroep1.text,
-              berStraat1: berStraat1.text,
-              berHuisNr1: int.parse(berHuisNr1.text),
-              berBusNr1: berBusNr1.text,
-              berPostcode1: int.parse(berPostcode1.text),
-              berGemeente1: berGemeente1.text,
-              oVoornaam2: oVoornaam2.text,
-              oNaam2: oNaam2.text,
-              beroep2: beroep2.text,
-              berStraat2: berStraat2.text,
-              berHuisNr2: int.tryParse(berHuisNr2.text),
-              berBusNr2: berBusNr2.text,
-              berPostcode2: int.tryParse(berPostcode2.text),
-              berGemeente2: berGemeente2.text,
-              vraagGOK: vraagGOK,
-              vraagTN: vraagTN,
-              schoolList: SchoolList.schoolList)
-          .then((value) {
-        setState(() {
-          _currentStep += 1;
-          _slider.currentState!.next();
-          regiSucces = true;
-        });
 
-        //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
-      }).catchError((value) {
-        setState(() {
-          _currentStep += 1;
-          _slider.currentState!.next();
-          regiSucces = false;
+      //print(regi1.toString());
+
+      if (widget.editRegi != null) {
+        Registration regi1 = Registration(
+            voornaam: voornaam.text,
+            naam: naam.text,
+            rijksNr: rijksNr.text,
+            straat: straat.text,
+            huisNr: int.parse(huisNr.text),
+            busNr: busNr.text,
+            postcode: int.parse(postcode.text),
+            gemeente: gemeente.text,
+            oVoornaam1: oVoornaam1.text,
+            oNaam1: oNaam1.text,
+            beroep1: beroep1.text,
+            berStraat1: berStraat1.text,
+            berHuisNr1: int.parse(berHuisNr1.text),
+            berBusNr1: berBusNr1.text,
+            berPostcode1: int.parse(berPostcode1.text),
+            berGemeente1: berGemeente1.text,
+            oVoornaam2: oVoornaam2.text,
+            oNaam2: oNaam2.text,
+            beroep2: beroep2.text,
+            berStraat2: berStraat2.text,
+            berHuisNr2: int.tryParse(berHuisNr2.text),
+            berBusNr2: berBusNr2.text,
+            berPostcode2: int.tryParse(berPostcode2.text),
+            berGemeente2: berGemeente2.text,
+            vraagGOK: vraagGOK,
+            vraagTN: vraagTN,
+            schoolList: SchoolList.schoolList,
+            id: widget.editRegi!.id);
+        await regi1.editRegi().then((value) {
+          setState(() {
+            _currentStep += 1;
+            _slider.currentState!.next();
+            regiSucces = true;
+          });
+
+          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+        }).catchError((value) {
+          print(value);
+          setState(() {
+            _currentStep += 1;
+            _slider.currentState!.next();
+            regiSucces = false;
+          });
         });
-      });
+      } else {
+        //  verstuur data naar de server
+        Registration.newRegi(
+                voornaam: voornaam.text,
+                naam: naam.text,
+                rijksNr: rijksNr.text,
+                straat: straat.text,
+                huisNr: int.parse(huisNr.text),
+                busNr: busNr.text,
+                postcode: int.parse(postcode.text),
+                gemeente: gemeente.text,
+                oVoornaam1: oVoornaam1.text,
+                oNaam1: oNaam1.text,
+                beroep1: beroep1.text,
+                berStraat1: berStraat1.text,
+                berHuisNr1: int.parse(berHuisNr1.text),
+                berBusNr1: berBusNr1.text,
+                berPostcode1: int.parse(berPostcode1.text),
+                berGemeente1: berGemeente1.text,
+                oVoornaam2: oVoornaam2.text,
+                oNaam2: oNaam2.text,
+                beroep2: beroep2.text,
+                berStraat2: berStraat2.text,
+                berHuisNr2: int.tryParse(berHuisNr2.text),
+                berBusNr2: berBusNr2.text,
+                berPostcode2: int.tryParse(berPostcode2.text),
+                berGemeente2: berGemeente2.text,
+                vraagGOK: vraagGOK,
+                vraagTN: vraagTN,
+                schoolList: SchoolList.schoolList)
+            .then((value) {
+          setState(() {
+            _currentStep += 1;
+            _slider.currentState!.next();
+            regiSucces = true;
+          });
+
+          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+        }).catchError((value) {
+          setState(() {
+            _currentStep += 1;
+            _slider.currentState!.next();
+            regiSucces = false;
+          });
+        });
+      }
     }
     //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
     else if (_currentStep == 2 && secParent == false) {
@@ -393,9 +488,6 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   @override
   Widget build(BuildContext context) {
-    // Expanded widget gebruikt om de render layout overflow te fixen
-    // bron: https://stackoverflow.com/questions/57203505/flutter-stretch-columns-to-full-screen-height
-
     return Column(
       children: <Widget>[
         // step indicator widget

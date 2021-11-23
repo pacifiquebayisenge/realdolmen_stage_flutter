@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:schooler/pages/home.dart';
+import 'package:schooler/pages/login.dart';
 import 'package:schooler/pages/new.dart';
 import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
@@ -19,8 +20,9 @@ void main()  {
     theme: ThemeData(
       primaryColor: Colors.indigo.shade800,
     ),
-    home: App(),
+    home: Login(),
     routes: {
+      'login' : (context) => Login(),
       'home': (context) => Home(),
       'new': (context) => New(),
       'notifications': (context) => Notifications(),
@@ -35,21 +37,7 @@ class App extends StatefulWidget {
   @override
   State<App> createState() => _AppState();
 }
-/*FutureBuilder(
 
-        future: _fbApp,
-      builder: ( context, snapshot) {
-         if (snapshot.hasError) {
-           print('You have an error ! ${snapshot.error.toString()}');
-           return Text('Something went wrong!');
-         } else if (snapshot.hasData) {
-           return App();
-         } else {
-           return Center(
-             child: CircularProgressIndicator(),
-           );
-         }
-      },)*/
 class _AppState extends State<App> {
 
   // Set default `_initialized` and `_error` state to false
@@ -117,7 +105,7 @@ class _AppState extends State<App> {
                 berPostcode2: 1500,
                 berGemeente2: 'Halle',
                 vraagGOK: true,
-                vraagTN: true, schoolList: null);
+                vraagTN: true, schoolList: ['school 1','school 2', 'school 3']);
 
             print("Open home page");
             // Navigator.pushReplacementNamed(context, '/');
@@ -171,18 +159,23 @@ class _AppState extends State<App> {
         if(_selectedIndex == 3)
         IconButton(
           onPressed: () {},
-          icon: Icon(Icons.more_vert),
+          icon: const Icon(Icons.more_vert),
 
         )
       ],
-      backgroundColor: Colors.indigo.shade800,
+      flexibleSpace: const Image(
+        image: AssetImage('lib/images/81.png'),
+        fit: BoxFit.cover,
+        repeat: ImageRepeat.repeat,
+      ),
+      backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      title: Text('Schooler'),
+      title: const Text('Schooler'),
     );
   }
 
-  final screens = [Home(), New(), Notifications(), Schools()];
+  final screens = [const Home(), const New(), Notifications(), const Schools(), Login()];
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +205,7 @@ class _AppState extends State<App> {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30)),
-                child: screens[_selectedIndex])),
+                child: screens[4])),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
           child: Container(

@@ -28,31 +28,31 @@ class _HomeState extends State<Home> {
     futureRegiRef = futureFetch();
     // stream reference om te gebruiken voor de real time changes
 
-streamList = streamFetch();
-_hasMore = true;
+    streamList = streamFetch();
+    _hasMore = true;
     super.initState();
   }
 
   Stream<QuerySnapshot> streamFetch() {
     return FirebaseFirestore.instance
         .collection('registrations')
-        .orderBy('date', descending: true).snapshots();
+        .orderBy('date', descending: true)
+        .snapshots();
   }
 
   // future reference methode om mee te geven aan de Future builder widget
   Future<QuerySnapshot<Object?>> futureFetch() async {
-
     await FirebaseFirestore.instance
         .collection('registrations')
         .orderBy('date', descending: true)
-        .get().then((QuerySnapshot querySnapshot) {
+        .get()
+        .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         setState(() {
           dataCount += 1;
         });
       });
     });
-
 
     return await FirebaseFirestore.instance
         .collection('registrations')
@@ -80,44 +80,106 @@ _hasMore = true;
     });
   }
 
+
+
+  showSnackbar(String text) {
+    // snackbar widget om verwijdering van de registratie te bevestigen
+    final snackBar = SnackBar(
+      content: ClipRRect(
+        borderRadius: BorderRadius.all(const Radius.circular(10)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+          color: const Color.fromRGBO(54, 60, 69, 1),
+          child:  Text(
+            text,
+            style: const TextStyle(color: Colors.orange),
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   // methode pm de realtime changes in de database op te volgen
   void realtime() {
-
-
     streamList.listen((event) {
-      // als er een inschrijving wordt toegevoegd
-      if (event.docChanges.first.type == DocumentChangeType.added) {
-        // kijken of het maar om 1 data gaat
-        if (event.docChanges.length < 2) {
-          // nieuwe inschrijving toevoegen aan de lijst
-          regiList.insert(
-              0,
-              Registration.toRegi(event.docs.first.id,
-                  event.docs.first.data() as Map<String, dynamic>));
+      // kijken of het maar om 1 data gaat
+      if (event.docChanges.length > 1) return;
 
-          // toevoeg animatie aan de animated list widget
-          _listKey.currentState!.insertItem(0);
-        }
-      }
+      switch (event.docChanges.first.type) {
+        // als er een inschrijving wordt toegevoegd
+        case DocumentChangeType.added:
+          {
+            // nieuwe inschrijving toevoegen aan de lijst
+            regiList.insert(
+                0,
+                Registration.toRegi(event.docChanges.first.doc.id,
+                    event.docChanges.first.doc.data() as Map<String, dynamic>));
 
-      // wanneer een inschrijving wordt verwijderd
-      if (event.docChanges.first.type == DocumentChangeType.removed) {
-        // kijken of het maar om 1 data gaat
-        if (event.docChanges.length < 2) {
-          print(event.docs.first.id);
-          // verwijder animatie aan de animated list widget
-          _listKey.currentState!.removeItem(
-              event.docChanges.first.oldIndex,
-              (context, animation) => SlideTransition(
-                    position: animation
-                        .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                    child:
-                        CustomCard(registration: regiList[event.docChanges.first.oldIndex], navMethod: () {}),
-                  ));
+            // toevoeg animatie aan de animated list widget
+            _listKey.currentState!.insertItem(0);
 
-          //  inschrijving verwijderen uit de lijst
-          regiList.removeAt(event.docChanges.first.oldIndex);
-        }
+            // show bevestiging
+            showSnackbar('Registration successfully added');
+          }
+          break;
+
+        // wanneer een inschrijving wordt verwijderd
+        case DocumentChangeType.removed:
+          {
+            // verwijder animatie aan de animated list widget
+            _listKey.currentState!.removeItem(
+                event.docChanges.first.oldIndex,
+                (context, animation) => SlideTransition(
+                      position: animation
+                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                      child: CustomCard(
+                          registration:
+                              regiList[event.docChanges.first.oldIndex],
+                          navMethod: () {}),
+                    ));
+
+            //  inschrijving verwijderen uit de lijst
+            regiList.removeAt(event.docChanges.first.oldIndex);
+
+            // show bevestiging
+            showSnackbar('Registration successfully deleted');
+          }
+          break;
+
+      // wanneer een inschrijving wordt gewijzigd
+        case DocumentChangeType.modified:
+          {
+            // verwijder animatie aan de animated list widget
+            _listKey.currentState!.removeItem(
+                event.docChanges.first.oldIndex,
+                (context, animation) => SlideTransition(
+                      position: animation
+                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                      child: CustomCard(
+                          registration:
+                              regiList[event.docChanges.first.oldIndex],
+                          navMethod: () {}),
+                    ));
+
+            //  inschrijving verwijderen uit de lijst
+            regiList.removeAt(event.docChanges.first.oldIndex);
+
+            // nieuwe inschrijving toevoegen aan de lijst
+            regiList.insert(
+                event.docChanges.first.oldIndex,
+                Registration.toRegi(event.docChanges.first.doc.id,
+                    event.docChanges.first.doc.data() as Map<String, dynamic>));
+
+            // toevoeg animatie aan de animated list widget
+            _listKey.currentState!.insertItem(event.docChanges.first.oldIndex);
+
+            // show bevestiging
+            showSnackbar('Registration successfully modified');
+          }
+          break;
       }
     });
   }
@@ -125,7 +187,15 @@ _hasMore = true;
   @override
   Widget build(BuildContext context) {
     return Container(
-
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'lib/images/81.png',
+          ),
+          repeat: ImageRepeat.repeat,
+          fit: BoxFit.scaleDown,
+        ),
+      ),
       child: FutureBuilder<QuerySnapshot>(
         future: futureRegiRef,
         builder: (context, snapshot) {
@@ -141,13 +211,14 @@ _hasMore = true;
               child: Padding(
                 padding: const EdgeInsets.only(top: 150.0),
                 child: Column(
-
                   children: const [
                     SpinKitSpinningLines(
                       color: Color.fromRGBO(234, 144, 16, 1),
                       size: 150,
                     ),
-                    SizedBox(height: 30,),
+                    SizedBox(
+                      height: 30,
+                    ),
                     Text('Loading...'),
                   ],
                 ),
@@ -166,7 +237,7 @@ _hasMore = true;
               getRegisList(documents);
 
               return DelayedDisplay(
-                delay: Duration(milliseconds: 200),
+                delay: const Duration(milliseconds: 200),
                 child: AnimatedList(
                   key: _listKey,
                   initialItemCount: regiList.length,
@@ -237,6 +308,7 @@ _hasMore = true;
                 ),
               );
             } else {
+              // geen inschrijvingen: call to action
               return Container(
                 color: Colors.white,
                 height: MediaQuery.of(context).size.height,
@@ -288,15 +360,15 @@ _hasMore = true;
               );
             }
           }
+          // something went wrong
           if (snapshot.hasError) {
             return Container(
               color: Colors.white,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: Padding(
-                padding: const EdgeInsets.only(top:100.0),
+                padding: const EdgeInsets.only(top: 100.0),
                 child: Column(
-
                   children: const [
                     DelayedDisplay(
                       delay: Duration(milliseconds: 500),
@@ -325,18 +397,20 @@ _hasMore = true;
             );
           }
 
+          // loading screen
           return Container(
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.only(top: 150.0),
               child: Column(
-
                 children: const [
                   SpinKitSpinningLines(
                     color: Color.fromRGBO(234, 144, 16, 1),
                     size: 150,
                   ),
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Text('Loading...'),
                 ],
               ),

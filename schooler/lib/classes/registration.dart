@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:schooler/dummy_data/data.dart';
-import 'package:schooler/services/globals.dart';
 
 @immutable
 class Registration {
@@ -23,14 +21,14 @@ class Registration {
   late final String gemeente;
 
   // vragen over eerste ouder
-  late final String oVoornaam1;
-  late final String oNaam1;
-  late final String beroep1;
-  late final String berStraat1;
-  late final int berHuisNr1;
+  late final String? oVoornaam1;
+  late final String? oNaam1;
+  late final String? beroep1;
+  late final String? berStraat1;
+  late final int? berHuisNr1;
   late final String? berBusNr1;
-  late final int berPostcode1;
-  late final String berGemeente1;
+  late final int? berPostcode1;
+  late final String? berGemeente1;
 
   // vragen over tweede ouder
   late final String? oVoornaam2;
@@ -43,8 +41,14 @@ class Registration {
   late final String? berGemeente2;
 
   // vooorangsvragen
-  late final bool vraagGOK;
-  late final bool vraagTN;
+  late final bool? vraagGOK;
+  late final bool? vraagTN;
+
+  // schoolLijst
+  late final List<dynamic> schoolList;
+// Firestore collectie reference naar de regstratie collectie
+  CollectionReference _regiRef =
+      FirebaseFirestore.instance.collection('registrations');
 
   Registration(
       {required this.id,
@@ -73,7 +77,8 @@ class Registration {
       required this.berPostcode2,
       required this.berGemeente2,
       required this.vraagGOK,
-      required this.vraagTN});
+      required this.vraagTN,
+      required this.schoolList});
 
   // methode om de geboorte datum te bekomen
   String getBDate() {
@@ -149,6 +154,10 @@ class Registration {
         \n
         vraagGOK: $vraagGOK
         vraagTN: $vraagTN
+        \n
+         --- schoollijst --- 
+        \n
+        schoollijst: $schoolList
 
         ''';
   }
@@ -190,13 +199,58 @@ class Registration {
             berPostcode2: doc['berPostcode2'],
             berGemeente2: doc['berGemeente2'],
             vraagGOK: doc['vraagGOK'],
-            vraagTN: doc['vraagTN']);
+            vraagTN: doc['vraagTN'],
+            schoolList: ['schoolList']);
 
         regiList.add(regi);
       });
     });
 
     return regiList;
+  }
+
+  Future<void> deleteRegi() async {
+    _regiRef
+        .doc(id)
+        .delete()
+        .then((value) => print("Registration succesfully deleted "))
+        .catchError((error) => print("Failed to delete Registration: $error"));
+  }
+
+  Future<void> editRegi() async {
+    _regiRef
+        .doc(id)
+        .update({
+          'voornaam': voornaam,
+          'naam': naam,
+          'rijksNr': rijksNr,
+          'straat': straat,
+          'huisNr': huisNr,
+          'busNr': busNr,
+          'postcode': postcode,
+          'gemeente': gemeente,
+          'oVoornaam1': oVoornaam1,
+          'oNaam1': oNaam1,
+          'beroep1': beroep1,
+          'berStraat1': berStraat1,
+          'berHuisNr1': berHuisNr1,
+          'berBusNr1': berBusNr1,
+          'berPostcode1': berPostcode1,
+          'berGemeente1': berGemeente1,
+          'oVoornaam2': oVoornaam2,
+          'oNaam2': oNaam2,
+          'beroep2': beroep2,
+          'berStraat2': berStraat2,
+          'berHuisNr2': berHuisNr2,
+          'berBusNr2': berBusNr2,
+          'berPostcode2': berPostcode2,
+          'berGemeente2': berGemeente2,
+          'vraagGOK': vraagGOK,
+          'vraagTN': vraagTN,
+          'schoolList': schoolList
+        })
+        .then((value) => print("Registration succesfully updated "))
+        .catchError((error) => print("Failed to update Registration: $error"));
   }
 
   // methode om nieuwe registratie naar de server te versturen
@@ -262,9 +316,7 @@ class Registration {
           'berGemeente2': berGemeente2,
           'vraagGOK': vraagGOK,
           'vraagTN': vraagTN,
-      'schoolList': schoolList
-
-
+          'schoolList': schoolList
         })
         .then((value) => print("Registration succesfully added "))
         .catchError((error) => print("Failed to add Registration: $error"));
@@ -299,6 +351,7 @@ class Registration {
         berPostcode2: data['berPostcode2'],
         berGemeente2: data['berGemeente2'],
         vraagGOK: data['vraagGOK'],
-        vraagTN: data['vraagTN']);
+        vraagTN: data['vraagTN'],
+        schoolList: data['schoolList']);
   }
 }
