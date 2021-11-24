@@ -713,7 +713,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * Schools page
   * Google maps implentatie documentatie
   * Google maps route beschrijving -> 60% : toont random route
-  * Google cloud platform cloud functions -> budgetering 
+  * Google cloud platform cloud functions -> budgetering
   * Info pagina om scholen info weer te geven
 
 * Firebase
@@ -721,6 +721,105 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Notities & aanwijzingen toepassen
   * Appbar animatie? -> sliver Appbar -> 80%
+  * Nieuwe notities -> 50 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+
+---
+---
+---
+
+#### 22/11 Maandag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 60 %
+  * Crud toepassingen : verwijderen + aanpassen
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 60%
+  * Google cloud platform cloud functions -> budgetering -> 80%
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Notities & aanwijzingen toepassen
+  * Nieuwe notities -> 50 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+
+#### 23/11 Dinsdag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> 20%
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 80 %
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Google cloud platform cloud functions -> budgetering -> fix
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Login
+  * zoeken naar een gepaste UI design
+
+* Notities & aanwijzingen toepassen
+  
+  * Nieuwe notities -> 50 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+
+#### 24/11 Woensdag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> 20%
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 80 %
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Google cloud platform cloud functions -> budgetering -> fix
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Login
+  * zoeken naar een gepaste UI design
+  * toepassen
+  * Firebase AUTH documentqtie 
+
+* Notities & aanwijzingen toepassen
+  
   * Nieuwe notities -> 50 %
 
 * TO DO
