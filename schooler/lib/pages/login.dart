@@ -11,6 +11,621 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  late Widget currWidget = Container();
+  bool isLogin = true;
+
+  // om van login naar sign up te veranderen en omgekeerd
+  changeMode() {
+    setState(() {
+      // als login true is, toon sign up
+      if (isLogin) {
+        currWidget = Container(
+          key: ValueKey<int>(0),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // login op de achtergrond
+              Container(
+                child: ClipPath(
+                  clipper: LoginClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration:
+                    BoxDecoration(color: Colors.white.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 30),
+                          child: Text(
+                            'Login',
+                            style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 30,
+                                color: Colors.grey.shade600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // sing up vooraan
+              CustomPaint(
+                // schaduw van de clipped widget
+                painter: SignUpShadowPaint(),
+                child: ClipPath(
+                  // clip path om de vorm van login te maken
+                  clipper: SignUpClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Spacer(),
+                            Container(
+                              margin: const EdgeInsets.only(right: 15),
+                              child: Text(
+                                'Sign up',
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Spacer(),
+                            Container(
+                              height: 12,
+                              margin: EdgeInsets.only(right: 20),
+                              width: 100,
+                              child: Card(
+                                elevation: 2,
+                                color: Colors.indigo.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  Icons.mail,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Email',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  FontAwesomeIcons.eyeSlash,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Password',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  FontAwesomeIcons.eyeSlash,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Confirm Password',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // ontzichtbare knop om van mode te veranderen
+              Positioned(
+                top: 5,
+                left: 0,
+                child: GestureDetector(
+                  onTap: changeMode,
+                  child: Container(
+                    height: 85,
+                    width: 150 ,
+                    color: Colors.transparent,),
+                ),
+              ),
+              // sign up button
+              Positioned(
+                left: MediaQuery.of(context).size.width*0.26,
+
+                bottom: -20,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: Colors.indigo.shade800,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(1),
+                              spreadRadius: -5,
+                              blurRadius: 15,
+                              offset: const Offset(6, 6),
+                            )
+                          ]),
+                      child: MaterialButton(
+                        onPressed: () {},
+                        elevation: 2,
+                        child: Text(
+                          'Sign up',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+
+        isLogin = false;
+      }
+      //als login false is, toon login
+      else {
+
+        currWidget = Container(
+          key: ValueKey<int>(1),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Sign up achtergrond
+              Container(
+                child: ClipPath(
+                  clipper: SignUpClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration:
+                    BoxDecoration(color: Colors.white.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 30, top: 0, right: 15),
+                          child: Text(
+                            'Sign up',
+                            style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 30,
+                                color: Colors.grey.shade500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // login vooraan
+              CustomPaint(
+                // schaduw van de clipped widget
+                painter: LoginShadowPaint(),
+                child: ClipPath(
+                  // clip path om de vorm van login te maken
+                  clipper: LoginClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 30),
+                          child: Text(
+                            'Login',
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 12,
+                          margin: EdgeInsets.only(left: 30),
+                          width: 90,
+                          child: Card(
+                            elevation: 2,
+                            color: Colors.indigo.shade800,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  Icons.mail,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Email',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  FontAwesomeIcons.eyeSlash,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Password',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(right: 28),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Spacer(),
+                              Text(
+                                'Forgot Password ?',
+                                style: GoogleFonts.roboto(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.indigo.shade800),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // ontzichtbare knop om van mode te veranderen
+              Positioned(
+                top: 5,
+                right: 0,
+                child: GestureDetector(
+                  onTap: changeMode,
+                  child: Container(
+                    height: 85,
+                    width: 150 ,
+                    color: Colors.transparent,),
+                ),
+              ),
+              // login knop
+              Positioned(
+                  left: MediaQuery.of(context).size.width*0.26,
+
+                  bottom: -20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.indigo.shade800,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(30),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(1),
+                                spreadRadius: -5,
+                                blurRadius: 15,
+                                offset: const Offset(6, 6),
+                              )
+                            ]),
+                        child: MaterialButton(
+                          onPressed: () {},
+                          elevation: 2,
+                          child: Text(
+                            'Log in',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ))
+            ],
+          ),
+        );
+
+        isLogin = true;
+      }
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    // methode om te wachten tot alle widgets gebouwd zijn
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+    // standdard login tonen
+    currWidget = Container(
+      key: ValueKey<int>(1),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Sign up achtergrond
+              Container(
+                child: ClipPath(
+                  clipper: SignUpClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration:
+                        BoxDecoration(color: Colors.white.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 30, top: 0, right: 15),
+                          child: Text(
+                            'Sign up',
+                            style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 30,
+                                color: Colors.grey.shade500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              CustomPaint(
+                // schaduw van de clipped widget
+                painter: LoginShadowPaint(),
+                child: ClipPath(
+                  // clip path om de vorm van login te maken
+                  clipper: LoginClipper(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 30),
+                          child: Text(
+                            'Login',
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 12,
+                          margin: EdgeInsets.only(left: 30),
+                          width: 90,
+                          child: Card(
+                            elevation: 2,
+                            color: Colors.indigo.shade800,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  Icons.mail,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Email',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          margin: EdgeInsets.only(left: 30),
+                          height: 60,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  FontAwesomeIcons.eyeSlash,
+                                  size: 24,
+                                  color: Colors.indigo.shade800,
+                                ),
+                                labelText: 'Password',
+                                labelStyle: GoogleFonts.roboto(
+                                    fontSize: 16, color: Colors.grey.shade500)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(right: 28),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Spacer(),
+                              Text(
+                                'Forgot Password ?',
+                                style: GoogleFonts.roboto(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.indigo.shade800),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 5,
+                right: 0,
+                child: GestureDetector(
+                  onTap: changeMode,
+                  child: Container(
+                    height: 85,
+                    width: 150 ,
+                    color: Colors.transparent),
+                ),
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width*0.26,
+
+                bottom: -20,
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: Colors.indigo.shade800,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(1),
+                            spreadRadius: -5,
+                            blurRadius: 15,
+                            offset: const Offset(6, 6),
+                          )
+                        ]),
+                    child: MaterialButton(
+                      onPressed: () {},
+                      elevation: 2,
+                      child: Text(
+                        'Log in',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+            ],
+          ),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +650,7 @@ class _LoginState extends State<Login> {
             ),
             Text(
               'Schooler',
-              style: GoogleFonts.roboto(
+              style: GoogleFonts.montserrat(
                   fontSize: 35,
                   fontWeight: FontWeight.w900,
                   color: Colors.white),
@@ -47,8 +662,10 @@ class _LoginState extends State<Login> {
               height: MediaQuery.of(context).size.height * 0.6,
               width: MediaQuery.of(context).size.width * 0.85,
               child: Stack(
-                children: [
+                children:  [
+/*
                   // Sign in
+                  isLogin?
                   Positioned(
                     child: Container(
                       child: Stack(
@@ -69,15 +686,16 @@ class _LoginState extends State<Login> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     const SizedBox(
-                                      height: 20,
+                                      height: 25,
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(left: 30, top: 0, right: 10),
+                                      margin: const EdgeInsets.only(left: 30, top: 0, right: 15),
                                       child: Text(
-                                        'Signup',
+                                        'Sign up',
                                         style: GoogleFonts.montserrat(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 30,
+                                          color: Colors.grey.shade500
                                         ),
                                       ),
                                     ),
@@ -88,6 +706,7 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
+
                           CustomPaint(
                             // schaduw van de clipped widget
                             painter: LoginShadowPaint(),
@@ -110,7 +729,7 @@ class _LoginState extends State<Login> {
                                       height: 25,
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(left: 20),
+                                      margin: const EdgeInsets.only(left: 30),
                                       child: Text(
                                         'Login',
                                         style: GoogleFonts.montserrat(
@@ -121,7 +740,7 @@ class _LoginState extends State<Login> {
                                     ),
                                     Container(
                                       height: 12,
-                                      margin: EdgeInsets.only(left: 20),
+                                      margin: EdgeInsets.only(left: 30),
                                       width: 90,
                                       child: Card(
                                         elevation: 2,
@@ -129,7 +748,7 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 60,
+                                      height: 40,
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width *
@@ -195,7 +814,7 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
-                          Positioned(
+                           Positioned(
                               left: MediaQuery.of(context).size.width*0.27,
                               bottom: -15,
                               child: Row(
@@ -223,26 +842,62 @@ class _LoginState extends State<Login> {
                                       onPressed: () {},
                                       elevation: 2,
                                       child: Text(
-                                        'Login',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
+                                        'Log in',
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
                                             color: Colors.white),
                                       ),
                                     ),
                                   ),
                                 ],
                               ))
+
                         ],
                       ),
                     ),
-                  ),
-/*
+                  ):
+
+
                   // Sign up
                   Positioned(
                     child: Container(
                       child: Stack(
+                        clipBehavior: Clip.none,
                         children: [
+                          // login op de achtergrond
+                          Container(
+                            child: ClipPath(
+                              clipper: LoginClipper(),
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height / 1.6,
+                                width: MediaQuery.of(context).size.width / 1.2,
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.8)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 25,
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.only(left: 30),
+                                      child: Text(
+                                        'Login',
+                                        style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 30,
+                                            color: Colors.grey.shade500),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          // sing up vooraan
                           CustomPaint(
                             // schaduw van de clipped widget
                             painter: SignUpShadowPaint(),
@@ -255,35 +910,176 @@ class _LoginState extends State<Login> {
                                 width: MediaQuery.of(context).size.width / 1.2,
                                 decoration:
                                     const BoxDecoration(color: Colors.white),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 25,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Spacer(),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 15),
+                                          child: Text(
+                                            'Sign up',
+                                            style: GoogleFonts.montserrat(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Spacer(),
+                                        Container(
+                                          height: 12,
+                                          margin: EdgeInsets.only(right: 20),
+                                          width: 100,
+                                          child: Card(
+                                            elevation: 2,
+                                            color: Colors.indigo.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      margin: EdgeInsets.only(left: 30),
+                                      height: 60,
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                            icon: Icon(
+                                              Icons.mail,
+                                              size: 24,
+                                              color: Colors.indigo.shade800,
+                                            ),
+                                            labelText: 'Email',
+                                            labelStyle: GoogleFonts.roboto(
+                                                fontSize: 16,
+                                                color: Colors.grey.shade500)),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      margin: EdgeInsets.only(left: 30),
+                                      height: 60,
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                            icon: Icon(
+                                              FontAwesomeIcons.eyeSlash,
+                                              size: 24,
+                                              color: Colors.indigo.shade800,
+                                            ),
+                                            labelText: 'Password',
+                                            labelStyle: GoogleFonts.roboto(
+                                                fontSize: 16,
+                                                color: Colors.grey.shade500)),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      margin: EdgeInsets.only(left: 30),
+                                      height: 60,
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                            icon: Icon(
+                                              FontAwesomeIcons.eyeSlash,
+                                              size: 24,
+                                              color: Colors.indigo.shade800,
+                                            ),
+                                            labelText: 'Confirm Password',
+                                            labelStyle: GoogleFonts.roboto(
+                                                fontSize: 16,
+                                                color: Colors.grey.shade500)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          Container(
-                            child: ClipPath(
-                              clipper: LoginClipper(),
-                              child: Container(
-                                height:
-                                    MediaQuery.of(context).size.height / 1.6,
-                                width: MediaQuery.of(context).size.width / 1.2,
-                                decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.8)),
-                              ),
+                          Positioned(
+                            left: MediaQuery.of(context).size.width * 0.27,
+                            bottom: -15,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 120,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Colors.indigo.shade800,
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(1),
+                                          spreadRadius: -5,
+                                          blurRadius: 15,
+                                          offset: const Offset(6, 6),
+                                        )
+                                      ]),
+                                  child: MaterialButton(
+                                    onPressed: () {},
+                                    elevation: 2,
+                                    child: Text(
+                                      'Sign up',
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white70),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                   ),
-                   */
+
+*/
+
+                  AnimatedSwitcher(
+
+                    duration: const Duration(milliseconds: 250),
+                    child: currWidget,
+                  )
                 ],
               ),
             ),
+
           ],
         ),
       ),
     );
   }
 }
+
 
 // clip punten om de vorm van de widget te bepalen
 // aangepast naar eigen smaakt
@@ -301,9 +1097,9 @@ class LoginClipper extends CustomClipper<Path> {
     clip.quadraticBezierTo(
         size.width, size.height, size.width, size.height - 70);
 
-    clip.lineTo(size.width, size.height * 0.3 + 50);
-    clip.quadraticBezierTo(
-        size.width, size.height * 0.3, size.width - 50, size.height * 0.3 - 50);
+    clip.lineTo(size.width, size.height / 100 * 0.3 + 50);
+    clip.quadraticBezierTo(size.width, size.height * 0.25, size.width - 50,
+        size.height * 0.3 - 50);
 
     clip.lineTo(70, 0);
     clip.quadraticBezierTo(0, 0, 0, 70);
@@ -330,9 +1126,9 @@ class SignUpClipper extends CustomClipper<Path> {
     clip.lineTo(70, size.height);
     clip.quadraticBezierTo(0, size.height, 0, size.height - 70);
 
-    clip.lineTo(0, size.height * 0.3 + 50);
-    clip.quadraticBezierTo(0, size.height * 0.3, 50, size.height * 0.3 - 50);
-    clip.lineTo(size.width - 70, 0);
+    clip.lineTo(0, size.height / 100 * 0.3 + 50);
+    clip.quadraticBezierTo(5, size.height * 0.23, 40, size.height * 0.25 - 20);
+    clip.lineTo(size.width - 75, 5);
 
     clip.quadraticBezierTo(size.width, 0, size.width, 70);
 
@@ -403,27 +1199,3 @@ class SignUpShadowPaint extends CustomPainter {
     return oldDelegate != this;
   }
 }
-/*
-*
-* Text(
-              'Schooler',
-              style: GoogleFonts.roboto(
-                  fontSize: 35,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-*
-*
-* ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              child: Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: MediaQuery.of(context).size.height / 2,
-                  color: Colors.white,
-                  ),
-            ),
-            *
-            * */
