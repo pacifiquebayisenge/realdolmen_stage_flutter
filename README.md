@@ -816,7 +816,41 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 * Login
   * zoeken naar een gepaste UI design
   * toepassen
-  * Firebase AUTH documentqtie 
+  * Firebase AUTH documentqtie
+
+* Notities & aanwijzingen toepassen
+  
+  * Nieuwe notities -> 50 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+
+#### 25/11 Donderdag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> 20%
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 80 %
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Google cloud platform cloud functions -> budgetering -> fix
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Login + sign up
+  * zoeken naar een gepaste UI design - afgewerkt
+  * animatie afgewerkt 
+  * Firebase AUTH documentatie
 
 * Notities & aanwijzingen toepassen
   
