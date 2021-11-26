@@ -78,6 +78,41 @@ class _FormQuestionsState extends State<FormQuestions> {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) => editRegistration());
   }
+  @override
+  void dispose() {
+
+    voornaam.dispose();
+    naam.dispose();
+    rijksNr.dispose();
+
+
+    straat.dispose();
+    huisNr.dispose();
+    busNr.dispose();
+    postcode.dispose();
+    gemeente.dispose();
+
+
+    oVoornaam1.dispose();
+    oNaam1.dispose();
+    beroep1.dispose();
+    berStraat1.dispose();
+    berHuisNr1.dispose();
+    berBusNr1.dispose();
+    berPostcode1.dispose();
+    berGemeente1.dispose();
+
+
+    oVoornaam2.dispose();
+    oNaam2.dispose();
+    beroep2.dispose();
+    berStraat2.dispose();
+    berHuisNr2.dispose();
+    berBusNr2.dispose();
+    berPostcode2.dispose();
+    berGemeente2.dispose();
+    super.dispose();
+  }
 
   void editRegistration() {
     if (widget.editRegi != null) {

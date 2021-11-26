@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/pages/home.dart';
 import 'package:schooler/pages/login.dart';
 import 'package:schooler/pages/new.dart';
@@ -11,14 +13,19 @@ import 'package:schooler/widgets/widgets.dart';
 
 import 'classes/registration.dart';
 
-void main()  {
+Future<void> main()  async {
   WidgetsFlutterBinding.ensureInitialized();
- // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     color: Colors.indigo.shade800,
     theme: ThemeData(
       primaryColor: Colors.indigo.shade800,
+      textTheme: GoogleFonts.montserratTextTheme(),
+      appBarTheme:  AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle(),
+        color: Colors.blue.shade900,
+      ),
     ),
     home: Login(),
     routes: {
@@ -40,22 +47,25 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
 
-  // Set default `_initialized` and `_error` state to false
+  // staat van flutter firebase
   bool _initialized = false;
   bool _error = false;
 
-  // Define an async function to initialize FlutterFire
+
+  // async funtie om firebase te initialiseren
   void initializeFlutterFire() async {
     try {
-      // Wait for Firebase to initialize and set `_initialized` state to true
+      // wachten tot firebase init
       await Firebase.initializeApp();
       setState(() {
         _initialized = true;
+        print("FIRE");
       });
     } catch(e) {
-      // Set `_error` state to true if Firebase initialization fails
+      // bij firebase init error
       setState(() {
         _error = true;
+        print("NO FIRE ");
       });
     }
   }

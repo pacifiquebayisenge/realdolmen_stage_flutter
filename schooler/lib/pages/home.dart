@@ -33,6 +33,7 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+
   Stream<QuerySnapshot> streamFetch() {
     return FirebaseFirestore.instance
         .collection('registrations')
