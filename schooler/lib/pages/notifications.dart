@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'package:schooler/dummy_data/data.dart';
@@ -115,7 +116,7 @@ class _NotificationsState extends State<Notifications> {
         0,
         (context, animation) => SlideTransition(
               position: animation
-                  .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                  .drive(Tween(begin: Offset(1, 0), end: const Offset(0, 0))),
               child:
                   CustomCard(registration: registerList[0], navMethod: () {}),
             ));
@@ -124,6 +125,7 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.indigo.shade700,
       body: CustomScrollView(
         slivers: <Widget>[
@@ -134,10 +136,14 @@ class _NotificationsState extends State<Notifications> {
             snap: false,
             floating: false,
             expandedHeight: 100.0,
-            flexibleSpace: const FlexibleSpaceBar(
+            flexibleSpace:  FlexibleSpaceBar(
               centerTitle: true,
-              title: Text('Notifications'),
-              background:   Image(
+              title: Text('Notifications', style: GoogleFonts.montserrat(
+
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white),),
+              background:   const Image(
                 image: AssetImage('lib/images/81.png'),
         fit: BoxFit.cover,
                 repeat: ImageRepeat.repeat,
@@ -149,16 +155,15 @@ class _NotificationsState extends State<Notifications> {
                   (BuildContext context, int index) {
                 return Container(
 
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(image: AssetImage('lib/images/81.png'),fit: BoxFit.scaleDown,repeat: ImageRepeat.repeat,),
-
+                  decoration:  BoxDecoration(
+                   color: Colors.white,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30))),
                   // color: index.isOdd ? Colors.white : Colors.black12,
                   //height: 100.0,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
                     child: Column(
                       children: List.generate(
                         10,

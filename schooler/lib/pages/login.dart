@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:schooler/classes/user.dart' as thisUser;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -16,9 +17,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  // TODO: comments + remove prints
+
   Widget _currWidget = Container();
   Widget _errWidget = Container();
+  Widget _succWidget = Container();
   bool _isLogin = false;
+  bool _isSucces = false;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   // login text field controllers
@@ -29,6 +35,52 @@ class _LoginState extends State<Login> {
   final _signUpEmail = TextEditingController();
   final _signUpPwd = TextEditingController();
   final _signUpPwd2 = TextEditingController();
+
+  bool _customValidator() {
+    RegExp passwordRegex =
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$');
+
+    RegExp emailRegex =
+        RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+            r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+            r"{0,253}[a-zA-Z0-9])?)*$");
+
+    if (_isLogin == false) {
+      if (_signUpEmail.text.isEmpty ||
+          _signUpPwd.text.isEmpty ||
+          _signUpPwd2.text.isEmpty) {
+        _showErrMsg('Please fill in all fields !');
+        return false;
+      }
+
+      if (!emailRegex.hasMatch(_signUpEmail.text)) {
+        _showErrMsg("Please, enter a valid email ! ");
+        return false;
+      }
+
+      if (_signUpPwd.text != _signUpPwd2.text) {
+        _showErrMsg('Passwords do not match !');
+        return false;
+      }
+
+      if (!passwordRegex.hasMatch(_signUpPwd.text)) {
+        _showErrMsg("Password: [ A ,a , 1] \n 8 characters ! ");
+        return false;
+      }
+    } else {
+      if (_loginEmail.text.isEmpty || _loginPwd.text.isEmpty) {
+        _showErrMsg('Please fill in all fields !');
+        return false;
+      }
+
+      if (!emailRegex.hasMatch(_loginEmail.text)) {
+        _showErrMsg("Please, enter a valid email ! ");
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   // om van login naar sign up te veranderen en omgekeerd
   _changeMode() {
@@ -185,14 +237,6 @@ class _LoginState extends State<Login> {
                                     fontSize: 16, color: Colors.grey.shade500)),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          margin: const EdgeInsets.only(left: 40),
-                          height: 60,
-                          child: _errWidget)
                       ],
                     ),
                   ),
@@ -238,8 +282,9 @@ class _LoginState extends State<Login> {
                             )
                           ]),
                       child: MaterialButton(
-                        onPressed: () {_showErrMsg('test');}
-                        ,
+                        onPressed: () {
+                          _signUp();
+                        },
                         elevation: 2,
                         child: Text(
                           'Sign up',
@@ -441,7 +486,9 @@ class _LoginState extends State<Login> {
                               )
                             ]),
                         child: MaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _login();
+                          },
                           elevation: 2,
                           child: Text(
                             'Log in',
@@ -464,46 +511,112 @@ class _LoginState extends State<Login> {
   }
 
   _signUp() async {
-    if (_signUpPwd.text != _signUpPwd2.text) return;
+    if (_customValidator() == false) return;
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: _signUpEmail.text, password: _signUpPwd.text);
+      setState(() {
+        _isSucces = true;
+      });
+
+      thisUser.User.newUser(
+              uid: userCredential.user!.uid, email: _signUpEmail.text)
+          .then((value) {
+        _showSuccesMsg();
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        _showErrMsg('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        _showErrMsg('The account already exists for that email.');
+        _showErrMsg('The password provided is too weak !');
+      }
+      if (e.code == 'email-already-in-use') {
+        _showErrMsg('The account already exists for that email !');
       }
     } catch (e) {
-      _showErrMsg('Something went wrong, please try again later');
+      _showErrMsg('Something went wrong, please try again later.');
       print(e);
     }
   }
 
+  _login() async {
+    if (_customValidator() == false) return;
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _loginEmail.text, password: _loginPwd.text);
+
+      setState(() {
+        _isSucces = true;
+      });
+      _showSuccesMsg();
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        _showErrMsg('No user found for that email.');
+      }
+      if (e.code == 'wrong-password') {
+        _showErrMsg('Wrong password provided for that user.');
+      }
+    } catch (e) {
+      _showErrMsg('Something went wrong, please try again later.');
+      print(e);
+    }
+  }
+
+  _showSuccesMsg() {
+    String text = 'User is succesfully registred';
+
+    if (_isLogin) text = 'Login Succesfull';
+    setState(() {
+      _succWidget = Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.montserrat(
+            color: Colors.green, fontWeight: FontWeight.w700),
+      );
+    });
+    Future.delayed(const Duration(milliseconds: 2000), () {
+// Here you can write your code
+
+      setState(() {
+        // Here you can write your code for open new view
+        _succWidget = Container();
+        _isSucces = false;
+        if (_isLogin == false) _changeMode();
+        if (_isLogin == true) {
+          print("NAVIGATE");
+        }
+      });
+    });
+  }
+
   _showErrMsg(String text) {
     setState(() {
-      _errWidget = Text(text,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-              color: Colors.red, fontWeight: FontWeight.w500));
-/*
-      Timer(const Duration(seconds: 3), () {
+      _errWidget = Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.montserrat(
+            color: Colors.red, fontWeight: FontWeight.w700),
+      );
+    });
+    Future.delayed(const Duration(milliseconds: 5000), () {
+// Here you can write your code
+
+      setState(() {
+        // Here you can write your code for open new view
         _errWidget = Container();
       });
-
- */
-
     });
-
   }
 
   @override
   initState() {
-    _errWidget = Container();
     super.initState();
 
     // methode om te wachten tot alle widgets gebouwd zijn
@@ -526,6 +639,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.indigo.shade800,
       body: Container(
@@ -563,6 +677,22 @@ class _LoginState extends State<Login> {
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 250),
                     child: _currWidget,
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            margin: const EdgeInsets.only(left: 40),
+                            height: 60,
+                            child:
+                                _isSucces == true ? _succWidget : _errWidget),
+                      ],
+                    ),
                   )
                 ],
               ),

@@ -77,6 +77,7 @@ class _CardDetailState extends State<CardDetail>
                         'lib/images/81.png',
                       ),
                       repeat: ImageRepeat.repeat,
+                      fit: BoxFit.scaleDown,
                     ),
                     centerTitle: true,
                   ),
@@ -110,7 +111,7 @@ class _CardDetailState extends State<CardDetail>
                                     ),
                                     elevation: 4,
                                   ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 if (_registration.vraagTN == true)

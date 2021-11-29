@@ -1770,9 +1770,9 @@ class _FormQuestionsState extends State<FormQuestions> {
         ),
 
         if (_currentStep == 6)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.0),
+            child: Text(
               'Search for the schools you would like to aply for\n'
               'short press for info, long press to reorder the list',
               style: TextStyle(fontSize: 11, color: Colors.black54),

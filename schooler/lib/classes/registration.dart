@@ -281,13 +281,14 @@ class Registration {
       required berGemeente2,
       required vraagGOK,
       required vraagTN,
-      required schoolList}) {
+      required schoolList}) async {
     // Firestore collectie reference naar de regstratie collectie
     CollectionReference _regiRef =
         FirebaseFirestore.instance.collection('registrations');
 
     // gebruk de collectie reference van registratie om de nieuwe registratie toe te voegen
-    return _regiRef
+    FirebaseFirestore.instance
+        .collection('registrations')
         .add({
           'date': DateTime.now(),
           'voornaam': voornaam,

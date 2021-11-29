@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/widgets/widgets.dart';
 
@@ -23,7 +24,7 @@ class New extends StatelessWidget {
         extendBody: true,
         backgroundColor: Colors.indigo.shade800,
         appBar: AppBar(
-
+centerTitle: true,
           flexibleSpace: const Image(
             image: AssetImage('lib/images/81.png'),
             fit: BoxFit.cover,
@@ -39,10 +40,13 @@ class New extends StatelessWidget {
             },
             icon: const Icon(Icons.close),
           ),
-          title: const Padding(
-            padding: EdgeInsets.only(left: 40.0),
+          title:  Padding(
+            padding: const EdgeInsets.only(left: 40.0),
             child: Text(
-              'New Registration',
+              'New Registration',style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white),
             ),
           ),
         ),
