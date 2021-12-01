@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:schooler/classes/user.dart' as thisUser;
+import 'package:schooler/classes/user.dart' as userClass;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -17,7 +17,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   // TODO: comments + remove prints
 
   Widget _currWidget = Container();
@@ -36,15 +35,23 @@ class _LoginState extends State<Login> {
   final _signUpPwd = TextEditingController();
   final _signUpPwd2 = TextEditingController();
 
+  // custom validator voor alle text velden
+  // retourneert bool
+  // bij false zal men niet verder kunnen
+  // bij true zijn alle validators succesvol voltooid
   bool _customValidator() {
+    // regex expressie: het password er moet uitzien om valide te zijn
     RegExp passwordRegex =
         RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$');
 
+    // regex expressie: de email er moet uitzien om valide te zijn
     RegExp emailRegex =
         RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
             r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
             r"{0,253}[a-zA-Z0-9])?)*$");
 
+    // als login false is zit men op de sign up pagina
+    // als alle velden leeg zijn return false
     if (_isLogin == false) {
       if (_signUpEmail.text.isEmpty ||
           _signUpPwd.text.isEmpty ||
@@ -53,32 +60,42 @@ class _LoginState extends State<Login> {
         return false;
       }
 
+
       if (!emailRegex.hasMatch(_signUpEmail.text)) {
         _showErrMsg("Please, enter a valid email ! ");
         return false;
       }
 
+      // als beide wachtwoorden niet overeen komen
       if (_signUpPwd.text != _signUpPwd2.text) {
         _showErrMsg('Passwords do not match !');
         return false;
       }
 
+      // als het wachtwoord niet geldig is volgens de regex expressie
       if (!passwordRegex.hasMatch(_signUpPwd.text)) {
         _showErrMsg("Password: [ A ,a , 1] \n 8 characters ! ");
         return false;
       }
-    } else {
+    }
+
+    // als men zich op de login pagina bevindt
+    else {
+
+      // als alle velden leeg zijn
       if (_loginEmail.text.isEmpty || _loginPwd.text.isEmpty) {
         _showErrMsg('Please fill in all fields !');
         return false;
       }
 
+      // als de email niet geldig is volgens de regex expressie
       if (!emailRegex.hasMatch(_loginEmail.text)) {
         _showErrMsg("Please, enter a valid email ! ");
         return false;
       }
     }
 
+    // als alle validators succesvol voltooid zijn, return true
     return true;
   }
 
@@ -510,65 +527,55 @@ class _LoginState extends State<Login> {
     });
   }
 
+  // methode om user te registreren
   _signUp() async {
+    // als validator false retourneert gaat die process niet door
     if (_customValidator() == false) return;
 
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: _signUpEmail.text, password: _signUpPwd.text);
+    // register methode vanuit de user klasse
+    // retourneert string
+    // als string null is => registratie succesvol
+    String? result = await userClass.User.signUp(
+        email: _signUpEmail.text, password: _signUpPwd.text);
+
+    if (result == null) {
       setState(() {
         _isSucces = true;
       });
-
-      thisUser.User.newUser(
-              uid: userCredential.user!.uid, email: _signUpEmail.text)
-          .then((value) {
-        _showSuccesMsg();
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        _showErrMsg('The password provided is too weak !');
-      }
-      if (e.code == 'email-already-in-use') {
-        _showErrMsg('The account already exists for that email !');
-      }
-    } catch (e) {
-      _showErrMsg('Something went wrong, please try again later.');
-      print(e);
+      return _showSuccesMsg();
     }
+
+    _showErrMsg(result);
   }
 
   _login() async {
+    // als validator false retourneert gaat die process niet door
     if (_customValidator() == false) return;
 
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: _loginEmail.text, password: _loginPwd.text);
+    // login methode vanuit de user klasse
+    // retourneert string
+    // als string null is => login succesvol
+    String? result = await userClass.User.login(
+        email: _loginEmail.text, password: _loginPwd.text);
 
-      setState(() {
-        _isSucces = true;
-      });
-      _showSuccesMsg();
-
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        _showErrMsg('No user found for that email.');
-      }
-      if (e.code == 'wrong-password') {
-        _showErrMsg('Wrong password provided for that user.');
-      }
-    } catch (e) {
-      _showErrMsg('Something went wrong, please try again later.');
-      print(e);
+    if (result == null) {
+      return _showSuccesMsg();
     }
+
+    _showErrMsg(result);
   }
 
+  // toont succesvol bericht
   _showSuccesMsg() {
+    setState(() {
+      _isSucces = true;
+    });
+
     String text = 'User is succesfully registred';
 
     if (_isLogin) text = 'Login Succesfull';
+
+
     setState(() {
       _succWidget = Text(
         text,
@@ -579,11 +586,13 @@ class _LoginState extends State<Login> {
             color: Colors.green, fontWeight: FontWeight.w700),
       );
     });
+
+    // Verberg bericht na  2 seconde
     Future.delayed(const Duration(milliseconds: 2000), () {
-// Here you can write your code
+
 
       setState(() {
-        // Here you can write your code for open new view
+
         _succWidget = Container();
         _isSucces = false;
         if (_isLogin == false) _changeMode();
@@ -594,6 +603,7 @@ class _LoginState extends State<Login> {
     });
   }
 
+  // toont faal bericht
   _showErrMsg(String text) {
     setState(() {
       _errWidget = Text(
@@ -605,11 +615,12 @@ class _LoginState extends State<Login> {
             color: Colors.red, fontWeight: FontWeight.w700),
       );
     });
+
+    // Verberg bericht na  5 seconde
     Future.delayed(const Duration(milliseconds: 5000), () {
-// Here you can write your code
 
       setState(() {
-        // Here you can write your code for open new view
+
         _errWidget = Container();
       });
     });
@@ -633,6 +644,7 @@ class _LoginState extends State<Login> {
     _signUpEmail.dispose();
     _signUpPwd.dispose();
     _signUpPwd2.dispose();
+
     super.dispose();
   }
 

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/widgets/widgets.dart';
@@ -17,24 +18,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<QuerySnapshot<Object?>> futureRegiRef;
-  late Stream<QuerySnapshot> streamList;
-  int dataCount = 0;
-  late bool _hasMore;
+  late Future<QuerySnapshot<Object?>> _futureRegiRef;
+  late Stream<QuerySnapshot> _streamList;
 
   @override
   void initState() {
     // bron: https://stackoverflow.com/questions/58664293/futurebuilder-runs-twice
-    futureRegiRef = futureFetch();
+    _futureRegiRef = _futureFetch();
     // stream reference om te gebruiken voor de real time changes
 
-    streamList = streamFetch();
-    _hasMore = true;
+    _streamList = _streamFetch();
     super.initState();
   }
 
 
-  Stream<QuerySnapshot> streamFetch() {
+  Stream<QuerySnapshot> _streamFetch() {
     return FirebaseFirestore.instance
         .collection('registrations')
         .orderBy('date', descending: true)
@@ -42,7 +40,7 @@ class _HomeState extends State<Home> {
   }
 
   // future reference methode om mee te geven aan de Future builder widget
-  Future<QuerySnapshot<Object?>> futureFetch() async {
+  Future<QuerySnapshot<Object?>> _futureFetch() async {
     await FirebaseFirestore.instance
         .collection('registrations')
         .orderBy('date', descending: true)
@@ -50,7 +48,6 @@ class _HomeState extends State<Home> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         setState(() {
-          dataCount += 1;
         });
       });
     });
@@ -65,7 +62,7 @@ class _HomeState extends State<Home> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   // future methode om de delay animatie te simuleren
-  void getRegisList(List<DocumentSnapshot> data) async {
+  void _getRegisList(List<DocumentSnapshot> data) async {
     regiList = [];
     Future ft = Future(() => {});
 
@@ -82,18 +79,18 @@ class _HomeState extends State<Home> {
   }
 
 
-
+// snackbar widget om verwijdering van de registratie te bevestigen
   showSnackbar(String text) {
-    // snackbar widget om verwijdering van de registratie te bevestigen
+
     final snackBar = SnackBar(
       content: ClipRRect(
-        borderRadius: BorderRadius.all(const Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
           color: const Color.fromRGBO(54, 60, 69, 1),
           child:  Text(
             text,
-            style: const TextStyle(color: Colors.orange),
+            style:  GoogleFonts.montserrat(color: Colors.orange, fontWeight: FontWeight.w600 ),textAlign: TextAlign.center,
           ),
         ),
       ),
@@ -105,7 +102,9 @@ class _HomeState extends State<Home> {
 
   // methode pm de realtime changes in de database op te volgen
   void realtime() {
-    streamList.listen((event) {
+
+
+    _streamList.listen((event) {
       // kijken of het maar om 1 data gaat
       if (event.docChanges.length > 1) return;
 
@@ -123,7 +122,7 @@ class _HomeState extends State<Home> {
             _listKey.currentState!.insertItem(0);
 
             // show bevestiging
-            showSnackbar('Registration successfully added');
+            showSnackbar('Registration successfully added !');
           }
           break;
 
@@ -146,7 +145,7 @@ class _HomeState extends State<Home> {
             regiList.removeAt(event.docChanges.first.oldIndex);
 
             // show bevestiging
-            showSnackbar('Registration successfully deleted');
+            showSnackbar('Registration successfully deleted !');
           }
           break;
 
@@ -178,7 +177,7 @@ class _HomeState extends State<Home> {
             _listKey.currentState!.insertItem(event.docChanges.first.oldIndex);
 
             // show bevestiging
-            showSnackbar('Registration successfully modified');
+            showSnackbar('Registration successfully modified !');
           }
           break;
       }
@@ -198,7 +197,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       child: FutureBuilder<QuerySnapshot>(
-        future: futureRegiRef,
+        future: _futureRegiRef,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.none) print('none');
 
@@ -235,7 +234,7 @@ class _HomeState extends State<Home> {
             if (snapshot.data!.docs.length > 0) {
               final List<DocumentSnapshot> documents = snapshot.data!.docs;
 
-              getRegisList(documents);
+              _getRegisList(documents);
 
               return DelayedDisplay(
                 delay: const Duration(milliseconds: 200),

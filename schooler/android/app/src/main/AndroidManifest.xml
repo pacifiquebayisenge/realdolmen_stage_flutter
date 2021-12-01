@@ -7,7 +7,7 @@
    <application
         android:label="schooler"
         android:icon="@mipmap/ic_launcher">
-
+        android:usesCleartextTraffic="true"
        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCeU0yDSx4PlwNAnI3hk2T9uzazLjrx1BI"/>
 
         <activity

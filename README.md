@@ -849,7 +849,7 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
 
 * Login + sign up
   * zoeken naar een gepaste UI design - afgewerkt
-  * animatie afgewerkt 
+  * animatie afgewerkt
   * Firebase AUTH documentatie
 
 * Notities & aanwijzingen toepassen
@@ -895,7 +895,6 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
   * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)
 
-  
 ---
 ---
 ---
@@ -936,3 +935,65 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
   * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)
 
+#### 30/11 Dinsdag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> 40%
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Login + sign up
+  * login verbetering -> 60 %
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 80 %
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Notities & aanwijzingen toepassen
+  * Nieuwe notities -> 70 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+  * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)
+
+#### 01/12 Woensdag ####
+
+* Klassen
+  * User klasse om de inlog data van de user bij te houden -> 40%
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Registratie
+  * Dynamisch juiste pagina weergeven -> 80 %
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Info pagina om scholen info weer te geven
+
+* Firebase
+  * issue -> start animatie van de app -> zal opgelost worden bij login implentatie
+
+* Login + sign up
+  * login verbetering -> 80 %
+
+* Notities & aanwijzingen toepassen
+  
+  * Nieuwe notities -> 70 %
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+  * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)

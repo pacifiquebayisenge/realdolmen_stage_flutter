@@ -47,7 +47,7 @@ class Registration {
   // schoolLijst
   late final List<dynamic> schoolList;
 // Firestore collectie reference naar de regstratie collectie
-  CollectionReference _regiRef =
+  final CollectionReference _regiRef =
       FirebaseFirestore.instance.collection('registrations');
 
   Registration(

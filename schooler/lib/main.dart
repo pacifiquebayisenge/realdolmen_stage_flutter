@@ -1,8 +1,11 @@
 import 'dart:math';
 
+import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/pages/home.dart';
 import 'package:schooler/pages/login.dart';
@@ -10,11 +13,13 @@ import 'package:schooler/pages/new.dart';
 import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:schooler/services/globals.dart';
+import 'package:schooler/widgets/profile_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 import 'classes/registration.dart';
 
-Future<void> main()  async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
@@ -22,19 +27,17 @@ Future<void> main()  async {
     color: Colors.indigo.shade800,
     theme: ThemeData(
       primaryColor: Colors.indigo.shade800,
-
-      appBarTheme:  AppBarTheme(
+      appBarTheme: AppBarTheme(
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarBrightness: Brightness.dark,
-              statusBarIconBrightness: Brightness.light,
-            statusBarColor: Colors.black12
-        ),
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+            statusBarColor: Colors.black12),
         color: Colors.blue.shade900,
       ),
     ),
     home: App(),
     routes: {
-      'login' : (context) => Login(),
+      'login': (context) => Login(),
       'home': (context) => Home(),
       'new': (context) => New(),
       'notifications': (context) => Notifications(),
@@ -51,11 +54,9 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-
   // staat van flutter firebase
   bool _initialized = false;
   bool _error = false;
-
 
   // async funtie om firebase te initialiseren
   void initializeFlutterFire() async {
@@ -66,7 +67,7 @@ class _AppState extends State<App> {
         _initialized = true;
         print("FIRE");
       });
-    } catch(e) {
+    } catch (e) {
       // bij firebase init error
       setState(() {
         _error = true;
@@ -80,39 +81,51 @@ class _AppState extends State<App> {
     initializeFlutterFire();
     userState();
     super.initState();
-     FirebaseAuth.instance.signOut();
+    //FirebaseAuth.instance.signOut();
   }
 
- void userState() {
-   FirebaseAuth.instance
-       .authStateChanges()
-       .listen((User? user) {
-     if (user == null) {
-       setState(() {
-         _selectedIndex = 4;
-       });
-       print('User is currently signed out!');
-     } else {
+  void userState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user == null) {
+        setState(() {
+          _selectedIndex = 4;
+        });
+        print('User is currently signed out!');
+      } else {
+        Future.delayed(const Duration(milliseconds: 2500), () {
+          setState(() {
+            _selectedIndex = 0;
+          });
+        });
 
-       Future.delayed(const Duration(milliseconds: 2500) ,() {
-       setState(() {
-       _selectedIndex = 0;
-       });
-       });
+String text = await thisUser.userInfoCheck(user.uid);
+
+        _showDialog(text);
+
+        print('User is signed in!');
+      }
+    });
+  }
 
 
-       print('User is signed in!');
-     }
-   });
- }
 
+  _showDialog(String text) {
+    if (text == "") return;
+
+    Future.delayed(const Duration(milliseconds: 2500), () {    showDialog(
+      context: context,
+      builder: (BuildContext context) => ProfileDialog(text: text),
+    );   });
+
+
+  }
 
   // Om de geselecteerde pagina te onthouden
   int _selectedIndex = 0;
 
   // Methode wanneer me nee knop klikt
-   void _onItemTapped(int index) async {
-      setState(()  {
+  void _onItemTapped(int index) async {
+    setState(() {
       switch (index) {
         case 0:
           {
@@ -143,7 +156,8 @@ class _AppState extends State<App> {
                 berPostcode2: 1500,
                 berGemeente2: 'Halle',
                 vraagGOK: true,
-                vraagTN: true, schoolList: ['school 1','school 2', 'school 3']);
+                vraagTN: true,
+                schoolList: ['school 1', 'school 2', 'school 3']);
 
             print("Open home page");
             // Navigator.pushReplacementNamed(context, '/');
@@ -193,14 +207,12 @@ class _AppState extends State<App> {
       return null;
     }
     return AppBar(
-
       actions: [
-        if(_selectedIndex == 3)
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.more_vert),
-
-        )
+        if (_selectedIndex == 3)
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_vert),
+          )
       ],
       flexibleSpace: const Image(
         image: AssetImage('lib/images/81.png'),
@@ -210,15 +222,16 @@ class _AppState extends State<App> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      title:  Text('Schooler',style: GoogleFonts.montserrat(
-          fontSize: 20,
-          fontWeight: FontWeight.w800,
-          color: Colors.white),),
+      title: Text(
+        'Schooler',
+        style: GoogleFonts.montserrat(
+            fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
+      ),
     );
   }
 
   Widget? test2() {
-    if ( _selectedIndex == 4) {
+    if (_selectedIndex == 4) {
       return null;
     }
     return Padding(
@@ -238,7 +251,6 @@ class _AppState extends State<App> {
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           child: BottomNavigationBar(
-
             type: BottomNavigationBarType.fixed,
             items: const [
               BottomNavigationBarItem(
@@ -260,19 +272,24 @@ class _AppState extends State<App> {
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.indigo.shade800,
-            onTap:  _onItemTapped,
+            onTap: _onItemTapped,
           ),
         ),
       ),
     );
   }
 
-  final screens = [const Home(), const New(), Notifications(), const Schools(), const Login(),];
+  final screens = [
+    const Home(),
+    const New(),
+    Notifications(),
+    const Schools(),
+    const Login(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-
-    if(_error) {
+    if (_error) {
       print('You have an error !');
       return Text('Something went wrong!');
     }
@@ -284,28 +301,24 @@ class _AppState extends State<App> {
     }
 
     return Scaffold(
-        backgroundColor: Colors.indigo.shade800,
-        // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
-        // voorlopig false => moeite met bottom padding in Notification pagina
-        // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
-        extendBody:  true,
+      backgroundColor: Colors.indigo.shade800,
+      // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
+      // voorlopig false => moeite met bottom padding in Notification pagina
+      // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
+      extendBody: true,
       resizeToAvoidBottomInset: false,
-        appBar: test(),
-        body: SafeArea(
-            bottom: false,
-            child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30)),
-                child: screens[_selectedIndex])),
-        bottomNavigationBar: test2(),);
-
-
-
-
-
+      appBar: test(),
+      body: SafeArea(
+          bottom: false,
+          child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              child: screens[_selectedIndex])),
+      bottomNavigationBar: test2(),
+    );
   }
 }
+
 
 /*
 Container(

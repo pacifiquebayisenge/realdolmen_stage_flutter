@@ -163,7 +163,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         Timestamp timestamp;
         timestamp = doc['date'];
 
-        if (timestamp.toDate().day == 23) {
+        if (timestamp.toDate().day == 1) {
           FirebaseFirestore.instance
               .collection('registrations')
               .doc(doc.id)
