@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/widgets/widgets.dart';
 
@@ -14,31 +16,71 @@ class CardDetail extends StatefulWidget {
 
 class _CardDetailState extends State<CardDetail>
     with SingleTickerProviderStateMixin {
-  Icon genderIcon(String rijksNr) {
-    if (int.parse(widget.card.registration.rijksNr.substring(6, 9)) % 2 == 0)
+  Icon genderIcon() {
+    if (widget.card.registration.getGender() == 'vrouw') {
+      widget.card.registration.getGender();
       return const Icon(Icons.female);
+    }
 
     return const Icon(Icons.male);
   }
 
   void handleClick(String value) {
     switch (value) {
-      case 'Edit':{
-        Navigator.pushNamed(context, 'new',arguments: widget.card.registration);
-      }
+      case 'Edit':
+        {
+          Navigator.pushNamed(context, 'new',
+              arguments: widget.card.registration);
+        }
 
         break;
-      case 'Cancel': {
-        widget.card.registration.deleteRegi();
-        Navigator.pop(context);
-      }
+      case 'Cancel':
+        {
+          widget.card.registration.deleteRegi();
+          Navigator.pop(context);
+        }
         break;
     }
   }
 
+  late ScrollController _scrollController;
+  double textOpacitiy = 1;
+
   @override
   void initState() {
     super.initState();
+
+    // als sliverappbar colapsed is verberg profiel detail
+    // als sliveappbar expanded is toon profiel detail
+
+    _scrollController = ScrollController()
+      ..addListener(() {
+
+        if (_isAppBarExpanded) {
+          if (textOpacitiy != 0) {
+            setState(() {
+              setState(() {
+                textOpacitiy = 0;
+              });
+            });
+          }
+        } else {
+          if (textOpacitiy != 1) {
+            setState(() {
+              setState(() {
+                textOpacitiy = 1;
+              });
+            });
+          }
+        }
+      });
+  }
+
+  // methode om te zien of sliverappbar exapned is of collapsed
+  // bron: https://stackoverflow.com/questions/53372276/flutter-how-to-check-if-sliver-appbar-is-expanded-or-collapsed
+  bool get _isAppBarExpanded {
+    return _scrollController.hasClients &&
+        _scrollController.offset > (90 - kToolbarHeight);
   }
 
   @override
@@ -49,37 +91,53 @@ class _CardDetailState extends State<CardDetail>
       body: Stack(
         children: <Widget>[
           NestedScrollView(
+            controller: _scrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 // sliver app bar work around om dubbele titels weer te geven
                 // bron: https://stackoverflow.com/questions/56365534/hide-the-tabbar-like-a-sliverappbar
                 SliverAppBar(
+                  leadingWidth: 20,
+                  leading: IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   backgroundColor: Colors.indigo.shade800,
-                  floating: true,
-                  snap: true,
+                  floating: false,
+                  snap: false,
                   pinned: true,
                   expandedHeight: 130.0,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: _registration.rijksNr.isNotEmpty
-                        ? Text(
-                            '${_registration.rijksNr.substring(4, 6)}/${_registration.rijksNr.substring(2, 4)}/${_registration.rijksNr.substring(0, 2)}'
-                            '\n${_registration.straat} ${_registration.huisNr} ${_registration.busNr}'
-                            '\n${_registration.postcode} ${_registration.gemeente}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          )
-                        : const Text(""),
-                    background: const Image(
-                      image: AssetImage(
-                        'lib/images/81.png',
+                  flexibleSpace: Stack(
+                    children: [
+                      const Positioned.fill(
+                        child: Image(
+                          image: AssetImage(
+                            'lib/images/81.png',
+                          ),
+                          repeat: ImageRepeat.repeat,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                      repeat: ImageRepeat.repeat,
-                      fit: BoxFit.scaleDown,
-                    ),
-                    centerTitle: true,
+                      FlexibleSpaceBar(
+                        title: _registration.rijksNr.isNotEmpty
+                            ? Text(
+                                '${_registration.rijksNr.substring(4, 6)}/${_registration.rijksNr.substring(2, 4)}/${_registration.rijksNr.substring(0, 2)}'
+                                '\n${_registration.straat} ${_registration.huisNr} ${_registration.busNr}'
+                                '\n${_registration.postcode} ${_registration.gemeente}',
+                                style: GoogleFonts.montserrat(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color:
+                                        Colors.white.withOpacity(textOpacitiy)),
+                                textAlign: TextAlign.center,
+                              )
+                            : const Text(""),
+                        centerTitle: true,
+                      ),
+                    ],
                   ),
                 ),
               ];
@@ -166,7 +224,7 @@ class _CardDetailState extends State<CardDetail>
                                         vertical: 20.0, horizontal: 30.0),
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                          const IntrinsicColumnWidth(),
                                       defaultVerticalAlignment:
                                           TableCellVerticalAlignment.middle,
                                       children: [
@@ -276,7 +334,8 @@ class _CardDetailState extends State<CardDetail>
                             ),
 
                           // school lijst
-                          if (_registration.schoolList.length > 0)
+                          if (_registration.schoolList != null &&
+                              _registration.schoolList.length > 0)
                             Padding(
                               padding: const EdgeInsets.only(top: 50.0),
                               child: FractionallySizedBox(
@@ -295,83 +354,88 @@ class _CardDetailState extends State<CardDetail>
                                 ),
                               ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: FractionallySizedBox(
-                              widthFactor: 0.85,
-                              child: Card(
-                                elevation: 1,
-                                shadowColor: Colors.lightBlueAccent,
-                                clipBehavior: Clip.antiAlias,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    children: List.generate(
-                                      _registration.schoolList.length,
-                                      (index) => Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              // verticaal centreren van circle avatar
-                                              // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                // rangschiknummer
-                                                CircleAvatar(
-                                                  backgroundColor:
-                                                      const Color.fromRGBO(
-                                                          234, 144, 16, 1),
-                                                  radius: 15,
-                                                  // rang nummer
-                                                  child: Text(
-                                                    (index + 1).toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w900,
-                                                        fontSize: 15),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Flexible(
-                                              child: Column(
+                          if (_registration.schoolList != null &&
+                              _registration.schoolList.length > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: FractionallySizedBox(
+                                widthFactor: 0.85,
+                                child: Card(
+                                  elevation: 1,
+                                  shadowColor: Colors.lightBlueAccent,
+                                  clipBehavior: Clip.antiAlias,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      children: List.generate(
+                                        _registration.schoolList.length,
+                                        (index) => Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                // verticaal centreren van circle avatar
+                                                // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
                                                 children: [
-                                                  Text(
-                                                      _registration
-                                                          .schoolList[index],
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                  // rangschiknummer
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        const Color.fromRGBO(
+                                                            234, 144, 16, 1),
+                                                    radius: 15,
+                                                    // rang nummer
+                                                    child: Text(
+                                                      (index + 1).toString(),
                                                       style: const TextStyle(
+                                                          color: Colors.white,
                                                           fontWeight:
-                                                              FontWeight.w500)),
-                                                  const Text(
-                                                    'Straatnaan 12, stadnaam postcode',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        TextStyle(fontSize: 11),
+                                                              FontWeight.w900,
+                                                          fontSize: 15),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Text(
+                                                        _registration
+                                                            .schoolList[index],
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                    const Text(
+                                                      'Straatnaan 12, stadnaam postcode',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 11),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -379,7 +443,6 @@ class _CardDetailState extends State<CardDetail>
                                 ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ],
@@ -396,22 +459,11 @@ class _CardDetailState extends State<CardDetail>
               context: context,
               removeBottom: true,
               child: AppBar(
-                  flexibleSpace: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'lib/images/81.png',
-                        ),
-                        repeat: ImageRepeat.repeat,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  backgroundColor: Colors.indigo.shade800,
-                  iconTheme: IconThemeData(color: Colors.white),
+                  backgroundColor: Colors.transparent,
+                  iconTheme: const IconThemeData(color: Colors.white),
                   automaticallyImplyLeading: true,
                   leading: IconButton(
-                    icon: Icon(Icons.close_rounded),
+                    icon: const Icon(Icons.close_rounded),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -425,7 +477,7 @@ class _CardDetailState extends State<CardDetail>
                       const SizedBox(
                         width: 10,
                       ),
-                      genderIcon(_registration.rijksNr)
+                      genderIcon()
                     ],
                   ),
                   centerTitle: true,

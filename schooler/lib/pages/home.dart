@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:schooler/services/globals.dart' as globals;
@@ -19,12 +20,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<QuerySnapshot<Object?>> _futureRegiRef;
-  late Stream<QuerySnapshot> _streamList;
+   late Stream<QuerySnapshot> _streamList;
 
   @override
   void initState() {
     // bron: https://stackoverflow.com/questions/58664293/futurebuilder-runs-twice
-    _futureRegiRef = _futureFetch();
+   _futureRegiRef = _futureFetch();
     // stream reference om te gebruiken voor de real time changes
 
     _streamList = _streamFetch();
@@ -33,27 +34,16 @@ class _HomeState extends State<Home> {
 
 
   Stream<QuerySnapshot> _streamFetch() {
-    return FirebaseFirestore.instance
-        .collection('registrations')
+    return  FirebaseFirestore.instance
+        .collection('users').doc(thisUser.id).collection('registrations')
         .orderBy('date', descending: true)
         .snapshots();
   }
 
   // future reference methode om mee te geven aan de Future builder widget
   Future<QuerySnapshot<Object?>> _futureFetch() async {
-    await FirebaseFirestore.instance
-        .collection('registrations')
-        .orderBy('date', descending: true)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        setState(() {
-        });
-      });
-    });
-
-    return await FirebaseFirestore.instance
-        .collection('registrations')
+     return await FirebaseFirestore.instance
+        .collection('users').doc(thisUser.id).collection('registrations')
         .orderBy('date', descending: true)
         .get();
   }
@@ -182,6 +172,8 @@ class _HomeState extends State<Home> {
           break;
       }
     });
+
+
   }
 
   @override
@@ -227,12 +219,12 @@ class _HomeState extends State<Home> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             print('done');
-            realtime();
+           realtime();
           }
 
           if (snapshot.hasData) {
             if (snapshot.data!.docs.length > 0) {
-              final List<DocumentSnapshot> documents = snapshot.data!.docs;
+               List<DocumentSnapshot> documents = snapshot.data!.docs;
 
               _getRegisList(documents);
 
@@ -243,6 +235,7 @@ class _HomeState extends State<Home> {
                   initialItemCount: regiList.length,
                   itemBuilder: (BuildContext context, int index,
                       Animation<double> animation) {
+
                     if (index != regiList.length - 1) {
                       return SlideTransition(
                         position: animation.drive(

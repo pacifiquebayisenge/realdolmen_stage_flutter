@@ -7,19 +7,32 @@ import 'package:schooler/services/globals.dart';
 
 
 class ProfileDialog extends StatefulWidget {
-   ProfileDialog({Key? key, required String this.text}) : super(key: key);
+   ProfileDialog({Key? key}) : super(key: key);
 
-  late String text;
+
   @override
   _ProfileDialogState createState() => _ProfileDialogState();
 }
 
 class _ProfileDialogState extends State<ProfileDialog> {
+
   // De  form velden controllers + keys
   final _thisForm = GlobalKey<FormBuilderState>();
   final voornaam = TextEditingController();
   final naam = TextEditingController();
   final rijksNr = TextEditingController();
+
+  @override
+  void dispose(){
+
+    voornaam.dispose();
+    naam.dispose();
+    rijksNr.dispose();
+
+    super.dispose();
+  }
+
+
 // methode om laatste 2 controle cijfers van rijksregister te berekennen
   // geeft de 2 controle cijfers terug
   int rijksnummerCheck(String rijksregisternummer) {
@@ -35,11 +48,42 @@ class _ProfileDialogState extends State<ProfileDialog> {
     return check;
   }
 
-  _submit() {
+  _submit() async {
+    // methode om de keybo
+    FocusScope.of(context).requestFocus(FocusNode());
     if(_thisForm.currentState!.validate() == false) return;
 
-// TODO: update user
-    print('ok');
+   bool result = await thisUser.updateUserProfile(voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text);
+
+    if(result == true) return _showSnackbar("User Successfully Updated");
+    _showSnackbar("Failed to update user");
+
+    Navigator.of(context).pop();
+
+
+
+
+  }
+
+  // snackbar widget om verwijdering van de registratie te bevestigen
+  _showSnackbar(String text) {
+
+    final snackBar = SnackBar(
+      content: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+          color: const Color.fromRGBO(54, 60, 69, 1),
+          child:  Text(
+            text,
+            style:  GoogleFonts.montserrat(color: Colors.orange, fontWeight: FontWeight.w600 ),textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
 
@@ -54,7 +98,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
       actionsAlignment: MainAxisAlignment.center,
       shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20)),
-      title:  Text( widget.text ,style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),),
+      title:  Text( "Complete profile info" ,style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),),
       content:  SizedBox(
         height: 270,
         child: FormBuilder(

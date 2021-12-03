@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:schooler/services/globals.dart';
 
 @immutable
 class Registration {
@@ -48,7 +49,8 @@ class Registration {
   late final List<dynamic> schoolList;
 // Firestore collectie reference naar de regstratie collectie
   final CollectionReference _regiRef =
-      FirebaseFirestore.instance.collection('registrations');
+  FirebaseFirestore.instance
+      .collection('users').doc(thisUser.id).collection('registrations');
 
   Registration(
       {required this.id,
@@ -167,7 +169,7 @@ class Registration {
     List<Registration> regiList = [];
 
     await FirebaseFirestore.instance
-        .collection('registrations')
+        .collection('users').doc(thisUser.id).collection('registrations')
         .orderBy('date')
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -210,7 +212,7 @@ class Registration {
   }
 
   Future<void> deleteRegi() async {
-    _regiRef
+    await _regiRef
         .doc(id)
         .delete()
         .then((value) => print("Registration succesfully deleted "))
@@ -218,7 +220,7 @@ class Registration {
   }
 
   Future<void> editRegi() async {
-    _regiRef
+    await _regiRef
         .doc(id)
         .update({
           'voornaam': voornaam,
@@ -282,13 +284,11 @@ class Registration {
       required vraagGOK,
       required vraagTN,
       required schoolList}) async {
-    // Firestore collectie reference naar de regstratie collectie
-    CollectionReference _regiRef =
-        FirebaseFirestore.instance.collection('registrations');
+
 
     // gebruk de collectie reference van registratie om de nieuwe registratie toe te voegen
-    FirebaseFirestore.instance
-        .collection('registrations')
+    await FirebaseFirestore.instance
+        .collection('users').doc(thisUser.id).collection('registrations')
         .add({
           'date': DateTime.now(),
           'voornaam': voornaam,

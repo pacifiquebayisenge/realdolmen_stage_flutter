@@ -77,19 +77,20 @@ class _AppState extends State<App> {
   }
 
   @override
-  void initState() {
+   initState()  {
     initializeFlutterFire();
-    userState();
+     userState();
     super.initState();
     //FirebaseAuth.instance.signOut();
   }
 
-  void userState() {
+  void userState() async {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         setState(() {
           _selectedIndex = 4;
         });
+
         print('User is currently signed out!');
       } else {
         Future.delayed(const Duration(milliseconds: 2500), () {
@@ -97,27 +98,23 @@ class _AppState extends State<App> {
             _selectedIndex = 0;
           });
         });
-
-String text = await thisUser.userInfoCheck(user.uid);
-
-        _showDialog(text);
+        await thisUser.getUser(user.uid);
+        bool profileComplete = await thisUser.userInfoCheck(user.uid);
+        if (profileComplete == false) _showDialog();
 
         print('User is signed in!');
       }
     });
   }
 
-
-
-  _showDialog(String text) {
-    if (text == "") return;
-
-    Future.delayed(const Duration(milliseconds: 2500), () {    showDialog(
-      context: context,
-      builder: (BuildContext context) => ProfileDialog(text: text),
-    );   });
-
-
+  _showDialog() {
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) => ProfileDialog(),
+      );
+    });
   }
 
   // Om de geselecteerde pagina te onthouden
@@ -318,7 +315,6 @@ String text = await thisUser.userInfoCheck(user.uid);
     );
   }
 }
-
 
 /*
 Container(
