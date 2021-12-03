@@ -35,11 +35,11 @@ class User {
   static Future<String?> login(
       {required String email, required String password}) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
+       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
       // thisUser = User(id: userCredential.user!.uid,voornaam: "test",naam: "test" ,rijksNr: "97042025942" );
-
+      await thisUser.getUser(userCredential.user!.uid);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return 'No user found for that email.';
@@ -61,7 +61,8 @@ class User {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       // nieuwe user toevoegen aan database
-      _newUser(uid: userCredential.user!.uid, email: email);
+     await _newUser(uid: userCredential.user!.uid, email: email);
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return 'The password provided is too weak !';
@@ -116,7 +117,7 @@ class User {
   }
 
   // methode om gegevens van de user op te halen
-  Future<void> getUser(String id) async {
+   Future<void> getUser(String id) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(id)
@@ -125,6 +126,7 @@ class User {
       if (documentSnapshot.exists) {
         Map<String, dynamic> data =
             documentSnapshot.data()! as Map<String, dynamic>;
+
         thisUser = User(
             id: id,
             voornaam: data['voornaam'],
@@ -161,19 +163,21 @@ class User {
       {required String voornaam,
       required String naam,
       required String rijksNr}) async {
+
+    bool result = false;
     await _userRef.doc(id).update(
         {'voornaam': voornaam, 'naam': naam, 'rijksNr': rijksNr}).then((value) {
       this.voornaam = voornaam;
       this.naam = naam;
       this.rijksNr = rijksNr;
 
-      return true;
+      result = true;
     }).catchError((error) {
       print(error);
-      return false;
+      result = false;
     });
 
-    return false;
+    return result;
   }
 
   Future<void> getRegiList() async {

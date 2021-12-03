@@ -85,17 +85,20 @@ class _AppState extends State<App> {
   }
 
   void userState() async {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+   FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         setState(() {
           _selectedIndex = 4;
+          // TODO: empy user class here
         });
 
         print('User is currently signed out!');
       } else {
         Future.delayed(const Duration(milliseconds: 2500), () {
-          setState(() {
+          setState(()  {
+
             _selectedIndex = 0;
+
           });
         });
         await thisUser.getUser(user.uid);

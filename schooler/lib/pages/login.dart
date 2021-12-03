@@ -298,15 +298,16 @@ class _LoginState extends State<Login> {
                               offset: const Offset(6, 6),
                             )
                           ]),
-                      child: MaterialButton(
-                        onPressed: () {
-                          _signUp();
-                        },
-                        elevation: 2,
-                        child: Text(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            alignment: Alignment.center,
+                            shape: const StadiumBorder(),
+                            primary: Colors.indigo.shade800),
+                        onPressed:  _signUp,
+                        child:  Text(
                           'Sign up',
                           style: GoogleFonts.montserrat(
-                              fontSize: 15,
+                              fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: Colors.white),
                         ),
@@ -482,41 +483,43 @@ class _LoginState extends State<Login> {
               Positioned(
                   left: MediaQuery.of(context).size.width * 0.26,
                   bottom: -20,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: Colors.indigo.shade800,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(30),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(1),
-                                spreadRadius: -5,
-                                blurRadius: 15,
-                                offset: const Offset(6, 6),
-                              )
-                            ]),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _login();
-                          },
-                          elevation: 2,
-                          child: Text(
-                            'Log in',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white),
+                  child: GestureDetector(
+                    onTap: _login,
+                    child: Container(
+                      width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(30),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(1),
+                              spreadRadius: -5,
+                              blurRadius: 15,
+                              offset: const Offset(6, 6),
+                            )
+                          ]),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            alignment: Alignment.center,
+                            shape: const StadiumBorder(),
+                            primary: Colors.indigo.shade800),
+                        onPressed: _login,
+                        child:  Text(
+                          'Log in',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white),
                         ),
                       ),
-                    ],
+
+
+
+
+                    ),
                   ))
             ],
           ),
@@ -652,64 +655,67 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.indigo.shade800,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'lib/images/81.png',
-            ),
-            repeat: ImageRepeat.repeat,
-            fit: BoxFit.scaleDown,
-          ),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 70,
-            ),
-            Text(
-              'Schooler',
-              style: GoogleFonts.montserrat(
-                  fontSize: 35,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
-              width: MediaQuery.of(context).size.width * 0.85,
-              child: Stack(
-                children: [
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: _currWidget,
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            margin: const EdgeInsets.only(left: 40),
-                            height: 60,
-                            child:
-                                _isSucces == true ? _succWidget : _errWidget),
-                      ],
-                    ),
-                  )
-                ],
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                'lib/images/81.png',
               ),
+              repeat: ImageRepeat.repeat,
+              fit: BoxFit.scaleDown,
             ),
-          ],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 70,
+              ),
+              Text(
+                'Schooler',
+                style: GoogleFonts.montserrat(
+                    fontSize: 35,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: Stack(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: _currWidget,
+                    ),
+                    Positioned(
+                      bottom: 20,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              margin: const EdgeInsets.only(left: 40),
+                              height: 60,
+                              child:
+                                  _isSucces == true ? _succWidget : _errWidget),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

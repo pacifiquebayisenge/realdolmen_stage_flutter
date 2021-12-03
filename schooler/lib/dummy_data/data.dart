@@ -61,9 +61,4 @@ List<String> scholen = [
 
 ];
 
-List<Registration> regiList = [
 
-
-
-
-];
