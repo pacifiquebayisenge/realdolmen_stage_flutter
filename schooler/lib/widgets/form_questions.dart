@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schooler/widgets/school_list.dart';
@@ -58,6 +59,9 @@ class _FormQuestionsState extends State<FormQuestions> {
   late bool vraagGOK = false;
   late bool vraagTN = false;
 
+  // key voor de page slider
+  final GlobalKey<PageSliderState> _slider = GlobalKey();
+
   // Huidige stap aanwijzing
   int _currentStep = 0;
 
@@ -78,8 +82,12 @@ class _FormQuestionsState extends State<FormQuestions> {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) => editRegistration());
   }
+
+
   @override
   void dispose() {
+
+
 
     voornaam.dispose();
     naam.dispose();
@@ -307,7 +315,6 @@ class _FormQuestionsState extends State<FormQuestions> {
       _thisForm.currentState!.save();
 
 
-      //print(regi1.toString());
 
       if (widget.editRegi != null) {
         Registration regi1 = Registration(
@@ -355,7 +362,8 @@ class _FormQuestionsState extends State<FormQuestions> {
             regiSucces = false;
           });
         });
-      } else {
+      }
+      else {
         //  verstuur data naar de server
         Registration.newRegi(
                 voornaam: voornaam.text,
@@ -389,10 +397,11 @@ class _FormQuestionsState extends State<FormQuestions> {
           setState(() {
             _currentStep += 1;
             _slider.currentState!.next();
+          // TODO: get giff collor background
             regiSucces = true;
           });
 
-          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+          Timer(const Duration(milliseconds: 2500 ), () {Navigator.pop(context); });
         }).catchError((value) {
           setState(() {
             _currentStep += 1;
@@ -518,8 +527,8 @@ class _FormQuestionsState extends State<FormQuestions> {
     });
   }
 
-  // key voor de page slider
-  GlobalKey<PageSliderState> _slider = GlobalKey();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1721,7 +1730,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                             width: MediaQuery.of(context).size.width,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children:  const [
                                 DelayedDisplay(
                                   delay: Duration(milliseconds: 500),
                                   child: Image(
@@ -1733,6 +1742,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   delay: Duration(milliseconds: 900),
                                   child: Text(
                                       'Registration completed successfully'),
+                                ),
+                                SizedBox(height: 10,),
+                                DelayedDisplay(
+                                  delay: Duration(milliseconds: 900),
+                                  child: Text(
+                                      'You will be redirected shortly.'),
                                 ),
                               ],
                             ),

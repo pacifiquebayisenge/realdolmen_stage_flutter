@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/user.dart' as userClass;
+import 'package:schooler/services/globals.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -189,7 +191,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                         const SizedBox(
-                          height: 40,
+                          height:40,
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.6,
@@ -209,7 +211,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.6,
@@ -232,7 +234,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.6,
@@ -277,7 +279,7 @@ class _LoginState extends State<Login> {
               // sign up button
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.26,
-                bottom: -20,
+                bottom: 10,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -482,7 +484,7 @@ class _LoginState extends State<Login> {
               // login knop
               Positioned(
                   left: MediaQuery.of(context).size.width * 0.26,
-                  bottom: -20,
+                  bottom: 10,
                   child: GestureDetector(
                     onTap: _login,
                     child: Container(
@@ -559,10 +561,12 @@ class _LoginState extends State<Login> {
     // retourneert string
     // als string null is => login succesvol
     String? result = await userClass.User.login(
-        email: _loginEmail.text, password: _loginPwd.text);
+        email: _loginEmail.text, password: _loginPwd.text)
+        ;
 
     if (result == null) {
       return _showSuccesMsg();
+
     }
 
     _showErrMsg(result);
@@ -686,32 +690,37 @@ class _LoginState extends State<Login> {
               const SizedBox(
                 height: 50,
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: MediaQuery.of(context).size.width * 0.85,
-                child: Stack(
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      child: _currWidget,
-                    ),
-                    Positioned(
-                      bottom: 20,
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                              width: MediaQuery.of(context).size.width * 0.6,
-                              margin: const EdgeInsets.only(left: 40),
-                              height: 60,
-                              child:
-                                  _isSucces == true ? _succWidget : _errWidget),
-                        ],
+              DelayedDisplay(
+                delay: const Duration(milliseconds: 700),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: Stack(
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        child: _currWidget,
                       ),
-                    )
-                  ],
+                      Positioned(
+                        bottom: 60,
+                        left: 5,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                margin: const EdgeInsets.only(left: 40),
+                                height: 60,
+                                child:
+                                    _isSucces == true ? _succWidget : _errWidget),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],

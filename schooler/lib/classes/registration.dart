@@ -211,13 +211,23 @@ class Registration {
     return regiList;
   }
 
-  Future<void> deleteRegi() async {
+  Future<String?> deleteRegi() async {
+    String? result;
     await _regiRef
         .doc(id)
         .delete()
-        .then((value) => print("Registration succesfully deleted "))
-        .catchError((error) => print("Failed to delete Registration: $error"));
+        .then((value) {
+      result = 'Registration succesfully deleted ';
+    })
+        .catchError((error) {
+      result = 'Failed to delete Registration';
+      print('Failed to delete registration: $error');
+    });
+
+    return result;
   }
+
+
 
   Future<void> editRegi() async {
     await _regiRef

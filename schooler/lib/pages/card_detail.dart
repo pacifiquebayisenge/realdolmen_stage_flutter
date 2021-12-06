@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
+import 'package:schooler/widgets/deletion_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 class CardDetail extends StatefulWidget {
@@ -29,6 +30,7 @@ class _CardDetailState extends State<CardDetail>
     switch (value) {
       case 'Edit':
         {
+          Navigator.pop(context);
           Navigator.pushNamed(context, 'new',
               arguments: widget.card.registration);
         }
@@ -36,8 +38,11 @@ class _CardDetailState extends State<CardDetail>
         break;
       case 'Cancel':
         {
-          widget.card.registration.deleteRegi();
-          Navigator.pop(context);
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) => DeleteDialog(widget: widget),
+          );
         }
         break;
     }
@@ -55,7 +60,6 @@ class _CardDetailState extends State<CardDetail>
 
     _scrollController = ScrollController()
       ..addListener(() {
-
         if (_isAppBarExpanded) {
           if (textOpacitiy != 0) {
             setState(() {
@@ -500,3 +504,4 @@ class _CardDetailState extends State<CardDetail>
     );
   }
 }
+

@@ -7,7 +7,7 @@ import 'package:schooler/services/globals.dart';
 
 
 class ProfileDialog extends StatefulWidget {
-   ProfileDialog({Key? key}) : super(key: key);
+  ProfileDialog({Key? key}) : super(key: key);
 
 
   @override
@@ -53,7 +53,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
     FocusScope.of(context).requestFocus(FocusNode());
     if(_thisForm.currentState!.validate() == false) return;
 
-   bool result = await thisUser.updateUserProfile(voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text);
+    bool result = await thisUser.updateUserProfile(voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text);
 
     if(result == true) return _showSnackbar("User Successfully Updated");
     _showSnackbar("Failed to update user");

@@ -22,6 +22,10 @@ import 'classes/registration.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+    if (user == null) return;
+
+  });
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     color: Colors.indigo.shade800,
@@ -65,6 +69,7 @@ class _AppState extends State<App> {
       await Firebase.initializeApp();
       setState(() {
         _initialized = true;
+        userState();
         print("FIRE");
       });
     } catch (e) {
@@ -79,9 +84,9 @@ class _AppState extends State<App> {
   @override
    initState()  {
     initializeFlutterFire();
-     userState();
+    FirebaseAuth.instance.signOut();
     super.initState();
-    //FirebaseAuth.instance.signOut();
+
   }
 
   void userState() async {
@@ -94,15 +99,18 @@ class _AppState extends State<App> {
 
         print('User is currently signed out!');
       } else {
-        Future.delayed(const Duration(milliseconds: 2500), () {
+        await thisUser.getUser(user.uid);
+        bool profileComplete = await thisUser.userInfoCheck(user.uid);
+        Future.delayed(const Duration(milliseconds: 2000), ()  {
+
           setState(()  {
 
             _selectedIndex = 0;
 
           });
         });
-        await thisUser.getUser(user.uid);
-        bool profileComplete = await thisUser.userInfoCheck(user.uid);
+
+
         if (profileComplete == false) _showDialog();
 
         print('User is signed in!');
@@ -202,7 +210,7 @@ class _AppState extends State<App> {
   }
 
   // TODO: properly name this
-  PreferredSizeWidget? test() {
+  PreferredSizeWidget? _customAppBar() {
     if (_selectedIndex == 2 || _selectedIndex == 4) {
       return null;
     }
@@ -212,7 +220,19 @@ class _AppState extends State<App> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.more_vert),
-          )
+          ),
+        if(_selectedIndex == 0)
+          PopupMenuButton<String>(
+                onSelected: handleClick,
+                itemBuilder: (BuildContext context) {
+                  return {'Account', 'Log out'}.map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                })
+
       ],
       flexibleSpace: const Image(
         image: AssetImage('lib/images/81.png'),
@@ -230,7 +250,22 @@ class _AppState extends State<App> {
     );
   }
 
-  Widget? test2() {
+  void handleClick(String value) {
+
+    switch (value)
+    {
+      case 'Account': {
+
+      }
+      break;
+      case 'Log out': {
+        FirebaseAuth.instance.signOut();
+      }
+      break;
+    }
+  }
+
+  Widget? _customBottomNavBar() {
     if (_selectedIndex == 4) {
       return null;
     }
@@ -300,6 +335,8 @@ class _AppState extends State<App> {
       );
     }
 
+
+
     return Scaffold(
       backgroundColor: Colors.indigo.shade800,
       // bool/ pagina content kan achter de bottom nav bar = pagina neemt heel scherm over
@@ -307,14 +344,14 @@ class _AppState extends State<App> {
       // bron: https://stackoverflow.com/questions/59491186/extend-container-behind-bottom-navigation-flutter
       extendBody: true,
       resizeToAvoidBottomInset: false,
-      appBar: test(),
+      appBar: _customAppBar(),
       body: SafeArea(
           bottom: false,
           child: ClipRRect(
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               child: screens[_selectedIndex])),
-      bottomNavigationBar: test2(),
+      bottomNavigationBar: _customBottomNavBar(),
     );
   }
 }

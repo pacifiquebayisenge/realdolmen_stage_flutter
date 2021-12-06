@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
@@ -23,19 +24,22 @@ class _HomeState extends State<Home> {
   late Stream<QuerySnapshot> _streamList;
 
   @override
-  void initState() {
+  void initState()  {
     // bron: https://stackoverflow.com/questions/58664293/futurebuilder-runs-twice
-    _futureRegiRef = _futureFetch();
+   // _futureRegiRef = _futureFetch();
     // stream reference om te gebruiken voor de real time changes
 
     _streamList = _streamFetch();
     super.initState();
   }
 
+
+
   Stream<QuerySnapshot> _streamFetch() {
+
     return FirebaseFirestore.instance
         .collection('users')
-        .doc(thisUser.id)
+        .doc(thisUser.id )
         .collection('registrations')
         .orderBy('date', descending: true)
         .snapshots();
@@ -100,7 +104,7 @@ class _HomeState extends State<Home> {
       if (event.docChanges.length > 1) return;
 
       switch (event.docChanges.first.type) {
-        // als er een inschrijving wordt toegevoegd
+      // als er een inschrijving wordt toegevoegd
         case DocumentChangeType.added:
           {
             // nieuwe inschrijving toevoegen aan de lijst
@@ -117,20 +121,20 @@ class _HomeState extends State<Home> {
           }
           break;
 
-        // wanneer een inschrijving wordt verwijderd
+      // wanneer een inschrijving wordt verwijderd
         case DocumentChangeType.removed:
           {
             // verwijder animatie aan de animated list widget
             _listKey.currentState!.removeItem(
                 event.docChanges.first.oldIndex,
-                (context, animation) => SlideTransition(
-                      position: animation
-                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                      child: CustomCard(
-                          registration:
-                              regiList[event.docChanges.first.oldIndex],
-                          navMethod: () {}),
-                    ));
+                    (context, animation) => SlideTransition(
+                  position: animation
+                      .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                  child: CustomCard(
+                      registration:
+                      regiList[event.docChanges.first.oldIndex],
+                      navMethod: () {}),
+                ));
 
             //  inschrijving verwijderen uit de lijst
             regiList.removeAt(event.docChanges.first.oldIndex);
@@ -140,20 +144,20 @@ class _HomeState extends State<Home> {
           }
           break;
 
-        // wanneer een inschrijving wordt gewijzigd
+      // wanneer een inschrijving wordt gewijzigd
         case DocumentChangeType.modified:
           {
             // verwijder animatie aan de animated list widget
             _listKey.currentState!.removeItem(
                 event.docChanges.first.oldIndex,
-                (context, animation) => SlideTransition(
-                      position: animation
-                          .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
-                      child: CustomCard(
-                          registration:
-                              regiList[event.docChanges.first.oldIndex],
-                          navMethod: () {}),
-                    ));
+                    (context, animation) => SlideTransition(
+                  position: animation
+                      .drive(Tween(begin: Offset(1, 0), end: Offset(0, 0))),
+                  child: CustomCard(
+                      registration:
+                      regiList[event.docChanges.first.oldIndex],
+                      navMethod: () {}),
+                ));
 
             //  inschrijving verwijderen uit de lijst
             regiList.removeAt(event.docChanges.first.oldIndex);
@@ -200,14 +204,14 @@ class _HomeState extends State<Home> {
             if (snapshot.connectionState == ConnectionState.active) {
 
               print('active');
-                if (snapshot.data!.docs.length > 0) {
-                  List<DocumentSnapshot> documents = snapshot.data!.docs;
+              if (snapshot.data!.docs.length > 0) {
+                List<DocumentSnapshot> documents = snapshot.data!.docs;
 
-                  _getRegisList(documents);
+                _getRegisList(documents);
 
-                  return DelayedDisplay(
-                    delay: const Duration(milliseconds: 200),
-                    child: AnimatedList(
+                return DelayedDisplay(
+                  delay: const Duration(milliseconds: 200),
+                  child: AnimatedList(
                       key: _listKey,
                       initialItemCount: regiList.length,
                       itemBuilder: (BuildContext context, int index,
@@ -280,59 +284,59 @@ class _HomeState extends State<Home> {
                           return Container();
                         }
                       }),
-                  );
-                } else {
-                  // geen inschrijvingen: call to action
-                  return Container(
-                    color: Colors.white,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const DelayedDisplay(
-                          delay: Duration(milliseconds: 500),
-                          child: Image(
-                            image: AssetImage('lib/images/empty_space.gif'),
-                            width: 250,
-                          ),
+                );
+              } else {
+                // geen inschrijvingen: call to action
+                return Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const DelayedDisplay(
+                        delay: Duration(milliseconds: 500),
+                        child: Image(
+                          image: AssetImage('lib/images/empty_space.gif'),
+                          width: 250,
                         ),
-                        const DelayedDisplay(
-                          delay: Duration(milliseconds: 900),
-                          child: Text('No registrations yet'),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const DelayedDisplay(
-                          delay: Duration(milliseconds: 900),
-                          child: Text('Create a new registration here'),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DelayedDisplay(
-                          delay: const Duration(milliseconds: 900),
-                          child: ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(100)),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                primary: Colors.indigo.shade800,
-                                shape: const StadiumBorder(),
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(context, 'new');
-                              },
-                              child: const Icon(Icons.add_circle),
+                      ),
+                      const DelayedDisplay(
+                        delay: Duration(milliseconds: 900),
+                        child: Text('No registrations yet'),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const DelayedDisplay(
+                        delay: Duration(milliseconds: 900),
+                        child: Text('Create a new registration here'),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      DelayedDisplay(
+                        delay: const Duration(milliseconds: 900),
+                        child: ClipRRect(
+                          borderRadius:
+                          const BorderRadius.all(Radius.circular(100)),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              primary: Colors.indigo.shade800,
+                              shape: const StadiumBorder(),
                             ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, 'new');
+                            },
+                            child: const Icon(Icons.add_circle),
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                }
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }
 
 
 
@@ -363,16 +367,14 @@ class _HomeState extends State<Home> {
             }
             if (snapshot.connectionState == ConnectionState.done) {
               print('done');
-              realtime();
+             // realtime();
             }
 
             if (snapshot.hasData) {
               /*
               if (snapshot.data!.docs.length > 0) {
                 List<DocumentSnapshot> documents = snapshot.data!.docs;
-
                 _getRegisList(documents);
-
                 return DelayedDisplay(
                   delay: const Duration(milliseconds: 200),
                   child: AnimatedList(
@@ -389,7 +391,6 @@ class _HomeState extends State<Home> {
                             navMethod: () {
                               // methode om naar de detail pagina te gaan
                               // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -421,7 +422,6 @@ class _HomeState extends State<Home> {
                               navMethod: () {
                                 // methode om naar de detail pagina te gaan
                                 // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -496,7 +496,6 @@ class _HomeState extends State<Home> {
                   ),
                 );
               }
-
                */
             }
             // something went wrong
@@ -581,10 +580,8 @@ class _HomeState extends State<Home> {
         future: _futureRegiRef,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.none) print('none');
-
           if (snapshot.connectionState == ConnectionState.active)
             print('active');
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('waiting');
             return Container(
@@ -610,13 +607,10 @@ class _HomeState extends State<Home> {
             print('done');
             realtime();
           }
-
           if (snapshot.hasData) {
             if (snapshot.data!.docs.length > 0) {
               List<DocumentSnapshot> documents = snapshot.data!.docs;
-
               _getRegisList(documents);
-
               return DelayedDisplay(
                 delay: const Duration(milliseconds: 200),
                 child: AnimatedList(
@@ -633,7 +627,6 @@ class _HomeState extends State<Home> {
                           navMethod: () {
                             // methode om naar de detail pagina te gaan
                             // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -665,7 +658,6 @@ class _HomeState extends State<Home> {
                             navMethod: () {
                               // methode om naar de detail pagina te gaan
                               // bron: https://www.youtube.com/watch?v=4naljQa5QA8 & https://github.com/iamshaunjp/flutter-animations/blob/lesson-4/ninja_trips/lib/shared/tripList.dart
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -777,7 +769,6 @@ class _HomeState extends State<Home> {
               ),
             );
           }
-
           // loading screen
           return Container(
             color: Colors.white,
@@ -843,19 +834,15 @@ class _HomeState extends State<Home> {
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(100)),
               child:  ElevatedButton(
-
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   primary: Colors.indigo.shade800,
                   shape: StadiumBorder(),
                 ),
-
-
                 onPressed: () {
                   Navigator.pushNamed(context, 'new');
                 },
                 child: Icon(Icons.add_circle),
-
               ),
             ),
           )
