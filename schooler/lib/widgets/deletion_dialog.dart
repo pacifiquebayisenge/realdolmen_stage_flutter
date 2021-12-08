@@ -67,7 +67,9 @@ class _DeleteDialogState extends State<DeleteDialog> {
         TextButton(
           style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.redAccent.withOpacity(0.7))),
           child: Text('No',style: GoogleFonts.montserrat(fontWeight: FontWeight.w500,color: Colors.redAccent)),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         TextButton(
           style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.indigo.shade800.withOpacity(0.7))),

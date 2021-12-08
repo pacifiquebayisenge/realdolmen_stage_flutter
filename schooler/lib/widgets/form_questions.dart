@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schooler/widgets/school_list.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'widgets.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -75,7 +76,8 @@ class _FormQuestionsState extends State<FormQuestions> {
   double pageHeight = 450;
 
   bool regiSucces = false;
-  String resultImg = '';
+
+  bool isParent = false;
 
   @override
   void initState() {
@@ -83,23 +85,17 @@ class _FormQuestionsState extends State<FormQuestions> {
     WidgetsBinding.instance!.addPostFrameCallback((_) => editRegistration());
   }
 
-
   @override
   void dispose() {
-
-
-
     voornaam.dispose();
     naam.dispose();
     rijksNr.dispose();
-
 
     straat.dispose();
     huisNr.dispose();
     busNr.dispose();
     postcode.dispose();
     gemeente.dispose();
-
 
     oVoornaam1.dispose();
     oNaam1.dispose();
@@ -109,7 +105,6 @@ class _FormQuestionsState extends State<FormQuestions> {
     berBusNr1.dispose();
     berPostcode1.dispose();
     berGemeente1.dispose();
-
 
     oVoornaam2.dispose();
     oNaam2.dispose();
@@ -181,6 +176,73 @@ class _FormQuestionsState extends State<FormQuestions> {
     });
   }
 
+  void userTypeBtn(String type) {
+    setState(() {
+    if(type == 'parent') {
+
+        isParent = true;
+
+    }else {
+      isParent = false;
+    }
+    });
+    nextStep() ;
+  }
+
+  void autoStudentData(){
+
+    if(!isParent){
+      voornaam.text = thisUser.voornaam;
+      naam.text = thisUser.naam;
+      rijksNr.text = thisUser.rijksNr;
+    }
+
+    if(!isParent && thisUser.straat != null){
+      straat.text = thisUser.straat;
+      huisNr.text = thisUser.huisNr.toString();
+      postcode.text = thisUser.postcode.toString();
+      gemeente.text = thisUser.gemeente;
+    }
+
+    if(!isParent && thisUser.oVoornaam1 != ""){
+      oVoornaam1.text = thisUser.oVoornaam1!;
+      oNaam1.text = thisUser.oNaam1!;
+      beroep1.text = thisUser.beroep1!;
+      berStraat1.text = thisUser.berStraat1!;
+      berHuisNr1.text = thisUser.berHuisNr1!.toString();
+      berBusNr1.text = thisUser.berBusNr1!;
+      berPostcode1.text = thisUser.berPostcode1!.toString();
+      berGemeente1.text = thisUser.berGemeente1!;
+    }
+
+    if(!isParent && thisUser.oVoornaam2 != ""){
+      oVoornaam2.text = thisUser.oVoornaam2!;
+      oNaam2.text = thisUser.oNaam2!;
+      beroep2.text = thisUser.beroep2!;
+      berStraat2.text = thisUser.berStraat2!;
+      berHuisNr2.text = thisUser.berHuisNr2!.toString();
+      berBusNr2.text = thisUser.berBusNr2!;
+      berPostcode2.text = thisUser.berPostcode2!.toString();
+      berGemeente2.text = thisUser.berGemeente2!;
+    }
+  }
+
+  void removeParent() {
+    setState(() {
+      oVoornaam2.clear();
+      oNaam2.clear();
+      beroep2.clear();
+      berStraat2.clear();
+      berHuisNr2.clear();
+      berBusNr2.clear();
+      berPostcode2.clear();
+      berGemeente2.clear();
+
+      secParent = false;
+      previousStep();
+    });
+  }
+
   // methode om de GOK en TN vragen op te vragen
   // 2 knoppen = ja knop en nee knop
   // index als parameter om te weten welke knop gedrukt werd
@@ -188,7 +250,7 @@ class _FormQuestionsState extends State<FormQuestions> {
   void vraagYesNo(int index) {
     // aan de hand van welke pagina weten we over welke vragen het gaat
     switch (_currentStep) {
-      case 4:
+      case 5:
         {
           vraagGOK = index != 0;
 
@@ -196,7 +258,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           print("vraagGOK $vraagGOK");
         }
         break;
-      case 5:
+      case 6:
         {
           vraagTN = index != 0;
           nextStep();
@@ -217,12 +279,22 @@ class _FormQuestionsState extends State<FormQuestions> {
 
     setState(() {
       switch (page) {
-        case 6:
+        case 3:
+          {
+            pageHeight = 480;
+          }
+          break;
+        case 4:
+          {
+            pageHeight = 480;
+          }
+          break;
+        case 7:
           {
             pageHeight = 520;
           }
           break;
-        case 7:
+        case 8:
           {
             pageHeight = 550;
           }
@@ -236,7 +308,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     });
   }
 
-// methode om elke validator van elke formfield na te gaan
+  // methode om elke validator van elke formfield na te gaan
   // geeft bool terug om te zien of form juist is ingevoerd
   bool checkStep() {
     bool formSucces = false;
@@ -250,38 +322,44 @@ class _FormQuestionsState extends State<FormQuestions> {
 
       case 1:
         {
-          formSucces = _thisForm2.currentState!.validate();
+          formSucces = _thisForm.currentState!.validate();
         }
         break;
 
       case 2:
         {
-          formSucces = _thisForm3.currentState!.validate();
+          formSucces = _thisForm2.currentState!.validate();
         }
         break;
 
       case 3:
         {
-          formSucces = _thisForm4.currentState!.validate();
+          formSucces = _thisForm3.currentState!.validate();
         }
         break;
+
       case 4:
         {
-          formSucces = true;
+          formSucces = _thisForm4.currentState!.validate();
         }
         break;
       case 5:
         {
-          pageHeight = 450;
           formSucces = true;
         }
         break;
       case 6:
         {
+          pageHeight = 450;
           formSucces = true;
         }
         break;
       case 7:
+        {
+          formSucces = true;
+        }
+        break;
+      case 8:
         {
           formSucces = true;
         }
@@ -300,6 +378,8 @@ class _FormQuestionsState extends State<FormQuestions> {
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   Future<void> nextStep() async {
+
+    autoStudentData();
     t();
     //print(checkStep());
 
@@ -313,8 +393,6 @@ class _FormQuestionsState extends State<FormQuestions> {
     if (isLastStep) {
       print('Completed!');
       _thisForm.currentState!.save();
-
-
 
       if (widget.editRegi != null) {
         Registration regi1 = Registration(
@@ -362,8 +440,7 @@ class _FormQuestionsState extends State<FormQuestions> {
             regiSucces = false;
           });
         });
-      }
-      else {
+      } else {
         //  verstuur data naar de server
         Registration.newRegi(
                 voornaam: voornaam.text,
@@ -397,11 +474,11 @@ class _FormQuestionsState extends State<FormQuestions> {
           setState(() {
             _currentStep += 1;
             _slider.currentState!.next();
-          // TODO: get giff collor background
+
             regiSucces = true;
           });
 
-          Timer(const Duration(milliseconds: 2500 ), () {Navigator.pop(context); });
+          //Timer(const Duration(milliseconds: 2500 ), () {Navigator.pop(context); });
         }).catchError((value) {
           setState(() {
             _currentStep += 1;
@@ -410,9 +487,13 @@ class _FormQuestionsState extends State<FormQuestions> {
           });
         });
       }
+
+      Timer(const Duration(milliseconds: 4500), () {
+        Navigator.pop(context);
+      });
     }
     //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
-    else if (_currentStep == 2 && secParent == false) {
+    else if (_currentStep == 3 && secParent == false) {
       setState(() => _currentStep += 2);
 
       _slider.currentState!.next();
@@ -440,7 +521,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       Navigator.pop(context);
     }
     // Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina  => dubbele stap achteruit
-    else if (_currentStep == 4 && secParent == false) {
+    else if (_currentStep == 5 && secParent == false) {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
       _slider.currentState!.previous();
@@ -475,7 +556,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       switch (page) {
         case 'profile':
           {
-            _currentStep -= 7;
+            _currentStep -= 8;
             _slider.currentState!.previous();
             _slider.currentState!.previous();
             _slider.currentState!.previous();
@@ -490,7 +571,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 'parents':
           {
-            _currentStep -= 5;
+            _currentStep -= 6;
             _slider.currentState!.previous();
             _slider.currentState!.previous();
             _slider.currentState!.previous();
@@ -507,7 +588,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 'statements':
           {
-            _currentStep -= 3;
+            _currentStep -= 4;
             _slider.currentState!.previous();
             _slider.currentState!.previous();
             _slider.currentState!.previous();
@@ -516,7 +597,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 'schoollist':
           {
-            _currentStep -= 1;
+            _currentStep -= 2;
             _slider.currentState!.previous();
             //formSucces = _thisForm.currentState!.validate();
           }
@@ -526,9 +607,6 @@ class _FormQuestionsState extends State<FormQuestions> {
       setpageHeight(_currentStep);
     });
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -553,6 +631,116 @@ class _FormQuestionsState extends State<FormQuestions> {
               duration: const Duration(milliseconds: 400),
               initialPage: _currentStep,
               pages: [
+
+                FractionallySizedBox(
+                    widthFactor: 0.9,
+                    heightFactor: 1,
+                    child: Container(
+                      color: Colors.white,
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+
+                        children: [
+                          Text(
+                            'Describe yourself',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                                decoration: TextDecoration.underline),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'Are you registering your child as a parent \n'
+                                'or are you registering a student yourself?',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black45),
+                          ),
+                          const SizedBox(
+                            height: 100,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              DelayedDisplay(
+                                delay: const Duration(milliseconds: 500),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(Radius.circular(30)),
+                                      border: Border.all(color: Colors.black45)
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                                      splashColor: Colors.indigo.shade800.withOpacity(0.5),
+                                      onTap: () {userTypeBtn('parent');},
+                                      child: Column(
+                                        children:  [
+                                          const Image(
+                                            image: AssetImage('lib/images/parents2.png'),
+                                            width: 150,
+                                          ),
+                                          Text(
+                                            "I'm a parent",
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black45),
+                                          ),
+                                          const SizedBox(height: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DelayedDisplay(
+                                delay: const Duration(milliseconds: 500),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                                      border: Border.all(color: Colors.black45)
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                                      splashColor: Colors.indigo.shade800.withOpacity(0.5),
+                                      onTap: () {userTypeBtn('student');},
+                                      child: Column(
+                                        children:  [
+                                          const Image(
+                                            image: AssetImage('lib/images/student2.png'),
+                                            width: 150,
+                                          ),
+                                          Text(
+                                            "I'm a student",
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black45),
+                                          ),
+                                          const SizedBox(height: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                    )),
+
+
                 // profiel info
                 FormBuilder(
                   key: _thisForm,
@@ -561,19 +749,23 @@ class _FormQuestionsState extends State<FormQuestions> {
                     heightFactor: 1,
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Profile information',
-                          style: TextStyle(
-                              fontSize: 16,
+                          style: GoogleFonts.montserrat(
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
+                              color: Colors.black87,
                               decoration: TextDecoration.underline),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
+                        Text(
                           'Please fill in your private information',
-                          style: TextStyle(fontSize: 10, color: Colors.black54),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black45),
                         ),
                         const SizedBox(
                           height: 100,
@@ -653,6 +845,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
+
+
                 // adress info
                 FormBuilder(
                   key: _thisForm2,
@@ -661,19 +855,23 @@ class _FormQuestionsState extends State<FormQuestions> {
                     heightFactor: 1,
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Address information',
-                          style: TextStyle(
-                              fontSize: 16,
+                          style: GoogleFonts.montserrat(
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
+                              color: Colors.black87,
                               decoration: TextDecoration.underline),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
+                        Text(
                           'Please fill in your private address',
-                          style: TextStyle(fontSize: 10, color: Colors.black54),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black45),
                         ),
                         const SizedBox(
                           height: 100,
@@ -776,6 +974,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
+
+
                 // eerste ouder info
                 FractionallySizedBox(
                   widthFactor: 0.9,
@@ -785,24 +985,27 @@ class _FormQuestionsState extends State<FormQuestions> {
                       key: _thisForm3,
                       child: Column(
                         children: [
-                          const Text(
+                          Text(
                             'Parent information',
-                            style: TextStyle(
-                                fontSize: 16,
+                            style: GoogleFonts.montserrat(
+                                fontSize: 18,
                                 fontWeight: FontWeight.w600,
+                                color: Colors.black87,
                                 decoration: TextDecoration.underline),
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text(
+                          Text(
                             "Please fill in your parent information together\nwith the profession and it's address",
                             textAlign: TextAlign.center,
-                            style:
-                                TextStyle(fontSize: 10, color: Colors.black54),
+                            style: GoogleFonts.montserrat(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black45),
                           ),
                           const SizedBox(
-                            height: 10,
+                            height: 40,
                           ),
                           Row(
                             children: [
@@ -955,6 +1158,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
+
+
                 // tweede ouder info
                 // enkel zichtbaar als 2e ouder knop wordt geklikt
                 Visibility(
@@ -968,24 +1173,27 @@ class _FormQuestionsState extends State<FormQuestions> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'Parent information',
-                              style: TextStyle(
-                                  fontSize: 16,
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
                                   decoration: TextDecoration.underline),
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text(
+                            Text(
                               "Please fill in your parent information together\nwith the profession and it's address",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 10, color: Colors.black54),
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black45),
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 40,
                             ),
                             Row(
                               children: [
@@ -1147,24 +1355,33 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
+
                 // GOK vragen
                 FractionallySizedBox(
                   widthFactor: 0.9,
                   heightFactor: 1,
                   child: Column(
-                    children: const [
-                      SizedBox(
+                    children: [
+                      const SizedBox(
                         height: 30,
                       ),
-                      Text('Do any of these statements apply to you?'),
-                      SizedBox(
+                      Text('Do any of these statements apply to you?',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87)),
+                      const SizedBox(
                         height: 5,
                       ),
-                      Text('(Proof will be requested later)'),
-                      SizedBox(
+                      Text('(Proof will be requested later)',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black45)),
+                      const SizedBox(
                         height: 10,
                       ),
-                      Expanded(
+                      const Expanded(
                         child: BulletList(
                           strings: [
                             'The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.',
@@ -1175,6 +1392,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ],
                   ),
                 ),
+
                 // TN vragen
                 FractionallySizedBox(
                   widthFactor: 0.9,
@@ -1185,11 +1403,19 @@ class _FormQuestionsState extends State<FormQuestions> {
                         const SizedBox(
                           height: 30,
                         ),
-                        const Text('Do any of these statements apply to you?'),
+                        Text('Do any of these statements apply to you?',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87)),
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text('(Proof will be requested later)'),
+                        Text('(Proof will be requested later)',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black45)),
                         const SizedBox(
                           height: 10,
                         ),
@@ -1207,315 +1433,326 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
+
                 // school rangschik lijst
                 FractionallySizedBox(
-                    widthFactor: 0.9, heightFactor: 1, child: SchoolList()),
+                  widthFactor: 0.9,
+                  heightFactor: 1,
+                  child: SchoolList(),
+                ),
+
                 // overzicht
                 FractionallySizedBox(
-                    widthFactor: 0.9,
-                    heightFactor: 1,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
+                  widthFactor: 0.9,
+                  heightFactor: 1,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        //overzicht: Profile
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: InkWell(
+                            onLongPress: () {
+                              overzichtEdit('profile');
+                            },
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('${voornaam.text} ${naam.text}',
-                                    style: TextStyle(
-                                        color: Colors.grey.shade700,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w500)),
+                                Text(
+                                  '${voornaam.text} ${naam.text}',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  '${straat.text} ${huisNr.text} ${busNr.text}',
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.grey.shade700,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  '${postcode.text} ${gemeente.text}',
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.grey.shade700,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500),
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
                             ),
                           ),
-                          const Divider(
-                            thickness: 3,
-                            height: 20,
-                            indent: 50,
-                            endIndent: 50,
+                        ),
+
+                        const Divider(
+                          thickness: 3,
+                          height: 20,
+                          indent: 50,
+                          endIndent: 50,
+                        ),
+
+                        //overzicht:  statements
+                        if (vraagGOK == true || vraagTN == true)
+                          InkWell(
+                            onLongPress: () {
+                              overzichtEdit('statements');
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (vraagGOK == true)
+                                  Chip(
+                                    backgroundColor: Colors.orange.shade500,
+                                    label: const Text(
+                                      'GOK',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black54),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                if (vraagTN == true)
+                                  Chip(
+                                    backgroundColor: Colors.orange.shade500,
+                                    label: const Text(
+                                      'TN',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black54),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                              ],
+                            ),
                           ),
-                          Column(
-                            children: [
-                              Card(
-                                elevation: 1,
-                                shadowColor: Colors.lightBlueAccent,
-                                clipBehavior: Clip.antiAlias,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: InkWell(
-                                  onLongPress: () {
-                                    overzichtEdit('profile');
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20.0, horizontal: 30.0),
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      children: [
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Birthdate:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
-                                            child: rijksNr.text.isNotEmpty &&
-                                                    rijksNr.text.length == 11
-                                                ? Text(
-                                                    '${rijksNr.text.substring(4, 6)}/${rijksNr.text.substring(2, 4)}/${rijksNr.text.substring(0, 2)}')
-                                                : const Text(""),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Address:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    '${straat.text} ${huisNr.text} ${busNr.text}'),
-                                                Text(
-                                                    '${gemeente.text} ${postcode.text}  ')
-                                              ],
-                                            ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ])
-                                      ],
-                                    ),
+
+                        //overzicht: parents
+                        if (oVoornaam1.text != "")
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: FractionallySizedBox(
+                              widthFactor: 0.4,
+                              child: Column(
+                                children: [
+                                  Text('Parents',
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w500)),
+                                  const Divider(
+                                    thickness: 2,
                                   ),
-                                ),
+                                ],
                               ),
-                              // titel: Parent
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30.0),
-                                child: FractionallySizedBox(
-                                  widthFactor: 0.4,
-                                  child: Column(
-                                    children: [
-                                      Text('Parents',
-                                          style: TextStyle(
-                                              color: Colors.grey.shade700,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w500)),
-                                      const Divider(
-                                        thickness: 2,
+                            ),
+                          ),
+                        if (oVoornaam1.text != "")
+                          Card(
+                            elevation: 1,
+                            shadowColor: Colors.lightBlueAccent,
+                            clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: InkWell(
+                              onLongPress: () {
+                                overzichtEdit('parents');
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 10.0),
+                                child: Table(
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
+                                  defaultVerticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  children: [
+                                    TableRow(children: [
+                                      TableCell(
+                                        child: Center(
+                                          child: Text(
+                                            '${oVoornaam1.text} ${oNaam1.text}',
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Card(
-                                elevation: 1,
-                                shadowColor: Colors.lightBlueAccent,
-                                clipBehavior: Clip.antiAlias,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: InkWell(
-                                  onLongPress: () {
-                                    overzichtEdit('parents');
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20.0, horizontal: 30.0),
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      children: [
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Full name:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
+                                      if (oVoornaam2.text != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
+                                          ),
+                                        ),
+                                      if (oVoornaam2.text != "")
+                                        TableCell(
+                                            child: Center(
+                                          child: Text(
+                                            '${oVoornaam2.text} ${oNaam2.text}',
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        )),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ]),
+                                    TableRow(children: [
+                                      TableCell(
+                                          child: Center(
+                                        child: Text(
+                                          beroep1.text.toString(),
+                                          style: GoogleFonts.montserrat(
+                                              color: Colors.grey.shade700,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                      if (oVoornaam2.text != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
+                                          ),
+                                        ),
+                                      if (oVoornaam2.text != "")
+                                        TableCell(
+                                          child: Center(
+                                            child: Text(
+                                              beroep2.text.toString(),
+                                              style: GoogleFonts.montserrat(
+                                                  color: Colors.grey.shade700,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ]),
+                                    TableRow(children: [
+                                      TableCell(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Center(
                                               child: Text(
-                                                  '${oVoornaam1.text} ${oNaam1.text}')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
+                                                '${berStraat1.text} ${berHuisNr1.text} ${berBusNr1.text}',
+                                                style: GoogleFonts.montserrat(
+                                                    color: Colors.grey.shade700,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
                                             ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Profession:')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 10,
-                                            ),
+                                            Center(
+                                              child: Text(
+                                                '${berPostcode1.text} ${berGemeente1.text}',
+                                                style: GoogleFonts.montserrat(
+                                                    color: Colors.grey.shade700,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      if (oVoornaam2.text != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
                                           ),
-                                          TableCell(child: Text(beroep1.text)),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child:
-                                                  Text('Profession address:')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 10,
-                                            ),
+                                        ),
+                                      if (oVoornaam2.text != "")
+                                        TableCell(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  '${berStraat2.text} ${berHuisNr2.text} ${berBusNr2.text}',
+                                                  style: GoogleFonts.montserrat(
+                                                      color:
+                                                          Colors.grey.shade700,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  '${berPostcode2.text} ${berGemeente2.text}',
+                                                  style: GoogleFonts.montserrat(
+                                                      color:
+                                                          Colors.grey.shade700,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          TableCell(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    '${berStraat1.text} ${berHuisNr1.text} ${berBusNr1.text} '),
-                                                Text(
-                                                    '${berGemeente1.text} ${berPostcode1.text}  ')
-                                              ],
-                                            ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ])
-                                      ],
-                                    ),
-                                  ),
+                                        ),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ])
+                                  ],
                                 ),
                               ),
-                              if (secParent)
-                                Card(
-                                  elevation: 1,
-                                  shadowColor: Colors.lightBlueAccent,
-                                  clipBehavior: Clip.antiAlias,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: InkWell(
-                                    onLongPress: () {
-                                      overzichtEdit('parents');
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20.0, horizontal: 30.0),
-                                      child: Table(
-                                        defaultColumnWidth:
-                                            const IntrinsicColumnWidth(),
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: [
-                                          TableRow(children: [
-                                            const TableCell(
-                                                child: Text('Full name:')),
-                                            const TableCell(
-                                                child: SizedBox(
-                                              width: 10,
-                                            )),
-                                            TableCell(
-                                                child: Text(
-                                                    '${oVoornaam2.text} ${oNaam2.text}')),
-                                            const TableCell(
-                                              child: SizedBox(
-                                                height: 30,
-                                              ),
-                                            )
-                                          ]),
-                                          TableRow(children: [
-                                            const TableCell(
-                                                child: Text('Profession:')),
-                                            const TableCell(
-                                              child: SizedBox(
-                                                width: 10,
-                                              ),
-                                            ),
-                                            TableCell(
-                                                child: Text(beroep2.text)),
-                                            const TableCell(
-                                              child: SizedBox(
-                                                height: 30,
-                                              ),
-                                            )
-                                          ]),
-                                          TableRow(children: [
-                                            const TableCell(
-                                                child: Text(
-                                                    'Profession address:')),
-                                            const TableCell(
-                                              child: SizedBox(
-                                                width: 10,
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                      '${berStraat2.text} ${berHuisNr2.text} ${berBusNr2.text}'),
-                                                  Text(
-                                                      '${berGemeente2.text} ${berPostcode2.text}  ')
-                                                ],
-                                              ),
-                                            ),
-                                            const TableCell(
-                                              child: SizedBox(
-                                                height: 30,
-                                              ),
-                                            )
-                                          ])
-                                        ],
-                                      ),
-                                    ),
+                            ),
+                          ),
+
+                        //overzicht: school lijst
+                        if (SchoolList.schoolList != null &&
+                            SchoolList.schoolList.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 50.0),
+                            child: FractionallySizedBox(
+                              widthFactor: 0.5,
+                              child: Column(
+                                children: [
+                                  Text('Schoollist',
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w500)),
+                                  const Divider(
+                                    thickness: 2,
                                   ),
-                                ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 50.0),
-                                child: FractionallySizedBox(
-                                  widthFactor: 0.4,
-                                  child: Column(
-                                    children: [
-                                      Text('Statements',
-                                          style: TextStyle(
-                                              color: Colors.grey.shade700,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w500)),
-                                      const Divider(
-                                        thickness: 2,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                ],
                               ),
-                              Card(
+                            ),
+                          ),
+                        if (SchoolList.schoolList != null &&
+                            SchoolList.schoolList.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: FractionallySizedBox(
+                              widthFactor: 0.85,
+                              child: Card(
                                 elevation: 1,
                                 shadowColor: Colors.lightBlueAccent,
                                 clipBehavior: Clip.antiAlias,
@@ -1523,214 +1760,115 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     borderRadius: BorderRadius.circular(20)),
                                 child: InkWell(
                                   onLongPress: () {
-                                    overzichtEdit('statements');
+                                    overzichtEdit('school list');
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20.0, horizontal: 40.0),
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      children: [
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('GOK statements:')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 10,
-                                            ),
-                                          ),
-                                          TableCell(
-                                            child: vraagGOK == true
-                                                ? Icon(
-                                                    Icons.check_circle,
-                                                    color:
-                                                        Colors.green.shade600,
-                                                  )
-                                                : Icon(
-                                                    Icons.cancel,
-                                                    color: Colors.red.shade600,
-                                                  ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('TN statements:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
-                                          )),
-                                          TableCell(
-                                            child: vraagTN == true
-                                                ? Icon(
-                                                    Icons.check_circle,
-                                                    color:
-                                                        Colors.green.shade600,
-                                                  )
-                                                : Icon(
-                                                    Icons.cancel,
-                                                    color: Colors.red.shade600,
-                                                  ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 30,
-                                            ),
-                                          )
-                                        ])
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 50.0),
-                                child: FractionallySizedBox(
-                                  widthFactor: 0.5,
-                                  child: Column(
-                                    children: [
-                                      Text('School list',
-                                          style: TextStyle(
-                                              color: Colors.grey.shade700,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w500)),
-                                      const Divider(
-                                        thickness: 2,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 50.0),
-                                child: FractionallySizedBox(
-                                  widthFactor: 0.85,
-                                  child: Card(
-                                    elevation: 1,
-                                    shadowColor: Colors.lightBlueAccent,
-                                    clipBehavior: Clip.antiAlias,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: InkWell(
-                                      onLongPress: () {
-                                        overzichtEdit('schoollist');
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          children: List.generate(
-                                            SchoolList.schoolList.length,
-                                            (index) => Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 20.0),
-                                              child: Row(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      children: List.generate(
+                                        SchoolList.schoolList.length,
+                                        (index) => Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                // verticaal centreren van circle avatar
+                                                // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                    MainAxisAlignment.center,
                                                 children: [
-                                                  Column(
-                                                    // verticaal centreren van circle avatar
-                                                    // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      // rangschiknummer
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color
-                                                                    .fromRGBO(
-                                                                234,
-                                                                144,
-                                                                16,
-                                                                1),
-                                                        radius: 15,
-                                                        // rang nummer
-                                                        child: Text(
-                                                          (index + 1)
-                                                              .toString(),
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900,
-                                                                  fontSize: 15),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Flexible(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .stretch,
-                                                      children: [
-                                                        Text(
-                                                            SchoolList
-                                                                    .schoolList[
-                                                                index],
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)),
-                                                        const Text(
-                                                          'Straatnaan 12, stadnaam postcode',
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                              fontSize: 11),
-                                                        ),
-                                                      ],
+                                                  // rangschiknummer
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        const Color.fromRGBO(
+                                                            234, 144, 16, 1),
+                                                    radius: 15,
+                                                    // rang nummer
+                                                    child: Text(
+                                                      (index + 1).toString(),
+                                                      style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 15),
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Text(
+                                                      SchoolList
+                                                          .schoolList[index],
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                              color: Colors.grey
+                                                                  .shade700,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                    ),
+                                                    Text(
+                                                      'Straatnaan 12\nstadnaam postcode',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                          color: Colors.black45,
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                    )),
+                      ],
+                    ),
+                  ),
+                ),
+
                 // succes / error pagina
                 FractionallySizedBox(
                     widthFactor: 0.9,
                     heightFactor: 1,
                     child: regiSucces == true
+
+                        // succes page
                         ? Container(
                             color: Colors.white,
                             height: MediaQuery.of(context).size.height,
                             width: MediaQuery.of(context).size.width,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children:  const [
+                              children: const [
                                 DelayedDisplay(
                                   delay: Duration(milliseconds: 500),
                                   child: Image(
@@ -1743,15 +1881,19 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   child: Text(
                                       'Registration completed successfully'),
                                 ),
-                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 DelayedDisplay(
                                   delay: Duration(milliseconds: 900),
-                                  child: Text(
-                                      'You will be redirected shortly.'),
+                                  child:
+                                      Text('You will be redirected shortly.'),
                                 ),
                               ],
                             ),
                           )
+
+                        // error page
                         : Container(
                             color: Colors.white,
                             height: MediaQuery.of(context).size.height,
@@ -1784,17 +1926,8 @@ class _FormQuestionsState extends State<FormQuestions> {
               key: _slider),
         ),
 
-        if (_currentStep == 6)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              'Search for the schools you would like to aply for\n'
-              'short press for info, long press to reorder the list',
-              style: TextStyle(fontSize: 11, color: Colors.black54),
-            ),
-          ),
         // toon enkel 2e ouder knop als men op de juiste pagina zit en 2e ouder nog niet aangeduid werd
-        if (_currentStep == 2 && secParent == false)
+        if (_currentStep == 3 && secParent == false)
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: ElevatedButton(
@@ -1803,14 +1936,16 @@ class _FormQuestionsState extends State<FormQuestions> {
                   shape: const StadiumBorder(),
                   primary: Colors.grey),
               onPressed: () => {secParent = true, nextStep()},
-              child: const Text(
-                'Second parent',
-                style: TextStyle(fontWeight: FontWeight.w900),
-              ),
+              child: Text('Second parent',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  )),
             ),
           ),
+
         // toon enkel 2e ouder verwijder knop als men op de juiste pagina zit en 2e ouder al aangeduid werd
-        if (_currentStep == 3 && secParent == true)
+        if (_currentStep == 4 && secParent == true)
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: ElevatedButton(
@@ -1818,15 +1953,17 @@ class _FormQuestionsState extends State<FormQuestions> {
                   alignment: Alignment.center,
                   shape: const StadiumBorder(),
                   primary: Colors.redAccent),
-              onPressed: () => {secParent = false, previousStep()},
-              child: const Text(
-                'remove this parent',
-                style: TextStyle(fontWeight: FontWeight.w900),
-              ),
+              onPressed: removeParent,
+              child: Text('Remove this parent',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  )),
             ),
           ),
+
         // toon de ja nee vragen enkel bij de GOK en TN vragen
-        if (_currentStep == 4 || _currentStep == 5)
+        if (_currentStep == 5 || _currentStep == 6)
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Row(
@@ -1850,6 +1987,7 @@ class _FormQuestionsState extends State<FormQuestions> {
               ],
             ),
           ),
+
         // back en next buttons
         //verberg als de registratie voltooid is
         if (regiSucces != true)
@@ -1871,10 +2009,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                     onPressed: () => {previousStep()},
                   ),
                 // verberg next button wanneer men op de voorrangsvragen en de 2 laatste pagina's komt
-                if (_currentStep != 4 &&
-                    _currentStep != 5 &&
-                    _currentStep != 7 &&
-                    _currentStep != 8)
+                if (_currentStep != 5 &&
+                    _currentStep != 6 &&
+                    _currentStep != 8 &&
+                    _currentStep != 9)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         alignment: Alignment.center,
@@ -1883,7 +2021,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                     child: const Icon(Icons.forward),
                     onPressed: () => nextStep(),
                   ),
-                if (_currentStep == 7)
+                if (_currentStep == 8)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         alignment: Alignment.center,

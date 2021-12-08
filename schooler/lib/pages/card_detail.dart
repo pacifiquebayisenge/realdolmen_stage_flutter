@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
-import 'package:schooler/widgets/deletion_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 class CardDetail extends StatefulWidget {
@@ -189,6 +188,8 @@ class _CardDetailState extends State<CardDetail>
                                   ),
                               ],
                             ),
+
+
                           // titel: Parents
                           if (_registration.oVoornaam1 != null)
                             Padding(
@@ -299,9 +300,9 @@ class _CardDetailState extends State<CardDetail>
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                    '${_registration.berStraat2} ${_registration.berHuisNr2} ${_registration.berBusNr2} '),
+                                                    '${_registration.berStraat1} ${_registration.berHuisNr1} ${_registration.berBusNr1} '),
                                                 Text(
-                                                    '${_registration.berGemeente2} ${_registration.berPostcode2}  ')
+                                                    '${_registration.berPostcode1} ${_registration.berGemeente1}')
                                               ],
                                             ),
                                           ),
@@ -318,9 +319,9 @@ class _CardDetailState extends State<CardDetail>
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                    '${_registration.berStraat1} ${_registration.berHuisNr1} ${_registration.berBusNr1} '),
+                                                    '${_registration.berStraat2} ${_registration.berHuisNr2} ${_registration.berBusNr2} '),
                                                 Text(
-                                                    '${_registration.berGemeente1} ${_registration.berPostcode1}  ')
+                                                    '${_registration.berPostcode2} ${_registration.berGemeente2}   ')
                                               ],
                                             ),
                                           ),

@@ -183,8 +183,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
             // Call your model, bloc, controller here.
             _queryList(query);
           },
-          // Specify a custom transition to be used for
-          // animating between opened and closed stated.
+
           transition: CircularFloatingSearchBarTransition(),
           leadingActions: [
             FloatingSearchBarAction.back(

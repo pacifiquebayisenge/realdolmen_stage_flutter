@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BulletPoint extends StatelessWidget {
   const BulletPoint(
@@ -32,6 +33,7 @@ class BulletPoint extends StatelessWidget {
 
           child: Text(
             text,
+              style: GoogleFonts.montserrat(fontSize: 14,fontWeight: FontWeight.w400, color: Colors.black87)
 
           ),
         )

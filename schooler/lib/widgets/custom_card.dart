@@ -3,11 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schooler/classes/registration.dart';
-import 'package:schooler/classes/user.dart';
-import 'package:schooler/dummy_data/data.dart' as dummy;
-import 'package:schooler/pages/card_detail.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard(

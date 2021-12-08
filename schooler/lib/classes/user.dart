@@ -5,7 +5,7 @@ import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart';
 
 class User {
-    String? id;
+  String? id;
 
   late String voornaam;
   late String naam;
@@ -18,6 +18,26 @@ class User {
   late final int postcode;
   late final String gemeente;
 
+  // vragen over eerste ouder
+  late final String? oVoornaam1;
+  late final String? oNaam1;
+  late final String? beroep1;
+  late final String? berStraat1;
+  late final int? berHuisNr1;
+  late final String? berBusNr1;
+  late final int? berPostcode1;
+  late final String? berGemeente1;
+
+  // vragen over tweede ouder
+  late final String? oVoornaam2;
+  late final String? oNaam2;
+  late final String? beroep2;
+  late final String? berStraat2;
+  late final int? berHuisNr2;
+  late final String? berBusNr2;
+  late final int? berPostcode2;
+  late final String? berGemeente2;
+
   // registratie lijst van deze user
   late List<Registration> regiList = [];
 
@@ -26,11 +46,33 @@ class User {
 
   User.emptyConstructor();
 
-  User(
-      {required this.id,
-      required this.voornaam,
-      required this.naam,
-      required this.rijksNr});
+  User({
+    required this.id,
+    required this.voornaam,
+    required this.naam,
+    required this.rijksNr,
+    required this.straat,
+    required this.huisNr,
+    required this.busNr,
+    required this.postcode,
+    required this.gemeente,
+    required this.oVoornaam1,
+    required this.oNaam1,
+    required this.beroep1,
+    required this.berStraat1,
+    required this.berHuisNr1,
+    required this.berBusNr1,
+    required this.berPostcode1,
+    required this.berGemeente1,
+    required this.oVoornaam2,
+    required this.oNaam2,
+    required this.beroep2,
+    required this.berStraat2,
+    required this.berHuisNr2,
+    required this.berBusNr2,
+    required this.berPostcode2,
+    required this.berGemeente2,
+  });
 
   // methode om user in te loggen via email en password
   static Future<String?> login(
@@ -90,27 +132,26 @@ class User {
           'naam': "",
           'rijksNr': "",
           'straat': "",
-          'huisNr': "",
+          'huisNr': null,
           'busNr': "",
-          'postcode': "",
+          'postcode': null,
           'gemeente': "",
           'oVoornaam1': "",
           'oNaam1': "",
           'beroep1': "",
           'berStraat1': "",
-          'berHuisNr1': "",
+          'berHuisNr1': null,
           'berBusNr1': "",
-          'berPostcode1': "",
+          'berPostcode1': null,
           'berGemeente1': "",
           'oVoornaam2': "",
           'oNaam2': "",
           'beroep2': "",
           'berStraat2': "",
-          'berHuisNr2': "",
+          'berHuisNr2': null,
           'berBusNr2': "",
-          'berPostcode2': "",
+          'berPostcode2': null,
           'berGemeente2': "",
-          'regiList': ""
         })
         .then((value) => print("User Seccesfully Added"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -118,19 +159,43 @@ class User {
 
   // methode om gegevens van de user op te halen
   Future<void> getUser(String id) async {
-    await _userRef.doc(id).get().then((DocumentSnapshot documentSnapshot) async {
+    await _userRef
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-
         Map<String, dynamic> data =
             documentSnapshot.data()! as Map<String, dynamic>;
 
         print(thisUser.id);
 
         thisUser = User(
-            id: id,
-            voornaam: data['voornaam'],
-            naam: data['naam'],
-            rijksNr: data['rijksNr']);
+          id: id,
+          voornaam: data['voornaam'],
+          naam: data['naam'],
+          rijksNr: data['rijksNr'],
+          straat: data['straat'],
+          huisNr: data['huisNr'],
+          busNr: data['busNr'],
+          postcode: data['postcode'],
+          gemeente: data['gemeente'],
+          oVoornaam1: data['oVoornaam1'],
+          oNaam1: data['oNaam1'],
+          beroep1: data['beroep1'],
+          berStraat1: data['berStraat1'],
+          berHuisNr1: data['berHuisNr1'],
+          berBusNr1: data['berBusNr1'],
+          berPostcode1: data['berPostcode1'],
+          berGemeente1: data['berGemeente1'],
+          oVoornaam2: data['oVoornaam2'],
+          oNaam2: data['oNaam2'],
+          beroep2: data['beroep2'],
+          berStraat2: data['berStraat2'],
+          berHuisNr2: data['berHuisNr2'],
+          berBusNr2: data['berBusNr2'],
+          berPostcode2: data['berPostcode2'],
+          berGemeente2: data['berGemeente2'],
+        );
 
         print(thisUser.id);
         //await  thisUser.getUserRegis();
@@ -226,6 +291,4 @@ class User {
 
     return result;
   }
-
-
 }

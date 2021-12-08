@@ -1,15 +1,12 @@
-import 'dart:async';
+
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/widgets.dart';
-import 'package:schooler/dummy_data/data.dart';
-
-import 'card_detail.dart';
 
 class Notifications extends StatefulWidget {
   Notifications({Key? key}) : super(key: key);

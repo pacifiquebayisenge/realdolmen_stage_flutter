@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
-import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:schooler/services/globals.dart' as globals;
 
 import 'card_detail.dart';
 

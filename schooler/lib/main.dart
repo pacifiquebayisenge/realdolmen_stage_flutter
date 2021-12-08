@@ -30,6 +30,7 @@ Future<void> main() async {
     debugShowCheckedModeBanner: false,
     color: Colors.indigo.shade800,
     theme: ThemeData(
+
       primaryColor: Colors.indigo.shade800,
       appBarTheme: AppBarTheme(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -284,7 +285,7 @@ class _AppState extends State<App> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          borderRadius: BorderRadius.all(const Radius.circular(20.0)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             items: const [

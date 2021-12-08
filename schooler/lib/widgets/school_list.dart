@@ -1,9 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/dummy_data/data.dart';
-import 'package:schooler/pages/schools.dart';
-import 'package:schooler/widgets/school_search.dart';
-import 'package:schooler/widgets/widgets.dart';
 
 class SchoolList extends StatefulWidget {
   static List<String> schoolList = [];
@@ -14,6 +13,11 @@ class SchoolList extends StatefulWidget {
 }
 
 class _SchoolListState extends State<SchoolList> {
+
+  final floatingSearchBarController = FloatingSearchBarController();
+
+  List<String> resultList = [];
+
   @override
   initState() {
     SchoolList.schoolList = [];
@@ -21,9 +25,7 @@ class _SchoolListState extends State<SchoolList> {
     super.initState();
   }
 
-  final floatingSearchBarController = FloatingSearchBarController();
 
-  List<String> resultList = [];
 
   // methode om nieuwe item in de lijst toe te voegen
   _addToList(String school) {
@@ -50,9 +52,20 @@ class _SchoolListState extends State<SchoolList> {
     SchoolList.schoolList.insert(newIndex, school);
   }
 
+  // methode om zoek resultaten weer te geven
   _queryList(String query) {
     setState(() {
+      // maak de eerste letter van de query een hoofdletter
+      if (query.isNotEmpty) {
+        query = query.substring(0, 1).toUpperCase() +
+            query.substring(1, query.length);
+      }
+
+      // maak reuslaten lijst leeg
       resultList = [];
+
+      // als query leeg is , geef alle scholen weer
+      // anders geef resultaten beginend met de query
       if (query.isEmpty) {
         resultList = scholen;
       } else {
@@ -65,18 +78,31 @@ class _SchoolListState extends State<SchoolList> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       Padding(
         padding: const EdgeInsets.only(top: 80.0),
-        child: ReorderableListView(
+        child: SchoolList.schoolList.isEmpty ?
+
+         Padding(
+           padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10,),
+           child: Text(
+           'Search for the schools you would like to apply for. '
+           'Short press for info, long press to reorder the list',
+           style: GoogleFonts.montserrat(fontSize: 13,fontWeight: FontWeight.bold, color: Colors.black45),
+           ),
+         )
+        :
+        ReorderableListView(
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               _update(oldIndex, newIndex);
             });
           },
           children: [
+
             for (var i = 0; i < SchoolList.schoolList.length; i++)
               Padding(
                 key: ValueKey(SchoolList.schoolList[i]),
@@ -125,10 +151,22 @@ class _SchoolListState extends State<SchoolList> {
                                 Text(SchoolList.schoolList[i],
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500)),
-                                const Text('Straatnaan 12, stadnaam postcode',
-                                    style: TextStyle(fontSize: 11)),
+                                  style: GoogleFonts
+                                      .montserrat(
+                                      color: Colors.grey
+                                          .shade700,
+                                      fontSize: 15,
+                                      fontWeight:
+                                      FontWeight
+                                          .w500),),
+                                 Text('Straatnaan 12, stadnaam postcode',
+                                  style: GoogleFonts
+                                      .montserrat(
+                                      color: Colors.black45,
+                                      fontSize: 11,
+                                      fontWeight:
+                                      FontWeight
+                                          .w500),),
                               ],
                             ),
                           ),
@@ -167,7 +205,7 @@ class _SchoolListState extends State<SchoolList> {
       FloatingSearchBar(
         backdropColor: Colors.black26,
         closeOnBackdropTap: true,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
         controller: floatingSearchBarController,
         hint: 'Search...',
         scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
@@ -206,96 +244,111 @@ class _SchoolListState extends State<SchoolList> {
           ),
         ],
         builder: (context, transition) {
+
+          // zoek resultaten lijst
           return ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(30)),
             child: Container(
               color: Colors.white,
               child: Column(
                 children: List.generate(resultList.length, (index) {
-                  if (SchoolList.schoolList.isEmpty) {
-                    return Center(
-                      child: Container(
-                        child: Material(
-                          child: InkWell(
-                            splashColor: Colors.grey,
-                            onTap: () {
-                              _addToList(resultList[index]);
-
-                              floatingSearchBarController.close();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 25),
-                              child: Container(
-                                child: Center(
-                                    child: Column(
-                                  children: [
-                                    Text(
-                                      resultList[index],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    const Text(
-                                        'Straatnaan 12, stadnaam postcode',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.black54)),
-                                  ],
-                                )),
-                              ),
-                            ),
-                          ),
-                          color: Colors.transparent,
-                        ),
-                        color: Colors.white,
-                      ),
-                    );
-                  } else if (!SchoolList.schoolList
+                  if (SchoolList.schoolList.isEmpty || !SchoolList.schoolList
                       .contains(resultList[index])) {
-                    return Center(
-                      child: Container(
-                        child: Material(
-                          child: InkWell(
-                            splashColor: Colors.grey,
-                            onTap: () {
-                              _addToList(resultList[index]);
+                    return Padding(
+                      padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20.0),
+                      child: ClipRRect(
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(30)),
+                        child: Container(
 
-                              floatingSearchBarController.close();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 25, horizontal: 20.0),
-                              child: Container(
-                                child: Center(
+                          child: Material(
+                            child: InkWell(
+                              overlayColor: MaterialStateProperty.all(Colors.grey),
+                              onTap: () {
+                                _addToList(resultList[index]);
+
+                                floatingSearchBarController.close();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    // verticaal centreren van circle avatar
+                                    // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+
+                                      // school icon
+                                      ClipOval(
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            const CircleAvatar(
+                                              backgroundColor:
+                                              Color.fromRGBO(234, 144, 16, 1),
+                                              radius: 25,
+                                            ),
+                                            const CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 23,
+                                            ),
+                                            ClipRRect(
+                                              borderRadius:
+                                              const BorderRadius.all(Radius.circular(30)),
+                                              child: Image.asset(
+                                                'lib/images/school.png',
+                                                width: 30,
+                                                height: 30,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Flexible(
                                     child: Column(
-                                  children: [
-                                    Text(
-                                      resultList[index],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(resultList[index],
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts
+                                              .montserrat(
+                                              color: Colors.grey
+                                                  .shade700,
+                                              fontSize: 15,
+                                              fontWeight:
+                                              FontWeight
+                                                  .w500),),
+                                         Text('Straatnaan 12, stadnaam postcode',
+                                          style: GoogleFonts
+                                              .montserrat(
+                                              color: Colors.black45,
+                                              fontSize: 12,
+                                              fontWeight:
+                                              FontWeight
+                                                  .w500),),
+                                      ],
                                     ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    const Text(
-                                        'Straatnaan 12, stadnaam postcode',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.black54)),
-                                  ],
-                                )),
+                                  ),
+                                ],
                               ),
                             ),
+                            color: Colors.transparent,
                           ),
-                          color: Colors.transparent,
+                          color: Colors.white,
                         ),
-                        color: Colors.white,
                       ),
                     );
-                  } else {
+                  }
+                  else {
                     return const SizedBox();
                   }
                 }),
