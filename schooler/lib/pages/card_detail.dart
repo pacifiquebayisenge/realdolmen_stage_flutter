@@ -127,7 +127,7 @@ class _CardDetailState extends State<CardDetail>
                       FlexibleSpaceBar(
                         title: _registration.rijksNr.isNotEmpty
                             ? Text(
-                                '${_registration.rijksNr.substring(4, 6)}/${_registration.rijksNr.substring(2, 4)}/${_registration.rijksNr.substring(0, 2)}'
+                                '${Registration.getBDate(_registration.rijksNr)}'
                                 '\n${_registration.straat} ${_registration.huisNr} ${_registration.busNr}'
                                 '\n${_registration.postcode} ${_registration.gemeente}',
                                 style: GoogleFonts.montserrat(
@@ -189,17 +189,16 @@ class _CardDetailState extends State<CardDetail>
                               ],
                             ),
 
-
-                          // titel: Parents
-                          if (_registration.oVoornaam1 != null)
+                          // parents
+                          if (_registration.oVoornaam1 != "")
                             Padding(
-                              padding: const EdgeInsets.only(top: 30.0),
+                              padding: const EdgeInsets.only(top: 20.0),
                               child: FractionallySizedBox(
                                 widthFactor: 0.4,
                                 child: Column(
                                   children: [
                                     Text('Parents',
-                                        style: TextStyle(
+                                        style: GoogleFonts.montserrat(
                                             color: Colors.grey.shade700,
                                             fontSize: 17,
                                             fontWeight: FontWeight.w500)),
@@ -210,145 +209,184 @@ class _CardDetailState extends State<CardDetail>
                                 ),
                               ),
                             ),
-                          if (_registration.oVoornaam1 != null)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Card(
-                                elevation: 1,
-                                shadowColor: Colors.lightBlueAccent,
-                                clipBehavior: Clip.antiAlias,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: InkWell(
-                                  onLongPress: () {
-                                    //overzichtEdit('parents');
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20.0, horizontal: 30.0),
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      children: [
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Full name:')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 0,
-                                          )),
-                                          TableCell(
+                          if (_registration.oVoornaam1 != "")
+                            Card(
+                              elevation: 1,
+                              shadowColor: Colors.lightBlueAccent,
+                              clipBehavior: Clip.antiAlias,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 10.0),
+                                child: Table(
+                                  defaultColumnWidth:
+                                  const IntrinsicColumnWidth(),
+                                  defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                                  children: [
+                                    TableRow(children: [
+                                      TableCell(
+                                        child: Center(
+                                          child: Text(
+                                            '${_registration.oVoornaam1} ${_registration.oNaam1}',
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ),
+                                      if (_registration.oVoornaam2 != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
+                                          ),
+                                        ),
+                                      if (_registration.oVoornaam2 != "")
+                                        TableCell(
+                                            child: Center(
                                               child: Text(
-                                                  '${_registration.oVoornaam1} ${_registration.oNaam1}')),
-                                          const TableCell(
-                                              child: SizedBox(
-                                            width: 10,
+                                                '${_registration.oVoornaam2} ${_registration.oNaam2}',
+                                                style: GoogleFonts.montserrat(
+                                                    color: Colors.grey.shade700,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500),
+                                              ),
+                                            )),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ]),
+                                    TableRow(children: [
+                                      TableCell(
+                                          child: Center(
+                                            child: Text(
+                                              _registration.beroep1.toString(),
+                                              style: GoogleFonts.montserrat(
+                                                  color: Colors.grey.shade700,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
                                           )),
-                                          TableCell(
+                                      if (_registration.oVoornaam2 != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
+                                          ),
+                                        ),
+                                      if (_registration.oVoornaam2 != "")
+                                        TableCell(
+                                          child: Center(
+                                            child: Text(
+                                              _registration.beroep2.toString(),
+                                              style: GoogleFonts.montserrat(
+                                                  color: Colors.grey.shade700,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ]),
+                                    TableRow(children: [
+                                      TableCell(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Center(
                                               child: Text(
-                                                  '${_registration.oVoornaam2} ${_registration.oNaam2}')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 40,
+                                                '${_registration.berStraat1} ${_registration.berHuisNr1} ${_registration.berBusNr1}',
+                                                style: GoogleFonts.montserrat(
+                                                    color: Colors.grey.shade700,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.w500),
+                                              ),
                                             ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child: Text('Profession:')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 0,
-                                            ),
+                                            Center(
+                                              child: Text(
+                                                '${_registration.berPostcode1} ${_registration.berGemeente1}',
+                                                style: GoogleFonts.montserrat(
+                                                    color: Colors.grey.shade700,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.w500),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      if (_registration.oVoornaam2 != "")
+                                        const TableCell(
+                                          child: SizedBox(
+                                            width: 30,
                                           ),
-                                          TableCell(
-                                              child: Text(widget
-                                                  .card.registration.beroep1
-                                                  .toString())),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 10,
-                                            ),
+                                        ),
+                                      if (_registration.oVoornaam2 != "")
+                                        TableCell(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  '${_registration.berStraat2} ${_registration.berHuisNr2} ${_registration.berBusNr2}',
+                                                  style: GoogleFonts.montserrat(
+                                                      color:
+                                                      Colors.grey.shade700,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                      FontWeight.w500),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  '${_registration.berPostcode2} ${_registration.berGemeente2}',
+                                                  style: GoogleFonts.montserrat(
+                                                      color:
+                                                      Colors.grey.shade700,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                      FontWeight.w500),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          TableCell(
-                                              child: Text(widget
-                                                  .card.registration.beroep2
-                                                  .toString())),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 40,
-                                            ),
-                                          )
-                                        ]),
-                                        TableRow(children: [
-                                          const TableCell(
-                                              child:
-                                                  Text('Profession address:')),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 0,
-                                            ),
-                                          ),
-                                          TableCell(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    '${_registration.berStraat1} ${_registration.berHuisNr1} ${_registration.berBusNr1} '),
-                                                Text(
-                                                    '${_registration.berPostcode1} ${_registration.berGemeente1}')
-                                              ],
-                                            ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              width: 10,
-                                            ),
-                                          ),
-                                          TableCell(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    '${_registration.berStraat2} ${_registration.berHuisNr2} ${_registration.berBusNr2} '),
-                                                Text(
-                                                    '${_registration.berPostcode2} ${_registration.berGemeente2}   ')
-                                              ],
-                                            ),
-                                          ),
-                                          const TableCell(
-                                            child: SizedBox(
-                                              height: 40,
-                                            ),
-                                          )
-                                        ])
-                                      ],
-                                    ),
-                                  ),
+                                        ),
+                                      const TableCell(
+                                        child: SizedBox(
+                                          height: 40,
+                                        ),
+                                      )
+                                    ])
+                                  ],
                                 ),
                               ),
                             ),
 
-                          // school lijst
-                          if (_registration.schoolList != null &&
-                              _registration.schoolList.length > 0)
+                          //school lijst
+                          if (
+                              _registration.schoolList.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 50.0),
                               child: FractionallySizedBox(
                                 widthFactor: 0.5,
                                 child: Column(
                                   children: [
-                                    Text('School list',
-                                        style: TextStyle(
+                                    Text('Schoollist',
+                                        style: GoogleFonts.montserrat(
                                             color: Colors.grey.shade700,
                                             fontSize: 17,
                                             fontWeight: FontWeight.w500)),
@@ -359,8 +397,8 @@ class _CardDetailState extends State<CardDetail>
                                 ),
                               ),
                             ),
-                          if (_registration.schoolList != null &&
-                              _registration.schoolList.length > 0)
+                          if (
+                              _registration.schoolList.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: FractionallySizedBox(
@@ -376,24 +414,24 @@ class _CardDetailState extends State<CardDetail>
                                     child: Column(
                                       children: List.generate(
                                         _registration.schoolList.length,
-                                        (index) => Padding(
+                                            (index) => Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 20.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Column(
                                                 // verticaal centreren van circle avatar
                                                 // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   // rangschiknummer
                                                   CircleAvatar(
                                                     backgroundColor:
-                                                        const Color.fromRGBO(
-                                                            234, 144, 16, 1),
+                                                    const Color.fromRGBO(
+                                                        234, 144, 16, 1),
                                                     radius: 15,
                                                     // rang nummer
                                                     child: Text(
@@ -401,7 +439,7 @@ class _CardDetailState extends State<CardDetail>
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
-                                                              FontWeight.w900,
+                                                          FontWeight.w900,
                                                           fontSize: 15),
                                                     ),
                                                   ),
@@ -413,28 +451,38 @@ class _CardDetailState extends State<CardDetail>
                                               Flexible(
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .stretch,
+                                                  CrossAxisAlignment
+                                                      .stretch,
                                                   children: [
                                                     Text(
-                                                        _registration
-                                                            .schoolList[index],
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500)),
-                                                    const Text(
-                                                      'Straatnaan 12, stadnaam postcode',
+                                                      _registration
+                                                          .schoolList[index],
                                                       maxLines: 2,
                                                       overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 11),
+                                                      TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                          color: Colors.grey
+                                                              .shade700,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500),
+                                                    ),
+                                                    Text(
+                                                      'Straatnaan 12\nstadnaam postcode',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                          color: Colors.black45,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500),
                                                     ),
                                                   ],
                                                 ),

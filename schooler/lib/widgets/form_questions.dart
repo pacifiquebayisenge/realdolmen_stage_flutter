@@ -77,12 +77,22 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   bool regiSucces = false;
 
+  bool updateUserAdres = false;
+  bool updateUserProf = false;
+  bool updateUserParent = false;
   bool isParent = false;
+
+  bool showBackBtn = true;
+  bool showNextBtn = true;
+  bool showSecParBtn = true;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) => editRegistration());
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      setpageHeight(_currentStep);
+      editRegistration();
+    });
   }
 
   @override
@@ -156,6 +166,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
   }
 
+  // TODO: delete this
   void t() {
     FirebaseFirestore.instance
         .collection('registrations')
@@ -178,33 +189,81 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   void userTypeBtn(String type) {
     setState(() {
-    if(type == 'parent') {
-
-        isParent = true;
-
-    }else {
-      isParent = false;
-    }
+      secParent = false;
     });
-    nextStep() ;
+    voornaam.clear();
+    naam.clear();
+    rijksNr.clear();
+
+    straat.clear();
+    huisNr.clear();
+    busNr.clear();
+    postcode.clear();
+    gemeente.clear();
+
+    oVoornaam1.clear();
+    oNaam1.clear();
+    beroep1.clear();
+    berStraat1.clear();
+    berHuisNr1.clear();
+    berBusNr1.clear();
+    berPostcode1.clear();
+    berGemeente1.clear();
+
+    oVoornaam2.clear();
+    oNaam2.clear();
+    beroep2.clear();
+    berStraat2.clear();
+    berHuisNr2.clear();
+    berBusNr2.clear();
+    berPostcode2.clear();
+    berGemeente2.clear();
+
+    setState(() {
+      if (type == 'parent') {
+        isParent = true;
+      } else {
+        isParent = false;
+      }
+    });
+    autoFormData();
+    nextStep();
   }
 
-  void autoStudentData(){
+  void autoFormData() {
+    if (widget.editRegi != null) return;
 
-    if(!isParent){
-      voornaam.text = thisUser.voornaam;
-      naam.text = thisUser.naam;
-      rijksNr.text = thisUser.rijksNr;
-    }
 
-    if(!isParent && thisUser.straat != null){
+    if (thisUser.straat != "") {
       straat.text = thisUser.straat;
       huisNr.text = thisUser.huisNr.toString();
       postcode.text = thisUser.postcode.toString();
       gemeente.text = thisUser.gemeente;
     }
 
-    if(!isParent && thisUser.oVoornaam1 != ""){
+    if (isParent) {
+      oVoornaam1.text = thisUser.voornaam;
+      oNaam1.text = thisUser.naam;
+    }
+
+    if (isParent && thisUser.beroep != "") {
+      beroep1.text = thisUser.beroep!;
+      berStraat1.text = thisUser.berStraat!;
+      berHuisNr1.text = thisUser.berHuisNr!.toString();
+      berBusNr1.text = thisUser.berBusNr!;
+      berPostcode1.text = thisUser.berPostcode!.toString();
+      berGemeente1.text = thisUser.berGemeente!;
+    }
+
+    if (!isParent) {
+      voornaam.text = thisUser.voornaam;
+      naam.text = thisUser.naam;
+      rijksNr.text = thisUser.rijksNr;
+    }
+
+
+
+    if (!isParent && thisUser.oVoornaam1 != "") {
       oVoornaam1.text = thisUser.oVoornaam1!;
       oNaam1.text = thisUser.oNaam1!;
       beroep1.text = thisUser.beroep1!;
@@ -215,7 +274,11 @@ class _FormQuestionsState extends State<FormQuestions> {
       berGemeente1.text = thisUser.berGemeente1!;
     }
 
-    if(!isParent && thisUser.oVoornaam2 != ""){
+    if (!isParent && thisUser.oVoornaam2 != "") {
+      setState(() {
+        secParent = true;
+      });
+
       oVoornaam2.text = thisUser.oVoornaam2!;
       oNaam2.text = thisUser.oNaam2!;
       beroep2.text = thisUser.beroep2!;
@@ -225,6 +288,37 @@ class _FormQuestionsState extends State<FormQuestions> {
       berPostcode2.text = thisUser.berPostcode2!.toString();
       berGemeente2.text = thisUser.berGemeente2!;
     }
+  }
+
+  _editAdressCheck() {
+    if (updateUserAdres == true) return;
+
+    if (isParent && thisUser.straat == '') {
+      setState(() {
+        updateUserAdres = true;
+      });
+    } else if (!isParent) {
+      setState(() {
+        updateUserAdres = true;
+      });
+    }
+  }
+
+  _editProfCheck(){
+    if(!isParent || updateUserProf) return;
+
+    setState(() {
+      updateUserProf = true;
+    });
+
+  }
+
+  _editParentCheck() {
+    if (!isParent == false || updateUserParent) return;
+
+    setState(() {
+      updateUserParent = true;
+    });
   }
 
   void removeParent() {
@@ -279,14 +373,59 @@ class _FormQuestionsState extends State<FormQuestions> {
 
     setState(() {
       switch (page) {
+        case 0:
+          {
+            showBackBtn = showNextBtn = false;
+
+
+            if (widget.editRegi != null) {
+              nextStep();
+            }
+          }
+          break;
+        case 1:
+          {
+
+            showBackBtn = showNextBtn =true;
+            if (widget.editRegi != null) showBackBtn = false;
+          }
+          break;
+        case 2:
+          {
+            print(Registration.getAge(rijksNr.text));
+            if (showBackBtn == false) showBackBtn = true;
+          }
+          break;
         case 3:
           {
             pageHeight = 480;
+            if (Registration.getAge(rijksNr.text) >= 24) {
+              if (widget.editRegi != null && secParent == true) {
+                nextStep();
+                nextStep();
+              } else {
+                nextStep();
+              }
+            }
           }
           break;
         case 4:
           {
             pageHeight = 480;
+          }
+          break;
+        case 5:
+          {
+            pageHeight = 450;
+            if (widget.editRegi != null ||
+                Registration.getAge(rijksNr.text) >= 24) nextStep();
+          }
+          break;
+        case 6:
+          {
+            pageHeight = 450;
+            if (widget.editRegi != null ||
+                Registration.getAge(rijksNr.text) >= 24) nextStep();
           }
           break;
         case 7:
@@ -296,9 +435,10 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 8:
           {
-            pageHeight = 550;
+            pageHeight = 570;
           }
           break;
+
         default:
           {
             pageHeight = 470;
@@ -378,11 +518,9 @@ class _FormQuestionsState extends State<FormQuestions> {
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   Future<void> nextStep() async {
-
-    autoStudentData();
     t();
-    //print(checkStep());
 
+    // TODO: reenable this
     // als form op deze pagina niet juist is ingevoerd dan kan men niet verder
     //if (!checkStep()) return;
 
@@ -395,33 +533,48 @@ class _FormQuestionsState extends State<FormQuestions> {
       _thisForm.currentState!.save();
 
       if (widget.editRegi != null) {
+        // update registration in de server
         Registration regi1 = Registration(
+
+            // basis info voor de ingeschrevende
             voornaam: voornaam.text,
             naam: naam.text,
             rijksNr: rijksNr.text,
+
+            // domicilierings adres
             straat: straat.text,
             huisNr: int.parse(huisNr.text),
             busNr: busNr.text,
             postcode: int.parse(postcode.text),
             gemeente: gemeente.text,
+
+            // vragen over eerste ouder
             oVoornaam1: oVoornaam1.text,
             oNaam1: oNaam1.text,
             beroep1: beroep1.text,
             berStraat1: berStraat1.text,
-            berHuisNr1: int.parse(berHuisNr1.text),
+            berHuisNr1: berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
             berBusNr1: berBusNr1.text,
-            berPostcode1: int.parse(berPostcode1.text),
+            berPostcode1:
+                berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
             berGemeente1: berGemeente1.text,
+
+            // vragen over tweede ouder
             oVoornaam2: oVoornaam2.text,
             oNaam2: oNaam2.text,
             beroep2: beroep2.text,
             berStraat2: berStraat2.text,
-            berHuisNr2: int.tryParse(berHuisNr2.text),
+            berHuisNr2: berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
             berBusNr2: berBusNr2.text,
-            berPostcode2: int.tryParse(berPostcode2.text),
+            berPostcode2:
+                berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
             berGemeente2: berGemeente2.text,
+
+            // vooorangsvragen
             vraagGOK: vraagGOK,
             vraagTN: vraagTN,
+
+            // schoolLijst
             schoolList: SchoolList.schoolList,
             id: widget.editRegi!.id);
         await regi1.editRegi().then((value) {
@@ -443,32 +596,48 @@ class _FormQuestionsState extends State<FormQuestions> {
       } else {
         //  verstuur data naar de server
         Registration.newRegi(
+
+                // basis info voor de ingeschrevende
                 voornaam: voornaam.text,
                 naam: naam.text,
                 rijksNr: rijksNr.text,
+
+                // domicilierings adres
                 straat: straat.text,
-                huisNr: int.parse(huisNr.text),
+                huisNr: huisNr.text != '' ? int.parse(huisNr.text) : 0,
                 busNr: busNr.text,
-                postcode: int.parse(postcode.text),
+                postcode: postcode.text != '' ? int.parse(postcode.text) : 0,
                 gemeente: gemeente.text,
+
+                // vragen over eerste ouder
                 oVoornaam1: oVoornaam1.text,
                 oNaam1: oNaam1.text,
                 beroep1: beroep1.text,
                 berStraat1: berStraat1.text,
-                berHuisNr1: int.parse(berHuisNr1.text),
+                berHuisNr1:
+                    berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
                 berBusNr1: berBusNr1.text,
-                berPostcode1: int.parse(berPostcode1.text),
+                berPostcode1:
+                    berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
                 berGemeente1: berGemeente1.text,
+
+                // vragen over tweede ouder
                 oVoornaam2: oVoornaam2.text,
                 oNaam2: oNaam2.text,
                 beroep2: beroep2.text,
                 berStraat2: berStraat2.text,
-                berHuisNr2: int.tryParse(berHuisNr2.text),
+                berHuisNr2:
+                    berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
                 berBusNr2: berBusNr2.text,
-                berPostcode2: int.tryParse(berPostcode2.text),
+                berPostcode2:
+                    berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
                 berGemeente2: berGemeente2.text,
+
+                // vooorangsvragen
                 vraagGOK: vraagGOK,
                 vraagTN: vraagTN,
+
+                // schoolLijst
                 schoolList: SchoolList.schoolList)
             .then((value) {
           setState(() {
@@ -487,6 +656,82 @@ class _FormQuestionsState extends State<FormQuestions> {
           });
         });
       }
+
+      if (updateUserProf) {
+        await thisUser.updateUserProf(
+          // info over ouder 1
+         
+          beroep: beroep1.text,
+          berStraat: berStraat1.text,
+          berHuisNr: berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
+          berBusNr: berBusNr1.text,
+          berPostcode:  berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
+          berGemeente: berGemeente1.text).then((value) {
+          setState(() {
+            updateUserAdres = false;
+          });
+
+          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+        }).catchError((value) {
+          print('Something went wrong while updating user profession');
+          print(value);
+        });
+      }
+      
+      if (updateUserAdres) {
+        await thisUser.updateUserAdress(
+            straat: straat.text,
+            huisNr: huisNr.text != '' ? int.parse(huisNr.text) : 0,
+            busNr: busNr.text,
+            postcode: postcode.text != '' ? int.parse(postcode.text) : 0,
+            gemeente: gemeente.text).then((value) {
+          setState(() {
+            updateUserAdres = false;
+          });
+
+          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+        }).catchError((value) {
+          print('Something went wrong while updating user adress');
+          print(value);
+        });
+      }
+
+      if (updateUserParent) {
+        await thisUser
+            .updateUserParents(
+
+                // info over ouder 1
+                oVoornaam1: oVoornaam1.text,
+                oNaam1: oNaam1.text,
+                beroep1: beroep1.text,
+                berStraat1: berStraat1.text,
+                berHuisNr1: berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
+                berBusNr1: berBusNr1.text,
+                berPostcode1:  berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
+                berGemeente1: berGemeente1.text,
+
+                // info over ouder 2
+                oVoornaam2: oVoornaam2.text,
+                oNaam2: oNaam2.text,
+                beroep2: beroep2.text,
+                berStraat2: berStraat2.text,
+                berHuisNr2: berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
+                berBusNr2: berBusNr2.text,
+                berPostcode2:  berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
+                berGemeente2: berGemeente2.text)
+            .then((value) {
+          setState(() {
+            updateUserParent = false;
+          });
+
+          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+        }).catchError((value) {
+          print('Something went wrong while updating user parents');
+          print(value);
+        });
+      }
+
+      
 
       Timer(const Duration(milliseconds: 4500), () {
         Navigator.pop(context);
@@ -525,6 +770,22 @@ class _FormQuestionsState extends State<FormQuestions> {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
       _slider.currentState!.previous();
+    } else if (_currentStep == 7 && Registration.getAge(rijksNr.text) >= 24) {
+      setState(() => _currentStep -= 5);
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+    } else if (_currentStep == 7 && widget.editRegi != null) {
+      setState(() => _currentStep -= 3);
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+    } else if (_currentStep == 4 && Registration.getAge(rijksNr.text) >= 24) {
+      setState(() => _currentStep -= 2);
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
     } else {
       setState(() => _currentStep -= 1);
       _slider.currentState!.previous();
@@ -535,20 +796,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
 
-  // methode om laatste 2 controle cijfers van rijksregister te berekennen
-  // geeft de 2 controle cijfers terug
-  int rijksnummerCheck(String rijksregisternummer) {
-    // eerste 9 cijfers van het rijksregisternummer
-    int deeltal = int.parse(rijksregisternummer.substring(0, 9));
 
-    // modula 97 om de restwaarde hiervan te berekennen
-    int mod = deeltal % 97;
-
-    // 97 verminderen met de restwaarde om de laatste 2 controle cijfers te bekomen
-    int check = 97 - mod;
-
-    return check;
-  }
 
   // methode om terug te gaan naar de pagina waar men de informatie wilt wijzigen
   void overzichtEdit(String page) {
@@ -631,7 +879,6 @@ class _FormQuestionsState extends State<FormQuestions> {
               duration: const Duration(milliseconds: 400),
               initialPage: _currentStep,
               pages: [
-
                 FractionallySizedBox(
                     widthFactor: 0.9,
                     heightFactor: 1,
@@ -640,7 +887,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       child: Column(
-
                         children: [
                           Text(
                             'Describe yourself',
@@ -655,7 +901,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                           ),
                           Text(
                             'Are you registering your child as a parent \n'
-                                'or are you registering a student yourself?',
+                            'or are you registering a student yourself?',
                             style: GoogleFonts.montserrat(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -666,24 +912,30 @@ class _FormQuestionsState extends State<FormQuestions> {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children:  [
+                            children: [
                               DelayedDisplay(
                                 delay: const Duration(milliseconds: 500),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(30)),
-                                      border: Border.all(color: Colors.black45)
-                                  ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(30)),
+                                      border:
+                                          Border.all(color: Colors.black45)),
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
-                                      splashColor: Colors.indigo.shade800.withOpacity(0.5),
-                                      onTap: () {userTypeBtn('parent');},
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(30)),
+                                      splashColor: Colors.indigo.shade800
+                                          .withOpacity(0.5),
+                                      onTap: () {
+                                        userTypeBtn('parent');
+                                      },
                                       child: Column(
-                                        children:  [
+                                        children: [
                                           const Image(
-                                            image: AssetImage('lib/images/parents2.png'),
+                                            image: AssetImage(
+                                                'lib/images/parents2.png'),
                                             width: 150,
                                           ),
                                           Text(
@@ -693,7 +945,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black45),
                                           ),
-                                          const SizedBox(height: 20,)
+                                          const SizedBox(
+                                            height: 20,
+                                          )
                                         ],
                                       ),
                                     ),
@@ -704,19 +958,25 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 delay: const Duration(milliseconds: 500),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
-                                      border: Border.all(color: Colors.black45)
-                                  ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(30)),
+                                      border:
+                                          Border.all(color: Colors.black45)),
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                      borderRadius: const BorderRadius.all(Radius.circular(30)),
-                                      splashColor: Colors.indigo.shade800.withOpacity(0.5),
-                                      onTap: () {userTypeBtn('student');},
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(30)),
+                                      splashColor: Colors.indigo.shade800
+                                          .withOpacity(0.5),
+                                      onTap: () {
+                                        userTypeBtn('student');
+                                      },
                                       child: Column(
-                                        children:  [
+                                        children: [
                                           const Image(
-                                            image: AssetImage('lib/images/student2.png'),
+                                            image: AssetImage(
+                                                'lib/images/student2.png'),
                                             width: 150,
                                           ),
                                           Text(
@@ -726,7 +986,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black45),
                                           ),
-                                          const SizedBox(height: 20,)
+                                          const SizedBox(
+                                            height: 20,
+                                          )
                                         ],
                                       ),
                                     ),
@@ -735,11 +997,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                               ),
                             ],
                           ),
-
                         ],
                       ),
                     )),
-
 
                 // profiel info
                 FormBuilder(
@@ -832,7 +1092,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                               // custom validator om rijksregisternummer te checken
                               (value) {
                                 if (int.parse(value!.substring(9, 11)) ==
-                                    rijksnummerCheck(value)) {
+                                    Registration.rijksNrCheck(value)) {
                                   return null;
                                 } else {
                                   return 'Invalid';
@@ -845,7 +1105,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
-
 
                 // adress info
                 FormBuilder(
@@ -881,6 +1140,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                           controller: straat,
                           decoration:
                               const InputDecoration(labelText: 'Street'),
+                          onChanged: (String? value) {
+                            if (value != thisUser.straat) _editAdressCheck();
+
+                            return;
+                          },
                           validator: FormBuilderValidators.compose([
                             FormBuilderValidators.required(context),
                             FormBuilderValidators.notEqual(context, "")
@@ -897,6 +1161,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: huisNr,
                               decoration: const InputDecoration(
                                   labelText: 'House number'),
+                              onChanged: (String? value) {
+                                if (value != '' &&
+                                    int.parse(value!) != thisUser.huisNr)
+                                  _editParentCheck();
+
+                                return;
+                              },
                               keyboardType: TextInputType.number,
                               // enkel nummers kubben ingevoerd worden
                               // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
@@ -920,6 +1191,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: busNr,
                               decoration: const InputDecoration(
                                   labelText: 'Additional'),
+                              onChanged: (String? value) {
+                                if (value != thisUser.busNr) _editParentCheck();
+
+                                return;
+                              },
                             ),
                           ),
                         ]),
@@ -935,6 +1211,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 controller: postcode,
                                 decoration: const InputDecoration(
                                     labelText: 'Postal code'),
+                                onChanged: (String? value) {
+                                  if (value != '' &&
+                                      int.parse(value!) != thisUser.postcode)
+                                    _editParentCheck();
+
+                                  return;
+                                },
                                 maxLength: 4,
                                 keyboardType: TextInputType.number,
                                 // enkel nummers kubben ingevoerd worden
@@ -961,6 +1244,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: gemeente,
                                   decoration:
                                       const InputDecoration(labelText: 'City'),
+                                  onChanged: (String? value) {
+                                    if (value != thisUser.gemeente)
+                                      _editParentCheck();
+
+                                    return;
+                                  },
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(context),
                                     FormBuilderValidators.notEqual(context, "")
@@ -974,7 +1263,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
-
 
                 // eerste ouder info
                 FractionallySizedBox(
@@ -1016,6 +1304,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: oVoornaam1,
                                   decoration: const InputDecoration(
                                       labelText: 'Parent firstname'),
+                                  onChanged: (String? value) {
+                                    if (value != thisUser.oVoornaam1) _editParentCheck();
+
+                                    return;
+                                  },
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(context),
                                     FormBuilderValidators.notEqual(context, "")
@@ -1032,6 +1325,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: oNaam1,
                                   decoration: const InputDecoration(
                                       labelText: 'Parent lastname'),
+                                  onChanged: (String? value) {
+                                    if (value != thisUser.oNaam1) _editParentCheck();
+
+                                    return;
+                                  },
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(context),
                                     FormBuilderValidators.notEqual(context, "")
@@ -1048,6 +1346,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                             controller: beroep1,
                             decoration:
                                 const InputDecoration(labelText: 'Profession'),
+                            onChanged: (String? value) {
+                              if (!isParent && value != thisUser.beroep1) _editParentCheck();
+                              if (isParent && value != thisUser.beroep1) _editProfCheck();
+
+                              return;
+                            },
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.notEqual(context, "")
@@ -1061,6 +1365,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                             controller: berStraat1,
                             decoration:
                                 const InputDecoration(labelText: 'Street'),
+                            onChanged: (String? value) {
+                              if (!isParent && value != thisUser.berStraat1) _editParentCheck();
+                              if (isParent && value != thisUser.berStraat1) _editProfCheck();
+
+                              return;
+                            },
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
                               FormBuilderValidators.notEqual(context, "")
@@ -1077,6 +1387,15 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 controller: berHuisNr1,
                                 decoration: const InputDecoration(
                                     labelText: 'House number'),
+                                onChanged: (String? value) {
+                                  if (!isParent && value != '' &&
+                                      int.parse(value!) != thisUser.berHuisNr1) _editParentCheck();
+
+                                  if (isParent && value != '' &&
+                                      int.parse(value!) != thisUser.berHuisNr1) _editProfCheck();
+
+                                  return;
+                                },
                                 keyboardType: TextInputType.number,
                                 // enkel nummers kubben ingevoerd worden
                                 // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
@@ -1098,6 +1417,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 controller: berBusNr1,
                                 decoration: const InputDecoration(
                                     labelText: 'Additional'),
+                                onChanged: (String? value) {
+                                  if (!isParent && value != thisUser.berBusNr1) _editParentCheck();
+                                  if (isParent &&value != thisUser.berBusNr1) _editProfCheck();
+
+                                  return;
+                                },
                               ),
                             ),
                           ]),
@@ -1113,6 +1438,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: berPostcode1,
                                   decoration: const InputDecoration(
                                       labelText: 'Postal code'),
+                                  onChanged: (String? value) {
+                                    if (!isParent && value != '' && int.parse(value!) != thisUser.berPostcode1) _editParentCheck();
+                                    if (isParent && value != '' && int.parse(value!) != thisUser.berPostcode1) _editProfCheck();
+
+                                    return;
+                                  },
                                   maxLength: 4,
                                   keyboardType: TextInputType.number,
                                   // enkel nummers kubben ingevoerd worden
@@ -1140,6 +1471,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     controller: berGemeente1,
                                     decoration: const InputDecoration(
                                         labelText: 'City'),
+                                    onChanged: (String? value) {
+                                      if (!isParent && value != thisUser.berGemeente1) _editParentCheck();
+                                      if (isParent && value != thisUser.berGemeente1) _editProfCheck();
+
+                                      return;
+                                    },
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
                                       FormBuilderValidators.notEqual(
@@ -1158,7 +1495,6 @@ class _FormQuestionsState extends State<FormQuestions> {
                     ),
                   ),
                 ),
-
 
                 // tweede ouder info
                 // enkel zichtbaar als 2e ouder knop wordt geklikt
@@ -1205,6 +1541,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     controller: oVoornaam2,
                                     decoration: const InputDecoration(
                                         labelText: 'Parent firstname'),
+                                    onChanged: (String? value) {
+                                      if (value != thisUser.oVoornaam2)
+                                        _editParentCheck();
+
+                                      return;
+                                    },
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
                                       FormBuilderValidators.notEqual(
@@ -1223,6 +1565,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     controller: oNaam2,
                                     decoration: const InputDecoration(
                                         labelText: 'Parent lastname'),
+                                    onChanged: (String? value) {
+                                      if (value != thisUser.oNaam2)
+                                        _editParentCheck();
+
+                                      return;
+                                    },
                                     validator: FormBuilderValidators.compose([
                                       FormBuilderValidators.required(context),
                                       FormBuilderValidators.notEqual(
@@ -1240,6 +1588,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: beroep2,
                               decoration: const InputDecoration(
                                   labelText: 'Profession'),
+                              onChanged: (String? value) {
+                                if (value != thisUser.beroep2)
+                                  _editParentCheck();
+
+                                return;
+                              },
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(context),
                                 FormBuilderValidators.notEqual(context, "")
@@ -1253,6 +1607,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                               controller: berStraat2,
                               decoration:
                                   const InputDecoration(labelText: 'Street'),
+                              onChanged: (String? value) {
+                                if (value != thisUser.berStraat2)
+                                  _editParentCheck();
+
+                                return;
+                              },
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(context),
                                 FormBuilderValidators.notEqual(context, "")
@@ -1269,6 +1629,14 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: berHuisNr2,
                                   decoration: const InputDecoration(
                                       labelText: 'House number'),
+                                  onChanged: (String? value) {
+                                    if (value != '' &&
+                                        int.parse(value!) !=
+                                            thisUser.berHuisNr2)
+                                      _editParentCheck();
+
+                                    return;
+                                  },
                                   keyboardType: TextInputType.number,
                                   // enkel nummers kubben ingevoerd worden
                                   // bron: https://stackoverflow.com/questions/49577781/how-to-create-number-input-field-in-flutter/49578197
@@ -1292,6 +1660,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   controller: berBusNr2,
                                   decoration: const InputDecoration(
                                       labelText: 'Additional'),
+                                  onChanged: (String? value) {
+                                    if (value != thisUser.berBusNr2)
+                                      _editParentCheck();
+
+                                    return;
+                                  },
                                 ),
                               ),
                             ]),
@@ -1308,6 +1682,14 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     controller: berPostcode2,
                                     decoration: const InputDecoration(
                                         labelText: 'Postal code'),
+                                    onChanged: (String? value) {
+                                      if (value != '' &&
+                                          int.parse(value!) !=
+                                              thisUser.berPostcode2)
+                                        _editParentCheck();
+
+                                      return;
+                                    },
                                     maxLength: 4,
                                     keyboardType: TextInputType.number,
                                     // enkel nummers kubben ingevoerd worden
@@ -1336,6 +1718,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                       controller: berGemeente2,
                                       decoration: const InputDecoration(
                                           labelText: 'City'),
+                                      onChanged: (String? value) {
+                                        if (value != thisUser.berGemeente2)
+                                          _editParentCheck();
+
+                                        return;
+                                      },
                                       validator: FormBuilderValidators.compose([
                                         FormBuilderValidators.required(context),
                                         FormBuilderValidators.notEqual(
@@ -1536,7 +1924,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                         //overzicht: parents
                         if (oVoornaam1.text != "")
                           Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
+                            padding: const EdgeInsets.only(top: 20.0),
                             child: FractionallySizedBox(
                               widthFactor: 0.4,
                               child: Column(
@@ -1831,7 +2219,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                           TextOverflow.ellipsis,
                                                       style: GoogleFonts
                                                           .montserrat(
-                                                          color: Colors.black45,
+                                                              color: Colors
+                                                                  .black45,
                                                               fontSize: 11,
                                                               fontWeight:
                                                                   FontWeight
@@ -1995,9 +2384,9 @@ class _FormQuestionsState extends State<FormQuestions> {
             delay: const Duration(milliseconds: 1000),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: [
                 // verberg back button wanneer men op de eerste pagina is
-                if (_currentStep != 0)
+                if (showBackBtn == true)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         alignment: Alignment.center,

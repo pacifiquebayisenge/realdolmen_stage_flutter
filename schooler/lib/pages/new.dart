@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -16,7 +14,6 @@ class New extends StatelessWidget {
   Widget build(BuildContext context) {
     final editRegi = ModalRoute.of(context)!.settings.arguments as Registration;
 
-
     // ervoor zorgen dat de popup niet wordt gesloten door de back button van de device
     return WillPopScope(
       onWillPop: () => Future.value(false),
@@ -24,15 +21,17 @@ class New extends StatelessWidget {
         extendBody: true,
         backgroundColor: Colors.indigo.shade800,
         appBar: AppBar(
-centerTitle: true,
+          centerTitle: true,
           flexibleSpace: const Image(
             image: AssetImage('lib/images/81.png'),
             fit: BoxFit.cover,
             repeat: ImageRepeat.repeat,
           ),
           elevation: 0,
-          systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarColor: Colors.indigo.shade800),
+          systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.light,
+              statusBarColor: Colors.black12),
           backgroundColor: Colors.indigo.shade800,
           leading: IconButton(
             onPressed: () {
@@ -40,13 +39,14 @@ centerTitle: true,
             },
             icon: const Icon(Icons.close),
           ),
-          title:  Padding(
+          title: Padding(
             padding: const EdgeInsets.only(left: 40.0),
             child: Text(
-              'New Registration',style: GoogleFonts.montserrat(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.white),
+              'New Registration',
+              style: GoogleFonts.montserrat(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white),
             ),
           ),
         ),
@@ -56,7 +56,11 @@ centerTitle: true,
         body: ClipRRect(
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            child: Container(color: Colors.white, child: FormQuestions(editRegi: editRegi,))),
+            child: Container(
+                color: Colors.white,
+                child: FormQuestions(
+                  editRegi: editRegi,
+                ))),
       ),
     );
   }

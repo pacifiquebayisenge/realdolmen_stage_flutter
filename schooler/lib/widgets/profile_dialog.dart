@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart';
-
 
 class ProfileDialog extends StatefulWidget {
   ProfileDialog({Key? key}) : super(key: key);
-
 
   @override
   _ProfileDialogState createState() => _ProfileDialogState();
 }
 
 class _ProfileDialogState extends State<ProfileDialog> {
-
   // De  form velden controllers + keys
   final _thisForm = GlobalKey<FormBuilderState>();
   final voornaam = TextEditingController();
@@ -23,8 +21,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
   final rijksNr = TextEditingController();
 
   @override
-  void dispose(){
-
+  void dispose() {
     voornaam.dispose();
     naam.dispose();
     rijksNr.dispose();
@@ -33,50 +30,32 @@ class _ProfileDialogState extends State<ProfileDialog> {
   }
 
 
-// methode om laatste 2 controle cijfers van rijksregister te berekennen
-  // geeft de 2 controle cijfers terug
-  int rijksnummerCheck(String rijksregisternummer) {
-    // eerste 9 cijfers van het rijksregisternummer
-    int deeltal = int.parse(rijksregisternummer.substring(0, 9));
-
-    // modula 97 om de restwaarde hiervan te berekennen
-    int mod = deeltal % 97;
-
-    // 97 verminderen met de restwaarde om de laatste 2 controle cijfers te bekomen
-    int check = 97 - mod;
-
-    return check;
-  }
 
   _submit() async {
     // methode om de keybo
     FocusScope.of(context).requestFocus(FocusNode());
-    if(_thisForm.currentState!.validate() == false) return;
+    if (_thisForm.currentState!.validate() == false) return;
 
-    bool result = await thisUser.updateUserProfile(voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text);
-
-    if(result == true) return _showSnackbar("User Successfully Updated");
-    _showSnackbar("Failed to update user");
-
+    bool result = await thisUser.updateUserProfile(
+        voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text);
     Navigator.of(context).pop();
-
-
-
-
+    if (result == true) return _showSnackbar("User Successfully Updated");
+    _showSnackbar("Failed to update user");
   }
 
   // snackbar widget om verwijdering van de registratie te bevestigen
   _showSnackbar(String text) {
-
     final snackBar = SnackBar(
       content: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
           color: const Color.fromRGBO(54, 60, 69, 1),
-          child:  Text(
+          child: Text(
             text,
-            style:  GoogleFonts.montserrat(color: Colors.orange, fontWeight: FontWeight.w600 ),textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+                color: Colors.orange, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
           ),
         ),
       ),
@@ -86,27 +65,21 @@ class _ProfileDialogState extends State<ProfileDialog> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-
-
-
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      shape:  RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
-      title:  Text( "Complete profile info" ,style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),),
-      content:  SizedBox(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        "Complete profile info",
+        style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+      ),
+      content: SizedBox(
         height: 270,
         child: FormBuilder(
           key: _thisForm,
           child: Column(
-
             children: [
-
               DelayedDisplay(
                 delay: const Duration(milliseconds: 700),
                 child: Container(
@@ -114,8 +87,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   child: FormBuilderTextField(
                     name: 'voornaam',
                     controller: voornaam,
-                    decoration: const InputDecoration(
-                        labelText: 'Firstname'),
+                    decoration: const InputDecoration(labelText: 'Firstname'),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context),
                       FormBuilderValidators.notEqual(context, "")
@@ -133,8 +105,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   child: FormBuilderTextField(
                     name: 'naam',
                     controller: naam,
-                    decoration: const InputDecoration(
-                        labelText: 'Lastname'),
+                    decoration: const InputDecoration(labelText: 'Lastname'),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context),
                       FormBuilderValidators.notEqual(context, "")
@@ -168,9 +139,9 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       FormBuilderValidators.minLength(context, 11),
                       FormBuilderValidators.maxLength(context, 11),
                       // custom validator om rijksregisternummer te checken
-                          (value) {
+                      (value) {
                         if (int.parse(value!.substring(9, 11)) ==
-                            rijksnummerCheck(value)) {
+                            Registration.rijksNrCheck(value)) {
                           return null;
                         } else {
                           return 'Invalid';
@@ -215,7 +186,6 @@ class _ProfileDialogState extends State<ProfileDialog> {
             ),
           ),
         ),
-
       ],
     );
   }

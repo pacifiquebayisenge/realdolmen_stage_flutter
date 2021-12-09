@@ -18,7 +18,15 @@ class User {
   late final int postcode;
   late final String gemeente;
 
-  // vragen over eerste ouder
+  // info beroep in geval van ouder
+  late final String? beroep;
+  late final String? berStraat;
+  late final int? berHuisNr;
+  late final String? berBusNr;
+  late final int? berPostcode;
+  late final String? berGemeente;
+
+  // info eerste ouder
   late final String? oVoornaam1;
   late final String? oNaam1;
   late final String? beroep1;
@@ -28,7 +36,7 @@ class User {
   late final int? berPostcode1;
   late final String? berGemeente1;
 
-  // vragen over tweede ouder
+  // info tweede ouder
   late final String? oVoornaam2;
   late final String? oNaam2;
   late final String? beroep2;
@@ -47,15 +55,28 @@ class User {
   User.emptyConstructor();
 
   User({
+    // basis info
     required this.id,
     required this.voornaam,
     required this.naam,
     required this.rijksNr,
+
+     // adress
     required this.straat,
     required this.huisNr,
     required this.busNr,
     required this.postcode,
     required this.gemeente,
+
+    // beroep in geval van ouder
+    required this.beroep,
+    required this.berStraat,
+    required this.berHuisNr,
+    required this.berBusNr,
+    required this.berPostcode,
+    required this.berGemeente,
+
+    // ouder 1 info
     required this.oVoornaam1,
     required this.oNaam1,
     required this.beroep1,
@@ -64,6 +85,8 @@ class User {
     required this.berBusNr1,
     required this.berPostcode1,
     required this.berGemeente1,
+
+    // ouder 2 info
     required this.oVoornaam2,
     required this.oNaam2,
     required this.beroep2,
@@ -105,6 +128,7 @@ class User {
 
       // nieuwe user toevoegen aan database
       await _newUser(uid: userCredential.user!.uid, email: email);
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return 'The password provided is too weak !';
@@ -125,32 +149,48 @@ class User {
         .collection('users')
         .doc(uid)
         .set({
+
+          // basis info
           'uid': uid,
           'email': email,
           'date': DateTime.now(),
           'voornaam': "",
           'naam': "",
           'rijksNr': "",
+
+           // adress
           'straat': "",
-          'huisNr': null,
+          'huisNr': 0,
           'busNr': "",
-          'postcode': null,
+          'postcode': 0,
           'gemeente': "",
+
+          // beroep in geval van ouder
+          'beroep': "",
+          'berStraat': "",
+          'berHuisNr': 0,
+          'berBusNr': "",
+          'berPostcode': 0,
+          'berGemeente': "",
+
+          // ouder 1 info
           'oVoornaam1': "",
           'oNaam1': "",
           'beroep1': "",
           'berStraat1': "",
-          'berHuisNr1': null,
+          'berHuisNr1': 0,
           'berBusNr1': "",
-          'berPostcode1': null,
+          'berPostcode1': 0,
           'berGemeente1': "",
+
+          // ouder 2 info
           'oVoornaam2': "",
           'oNaam2': "",
           'beroep2': "",
           'berStraat2': "",
-          'berHuisNr2': null,
+          'berHuisNr2': 0,
           'berBusNr2': "",
-          'berPostcode2': null,
+          'berPostcode2': 0,
           'berGemeente2': "",
         })
         .then((value) => print("User Seccesfully Added"))
@@ -167,18 +207,29 @@ class User {
         Map<String, dynamic> data =
             documentSnapshot.data()! as Map<String, dynamic>;
 
-        print(thisUser.id);
-
         thisUser = User(
+          // basis info
           id: id,
           voornaam: data['voornaam'],
           naam: data['naam'],
           rijksNr: data['rijksNr'],
+
+          // adress
           straat: data['straat'],
           huisNr: data['huisNr'],
           busNr: data['busNr'],
           postcode: data['postcode'],
           gemeente: data['gemeente'],
+
+          // beroep in geval van ouder
+          beroep: data['beroep'],
+          berStraat: data['berStraat'],
+          berHuisNr: data['berHuisNr'],
+          berBusNr: data['berBusNr'],
+          berPostcode: data['berPostcode'],
+          berGemeente: data['berGemeente'],
+
+          // ouder 1 info
           oVoornaam1: data['oVoornaam1'],
           oNaam1: data['oNaam1'],
           beroep1: data['beroep1'],
@@ -187,6 +238,8 @@ class User {
           berBusNr1: data['berBusNr1'],
           berPostcode1: data['berPostcode1'],
           berGemeente1: data['berGemeente1'],
+
+          // ouder 2 info
           oVoornaam2: data['oVoornaam2'],
           oNaam2: data['oNaam2'],
           beroep2: data['beroep2'],
@@ -197,7 +250,7 @@ class User {
           berGemeente2: data['berGemeente2'],
         );
 
-        print(thisUser.id);
+
         //await  thisUser.getUserRegis();
 
       } else {
@@ -252,7 +305,7 @@ class User {
 
  */
 
-  // methode om na te gaan of er informatie ove rde user mist
+  // methode om na te gaan of het user profiel compleet is
   Future<bool> userInfoCheck(String id) async {
     bool profileComplete = true;
 
@@ -279,16 +332,104 @@ class User {
     bool result = false;
     await _userRef.doc(id).update(
         {'voornaam': voornaam, 'naam': naam, 'rijksNr': rijksNr}).then((value) {
-      this.voornaam = voornaam;
-      this.naam = naam;
-      this.rijksNr = rijksNr;
+      getUser(id!);
 
       result = true;
     }).catchError((error) {
+      print('Something went wrong while updating profile');
       print(error);
       result = false;
     });
 
     return result;
+  }
+
+  // methode om de basis info van de user te updaten
+  Future<void> updateUserAdress({
+    required String straat,
+    required int huisNr,
+    required String busNr,
+    required int postcode,
+    required String gemeente,
+  }) async {
+    await _userRef.doc(id).update({
+      'straat': straat,
+      'huisNr': huisNr,
+      'busNr': busNr,
+      'postcode': postcode,
+      'gemeente': gemeente
+    }).then((value) {
+      getUser(id!);
+    }).catchError((error) {
+      print('Something went wrong while updating adres');
+      print(error);
+    });
+  }
+
+  Future<void> updateUserParents({
+    required String  oVoornaam1,
+    required String oNaam1,
+    required String beroep1,
+    required String berStraat1,
+    required int berHuisNr1,
+    required String berBusNr1,
+    required int berPostcode1,
+    required String berGemeente1,
+    required String oVoornaam2,
+    required String oNaam2,
+    required String beroep2,
+    required String berStraat2,
+    required int berHuisNr2,
+    required String berBusNr2,
+    required int berPostcode2,
+    required String berGemeente2,
+  }) async {
+    await _userRef.doc(id).update({
+      'oVoornaam1': oVoornaam1,
+      'oNaam1': oNaam1,
+      'beroep1': beroep1,
+      'berStraat1': berStraat1,
+      'berHuisNr1': berHuisNr1,
+      'berBusNr1': berBusNr1,
+      'berPostcode1': berPostcode1,
+      'berGemeente1': berGemeente1,
+      'oVoornaam2': oVoornaam2,
+      'oNaam2': oNaam2,
+      'beroep2': beroep2,
+      'berStraat2': berStraat2,
+      'berHuisNr2': berHuisNr2,
+      'berBusNr2': berBusNr2,
+      'berPostcode2': berPostcode2,
+      'berGemeente2': berGemeente2,
+    }).then((value) {
+      getUser(id!);
+    }).catchError((error) {
+      print('Something went wrong while updating parents');
+      print(error);
+    });
+  }
+
+  Future<void> updateUserProf({
+        required String beroep,
+    required String berStraat,
+    required int berHuisNr,
+    required String berBusNr,
+    required int berPostcode,
+    required String berGemeente,
+  }) async {
+    await _userRef.doc(id).update({
+  
+      'beroep': beroep,
+      'berStraat': berStraat,
+      'berHuisNr': berHuisNr,
+      'berBusNr': berBusNr,
+      'berPostcode': berPostcode,
+      'berGemeente': berGemeente,
+    }).then((value) {
+      getUser(id!);
+    }).catchError((error) {
+      print('Something went wrong while updating profession');
+      print(error);
+    });
   }
 }

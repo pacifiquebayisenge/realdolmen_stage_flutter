@@ -1,8 +1,7 @@
-
 import 'dart:math';
 
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 import 'package:schooler/services/globals.dart';
@@ -16,33 +15,26 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-
-
   @override
   void initState() {
     super.initState();
     // voer de functie uit na dat de build functie van de widgets afgelopen is
     // bron: 7:44 => https://www.youtube.com/watch?v=i9g2kSuWutk&list=PL4cUxeGkcC9gP1qg8yj-Jokef29VRCLt1&index=9
-    WidgetsBinding.instance!.addPostFrameCallback((_)  {
-
-
-    });
+    WidgetsBinding.instance!.addPostFrameCallback((_) {});
   }
 
   // lijst om registraties op te halen
   List<Registration> registerList = [];
 
-
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
-
   void addThis() {
-    Random r = new Random();
+    Random r = Random();
 
     registerList.insert(
         0,
-        new Registration(
-          id: '${r.nextInt(1000000)}',
+        Registration(
+            id: '${r.nextInt(1000000)}',
             voornaam: '${r.nextInt(100)}',
             naam: 'Pokers',
             rijksNr: '97042025942',
@@ -68,13 +60,10 @@ class _NotificationsState extends State<Notifications> {
             berPostcode2: 1500,
             berGemeente2: 'Halle',
             vraagGOK: true,
-            vraagTN: true, schoolList: []));
+            vraagTN: true,
+            schoolList: []));
 
     _listKey.currentState!.insertItem(0);
-
-
-
-
 
     /*
    Registration.newRegi(
@@ -122,76 +111,81 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.black12));
     return Scaffold(
-
-      backgroundColor: Colors.indigo.shade700,
+      extendBody: true,
+      backgroundColor: Colors.indigo.shade800,
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-
+            systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+                statusBarColor: Colors.black12),
             backgroundColor: Colors.indigo.shade800,
             pinned: false,
             snap: false,
             floating: false,
             expandedHeight: 100.0,
-            flexibleSpace:  FlexibleSpaceBar(
+            flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text('Notifications', style: GoogleFonts.montserrat(
-
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white),),
-              background:   const Image(
+              title: Text(
+                'Notifications',
+                style: GoogleFonts.montserrat(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white),
+              ),
+              background: const Image(
                 image: AssetImage('lib/images/81.png'),
-        fit: BoxFit.cover,
+                fit: BoxFit.cover,
                 repeat: ImageRepeat.repeat,
-      ),
+              ),
             ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
+              (BuildContext context, int index) {
                 return Container(
-
-                  decoration:  BoxDecoration(
-                   color: Colors.white,
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30))),
                   // color: index.isOdd ? Colors.white : Colors.black12,
                   //height: 100.0,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30)),
                     child: Column(
                       children: List.generate(
                         10,
-                            (index) {
+                        (index) {
                           if (index == 9) {
                             return Padding(
-                              padding: const EdgeInsets.only(bottom:100.0),
+                              padding: const EdgeInsets.only(bottom: 100.0),
                               child: Container(
-                                color: index.isOdd
-                                    ? Colors.white
-                                    : Colors.grey,
+                                color: index.isOdd ? Colors.white : Colors.grey,
                                 height: 100.0,
                                 child: Center(
                                   child: Text('$index', textScaleFactor: 5),
                                 ),
                               ),
                             );
-                          }
-                          else {
+                          } else {
                             return Container(
-                              color: index.isOdd
-                                  ? Colors.white
-                                  : Colors.grey,
+                              color: index.isOdd ? Colors.white : Colors.grey,
                               height: 100.0,
                               child: Center(
                                 child: Text('$index', textScaleFactor: 5),
                               ),
                             );
                           }
-                        } ,
+                        },
                       ),
                     ),
                   ),
@@ -204,6 +198,4 @@ class _NotificationsState extends State<Notifications> {
       ),
     );
   }
-
-
 }
