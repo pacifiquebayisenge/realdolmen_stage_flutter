@@ -84,7 +84,8 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   bool showBackBtn = true;
   bool showNextBtn = true;
-  bool showSecParBtn = true;
+  bool showFinishBtn = false;
+  bool showGokTnBtn = false;
 
   @override
   void initState() {
@@ -246,7 +247,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       oNaam1.text = thisUser.naam;
     }
 
-    if (isParent && thisUser.beroep != "") {
+    if (isParent && thisUser.beroep != "" && thisUser.beroep != null) {
       beroep1.text = thisUser.beroep!;
       berStraat1.text = thisUser.berStraat!;
       berHuisNr1.text = thisUser.berHuisNr!.toString();
@@ -386,36 +387,38 @@ class _FormQuestionsState extends State<FormQuestions> {
         case 1:
           {
 
-            showBackBtn = showNextBtn =true;
+            showBackBtn = showNextBtn = true;
             if (widget.editRegi != null) showBackBtn = false;
           }
           break;
         case 2:
           {
-            print(Registration.getAge(rijksNr.text));
+
+
             if (showBackBtn == false) showBackBtn = true;
           }
           break;
         case 3:
           {
+
+            showNextBtn = true;
             pageHeight = 480;
-            if (Registration.getAge(rijksNr.text) >= 24) {
-              if (widget.editRegi != null && secParent == true) {
-                nextStep();
-                nextStep();
-              } else {
-                nextStep();
-              }
-            }
+            if (Registration.getAge(rijksNr.text) >= 24) nextStep();
+
+
           }
           break;
         case 4:
           {
+            showGokTnBtn = false;
+            if (Registration.getAge(rijksNr.text) >= 24) nextStep();
             pageHeight = 480;
           }
           break;
         case 5:
           {
+            showGokTnBtn = true;
+            showNextBtn  = false;
             pageHeight = 450;
             if (widget.editRegi != null ||
                 Registration.getAge(rijksNr.text) >= 24) nextStep();
@@ -423,6 +426,8 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 6:
           {
+            showGokTnBtn = true;
+            showNextBtn = false;
             pageHeight = 450;
             if (widget.editRegi != null ||
                 Registration.getAge(rijksNr.text) >= 24) nextStep();
@@ -430,12 +435,21 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 7:
           {
+            showGokTnBtn = false;
+            showNextBtn = true;
             pageHeight = 520;
           }
           break;
         case 8:
           {
+            showBackBtn = showNextBtn = false;
+            if(regiSucces != true) showBackBtn = true;
+
             pageHeight = 570;
+          }
+          break;
+        case 9:
+          { showNextBtn = false;
           }
           break;
 
@@ -782,6 +796,12 @@ class _FormQuestionsState extends State<FormQuestions> {
       _slider.currentState!.previous();
       _slider.currentState!.previous();
       _slider.currentState!.previous();
+
+    }else if (_currentStep == 7 ) {
+      setState(() => _currentStep -= 2);
+      _slider.currentState!.previous();
+      _slider.currentState!.previous();
+
     } else if (_currentStep == 4 && Registration.getAge(rijksNr.text) >= 24) {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
@@ -2117,7 +2137,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                         if (SchoolList.schoolList != null &&
                             SchoolList.schoolList.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(top: 50.0),
+                            padding: const EdgeInsets.only(top: 40.0),
                             child: FractionallySizedBox(
                               widthFactor: 0.5,
                               child: Column(
@@ -2352,7 +2372,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           ),
 
         // toon de ja nee vragen enkel bij de GOK en TN vragen
-        if (_currentStep == 5 || _currentStep == 6)
+        if (showGokTnBtn)
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Row(
@@ -2379,14 +2399,14 @@ class _FormQuestionsState extends State<FormQuestions> {
 
         // back en next buttons
         //verberg als de registratie voltooid is
-        if (regiSucces != true)
+
           DelayedDisplay(
             delay: const Duration(milliseconds: 1000),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // verberg back button wanneer men op de eerste pagina is
-                if (showBackBtn == true)
+                if (showBackBtn)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         alignment: Alignment.center,
@@ -2398,10 +2418,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                     onPressed: () => {previousStep()},
                   ),
                 // verberg next button wanneer men op de voorrangsvragen en de 2 laatste pagina's komt
-                if (_currentStep != 5 &&
-                    _currentStep != 6 &&
-                    _currentStep != 8 &&
-                    _currentStep != 9)
+                if (showNextBtn)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         alignment: Alignment.center,
