@@ -1,11 +1,9 @@
 import 'dart:math';
 
-import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/pages/home.dart';
 import 'package:schooler/pages/login.dart';
@@ -18,6 +16,7 @@ import 'package:schooler/widgets/profile_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 import 'classes/registration.dart';
+import 'classes/school.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,6 +101,10 @@ class _AppState extends State<App> {
       } else {
         await thisUser.getUser(user.uid);
         bool profileComplete = await thisUser.userInfoCheck(user.uid);
+
+        schools = await SchoolObject.getAllSchools();
+
+
         Future.delayed(const Duration(milliseconds: 2000), ()  {
 
           setState(()  {

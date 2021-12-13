@@ -112,7 +112,7 @@ class Registration {
     String month = rijksNr.substring(2, 4);
     String day = rijksNr.substring(4, 6);
 
-    // Het jaar van de huidige datum omzette naar string
+    // Het jaar van de huidige datum omzetten naar string
     // daarvan enkel de 2 laatste cijfer nemen en dan omzette naar int
     // verminderen met het jaartal uit rijksregister nummer
     // als het resultaat positief is dan is de persoon geboren VANAF 2000
@@ -131,9 +131,9 @@ class Registration {
   // methode om laatste 2 controle cijfers van rijksregister te berekennen
   // geeft de 2 controle cijfers terug
   static int rijksNrCheck(String rijksregisternummer) {
-    // eerste 9 cijfers van het rijksregisternummer
 
-    int deeltal = int.parse(rijksregisternummer.substring(0, 9));
+
+    int deeltal = 0;
 
     /*
     bij geboorte datums vanaf 2000 kloopt de rijksnummer controle niet meer
@@ -142,7 +142,10 @@ class Registration {
     bron : https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/
     */
     if (int.parse(rijksregisternummer.substring(0, 2)) == 00) {
-      deeltal = int.parse('2$deeltal');
+      deeltal = int.parse('2${rijksregisternummer.substring(0, 9)}');
+    } else {
+      // eerste 9 cijfers van het rijksregisternummer
+      deeltal = int.parse(rijksregisternummer.substring(0, 9));
     }
 
     // modula 97 om de restwaarde hiervan te berekennen

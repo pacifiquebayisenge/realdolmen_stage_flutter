@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:schooler/classes/registration.dart';
+import 'package:schooler/classes/school.dart';
 import 'package:schooler/services/globals.dart';
 
 class User {
@@ -18,13 +19,23 @@ class User {
   late final int postcode;
   late final String gemeente;
 
-  // info beroep in geval van ouder
+  // info beroep in geval van zelf ouder te worden
   late final String? beroep;
   late final String? berStraat;
   late final int? berHuisNr;
   late final String? berBusNr;
   late final int? berPostcode;
   late final String? berGemeente;
+
+  // info partner in geval van  zelf ouder te worden
+  late final String? oVoornaam3;
+  late final String? oNaam3;
+  late final String? beroep3;
+  late final String? berStraat3;
+  late final int? berHuisNr3;
+  late final String? berBusNr3;
+  late final int? berPostcode3;
+  late final String? berGemeente3;
 
   // info eerste ouder
   late final String? oVoornaam1;
@@ -46,8 +57,8 @@ class User {
   late final int? berPostcode2;
   late final String? berGemeente2;
 
-  // registratie lijst van deze user
-  late List<Registration> regiList = [];
+  // favoriete scholen lijst van deze user
+  late List<SchoolObject> favoSchoolsList = [];
 
   final CollectionReference _userRef =
       FirebaseFirestore.instance.collection('users');
@@ -77,6 +88,16 @@ class User {
     required this.berGemeente,
 
     // ouder 1 info
+    required this.oVoornaam3,
+    required this.oNaam3,
+    required this.beroep3,
+    required this.berStraat3,
+    required this.berHuisNr3,
+    required this.berBusNr3,
+    required this.berPostcode3,
+    required this.berGemeente3,
+
+    // ouder 1 info
     required this.oVoornaam1,
     required this.oNaam1,
     required this.beroep1,
@@ -95,6 +116,7 @@ class User {
     required this.berBusNr2,
     required this.berPostcode2,
     required this.berGemeente2,
+
   });
 
   // methode om user in te loggen via email en password
@@ -173,6 +195,16 @@ class User {
           'berPostcode': 0,
           'berGemeente': "",
 
+      // partner in geval van ouder te zijn geworden
+      'oVoornaam3': "",
+      'oNaam3': "",
+      'beroep3': "",
+      'berStraat3': "",
+      'berHuisNr3': 0,
+      'berBusNr3': "",
+      'berPostcode3': 0,
+      'berGemeente3': "",
+
           // ouder 1 info
           'oVoornaam1': "",
           'oNaam1': "",
@@ -228,6 +260,16 @@ class User {
           berBusNr: data['berBusNr'],
           berPostcode: data['berPostcode'],
           berGemeente: data['berGemeente'],
+
+          // partner in geval van ouder te zijn geworden
+          oVoornaam3: data['oVoornaam3'],
+          oNaam3: data['oNaam3'],
+          beroep3: data['beroep3'],
+          berStraat3: data['berStraat3'],
+          berHuisNr3: data['berHuisNr3'],
+          berBusNr3: data['berBusNr3'],
+          berPostcode3: data['berPostcode3'],
+          berGemeente3: data['berGemeente3'],
 
           // ouder 1 info
           oVoornaam1: data['oVoornaam1'],
@@ -418,7 +460,7 @@ class User {
     required String berGemeente,
   }) async {
     await _userRef.doc(id).update({
-  
+
       'beroep': beroep,
       'berStraat': berStraat,
       'berHuisNr': berHuisNr,
@@ -432,4 +474,36 @@ class User {
       print(error);
     });
   }
+
+  Future<void> updateUserPartner({
+    required String  oVoornaam3,
+    required String oNaam3,
+    required String beroep3,
+    required String berStraat3,
+    required int berHuisNr3,
+    required String berBusNr3,
+    required int berPostcode3,
+    required String berGemeente3,
+
+  }) async {
+    await _userRef.doc(id).update({
+      'oVoornaam3': oVoornaam3,
+      'oNaam3': oNaam3,
+      'beroep3': beroep3,
+      'berStraat3': berStraat3,
+      'berHuisNr3': berHuisNr3,
+      'berBusNr3': berBusNr3,
+      'berPostcode3': berPostcode3,
+      'berGemeente3': berGemeente3,
+
+    }).then((value) {
+      getUser(id!);
+    }).catchError((error) {
+      print('Something went wrong while updating partner');
+      print(error);
+    });
+  }
+
+
+
 }
