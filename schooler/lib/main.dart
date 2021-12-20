@@ -90,6 +90,7 @@ class _AppState extends State<App> {
   }
 
   void userState() async {
+    schools = [];
    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         setState(() {
@@ -103,6 +104,7 @@ class _AppState extends State<App> {
         bool profileComplete = await thisUser.userInfoCheck(user.uid);
 
         schools = await SchoolObject.getAllSchools();
+        thisUser.favoSchoolsList = await SchoolObject.getAllFavoSchools();
 
 
         Future.delayed(const Duration(milliseconds: 2000), ()  {
@@ -220,11 +222,7 @@ class _AppState extends State<App> {
     }
     return AppBar(
       actions: [
-        if (_selectedIndex == 3)
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert),
-          ),
+
         if(_selectedIndex == 0)
           PopupMenuButton<String>(
                 onSelected: handleClick,

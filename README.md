@@ -1158,3 +1158,35 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
   * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
   * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)
+
+---
+---
+---
+
+#### 20/12 Maandag ####
+
+* Schools
+  * School lijst -> verschillende echte scholen -> +- 90 scholen
+  * Like button -> 100%
+  *
+
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Schools page
+  * Google maps implentatie documentatie
+  * Google maps route beschrijving -> 80% : toont route van andere plaartsen ook
+  * Info pagina om scholen info weer te geven
+
+* overweging om al gebruikte adressen popup of weglaten
+
+* Notities & aanwijzingen toepassen  
+  * Nieuwe notities -> 70 %
+
+* overweging om notificaite pagina weg te laten
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
+  * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)

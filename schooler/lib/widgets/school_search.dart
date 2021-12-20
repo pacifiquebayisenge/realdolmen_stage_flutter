@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/classes/school.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:like_button/like_button.dart';
 import 'package:schooler/services/globals.dart';
+import 'package:intl/intl.dart';
 
 import 'custom_like_button.dart';
 
@@ -21,58 +23,24 @@ class SchoolSearch extends StatefulWidget {
 
 class _SchoolSearchState extends State<SchoolSearch> {
   final floatingSearchBarController = FloatingSearchBarController();
-
-
+  bool favoList = false;
 
   List<SchoolObject> resultList = [];
 
   @override
   void initState() {
-   resultList = schools;
+    resultList = schools;
     super.initState();
-  }
-
-
-
-
-
-
-
-
-  _addToFavList(SchoolObject school) {
-    thisUser.favoSchoolsList.add(school);
-    //thisUser.updateSchoolList(schoolList:  thisUser.favoSchoolsList);
-  }
-
-  _removeFromFavList(SchoolObject school) {
-    thisUser.favoSchoolsList.removeAt(thisUser.favoSchoolsList.indexOf(school));
-    //thisUser.updateSchoolList(schoolList:  thisUser.favoSchoolsList);
-  }
-
-  Future<bool> onLikeButtonTapped(bool isLiked) async {
-    /// send your request here
-    // final bool success= await sendRequest();
-
-    /// if failed, you can do nothing
-    // return success? !isLiked:isLiked;
-
-    print(isLiked);
-
-    return !isLiked;
   }
 
   // methode om zoek resultaten weer te geven
   _queryList(String query) {
-
     setState(() {
-
       // maak de eerste letter van de query een hoofdletter
       if (query.isNotEmpty) {
         query = query.substring(0, 1).toUpperCase() +
             query.substring(1, query.length);
       }
-
-
 
       // maak reuslaten lijst leeg
       resultList = [];
@@ -80,20 +48,65 @@ class _SchoolSearchState extends State<SchoolSearch> {
       // als query leeg is , geef alle scholen weer
       // anders geef resultaten beginend met de query
       if (query.isEmpty) {
-        resultList = schools;
+        resultList = scholen2;
       } else {
-        schools.forEach((element) {
+        scholen2.forEach((element) {
           if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
         });
       }
     });
+  }
+
+  _showFavoList() {
+    if (thisUser.favoSchoolsList.isEmpty) {
+      _showSnackbar('Favorite list is empty');
+      return;
+    }
+    setState(() {
+      if (favoList == false) {
+        favoList = true;
+        resultList = thisUser.favoSchoolsList;
+      } else {
+        favoList = false;
+        resultList = schools;
+      }
+    });
+  }
+
+  refresh() {
+    setState(() {
+      if(thisUser.favoSchoolsList.isEmpty) {
+        favoList = false;
+        resultList = schools;
+      }
+    });
 
 
   }
 
-
+  // snackbar widget om verwijdering van de registratie te bevestigen
+  _showSnackbar(String text) {
+    final snackBar = SnackBar(
+      content: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+          color: const Color.fromRGBO(54, 60, 69, 1),
+          child: Text(
+            text,
+            style: GoogleFonts.montserrat(
+                color: Colors.orange, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,14 +114,14 @@ class _SchoolSearchState extends State<SchoolSearch> {
       borderRadius: BorderRadius.all(Radius.circular(30)),
       child: Stack(children: [
         Padding(
-          padding: const EdgeInsets.only(top: 80.0),
+          padding: const EdgeInsets.only(top: 100.0),
           child: ListView.builder(
               itemCount: resultList.length,
               addAutomaticKeepAlives: false,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
                   child: InkWell(
                     overlayColor: MaterialStateProperty.all(Colors.grey),
                     onTap: () {
@@ -128,7 +141,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
                                 children: [
                                   const CircleAvatar(
                                     backgroundColor:
-                                    Color.fromRGBO(234, 144, 16, 1),
+                                        Color.fromRGBO(234, 144, 16, 1),
                                     radius: 25,
                                   ),
                                   const CircleAvatar(
@@ -137,7 +150,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
                                   ),
                                   ClipRRect(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(30)),
+                                        BorderRadius.all(Radius.circular(30)),
                                     child: Image.asset(
                                       'lib/images/school.png',
                                       width: 30,
@@ -163,8 +176,8 @@ class _SchoolSearchState extends State<SchoolSearch> {
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500)),
-                              const Text('Straatnaan 12, stadnaam postcode',
-                                  style: TextStyle(
+                              Text(resultList[index].adres,
+                                  style: const TextStyle(
                                       fontSize: 11, color: Colors.black54)),
                             ],
                           ),
@@ -172,7 +185,10 @@ class _SchoolSearchState extends State<SchoolSearch> {
                         const SizedBox(
                           width: 10,
                         ),
-                        const CustomLikeButton()
+                        CustomLikeButton(
+                          school: resultList[index],
+                          refresh: refresh,
+                        )
                       ],
                     ),
                   ),
@@ -186,7 +202,6 @@ class _SchoolSearchState extends State<SchoolSearch> {
           borderRadius: const BorderRadius.all(Radius.circular(30)),
           controller: floatingSearchBarController,
           hint: 'Search...',
-
           scrollPadding: const EdgeInsets.only(top: 16, bottom: 0),
           transitionDuration: const Duration(milliseconds: 800),
           transitionCurve: Curves.easeInOut,
@@ -200,7 +215,6 @@ class _SchoolSearchState extends State<SchoolSearch> {
             // Call your model, bloc, controller here.
             _queryList(query);
           },
-
           transition: CircularFloatingSearchBarTransition(),
           leadingActions: [
             FloatingSearchBarAction.back(
@@ -227,6 +241,46 @@ class _SchoolSearchState extends State<SchoolSearch> {
               child: Container(),
             );
           },
+        ),
+        Positioned(
+          top: 53,
+          left: 45,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(130, 10),
+                    alignment: Alignment.center,
+                    shape: const StadiumBorder(),
+                    primary: favoList
+                        ? Color.fromRGBO(234, 144, 16, 1)
+                        : Colors.grey),
+                onPressed: _showFavoList,
+                child: Text('Show favorite list',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                    )),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(120, 10),
+                    alignment: Alignment.center,
+                    shape: const StadiumBorder(),
+                    primary: Colors.grey),
+                onPressed: () {},
+                child: Text('Filter',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                    )),
+              ),
+            ],
+          ),
         ),
       ]),
     );

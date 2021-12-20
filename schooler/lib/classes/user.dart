@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:schooler/classes/registration.dart';
 import 'package:schooler/classes/school.dart';
 import 'package:schooler/services/globals.dart';
 
@@ -79,7 +77,7 @@ class User {
     required this.postcode,
     required this.gemeente,
 
-    // beroep in geval van ouder
+    // beroep in geval van parent te worden
     required this.beroep,
     required this.berStraat,
     required this.berHuisNr,
@@ -87,7 +85,7 @@ class User {
     required this.berPostcode,
     required this.berGemeente,
 
-    // ouder 1 info
+    // beroep partner  in geval van kind dat parent wordt
     required this.oVoornaam3,
     required this.oNaam3,
     required this.beroep3,
@@ -187,7 +185,7 @@ class User {
           'postcode': 0,
           'gemeente': "",
 
-          // beroep in geval van ouder
+          // beroep in geval van ouder te worden
           'beroep': "",
           'berStraat': "",
           'berHuisNr': 0,
@@ -290,7 +288,11 @@ class User {
           berBusNr2: data['berBusNr2'],
           berPostcode2: data['berPostcode2'],
           berGemeente2: data['berGemeente2'],
+          
+          
         );
+        
+        print(data['favoSchoolsList']);
 
 
         //await  thisUser.getUserRegis();
@@ -374,6 +376,7 @@ class User {
     bool result = false;
     await _userRef.doc(id).update(
         {'voornaam': voornaam, 'naam': naam, 'rijksNr': rijksNr}).then((value) {
+
       getUser(id!);
 
       result = true;
@@ -408,6 +411,8 @@ class User {
     });
   }
 
+
+    // methode om ouder van user te updaten
   Future<void> updateUserParents({
     required String  oVoornaam1,
     required String oNaam1,
@@ -427,6 +432,7 @@ class User {
     required String berGemeente2,
   }) async {
     await _userRef.doc(id).update({
+      // ouder 1
       'oVoornaam1': oVoornaam1,
       'oNaam1': oNaam1,
       'beroep1': beroep1,
@@ -435,6 +441,8 @@ class User {
       'berBusNr1': berBusNr1,
       'berPostcode1': berPostcode1,
       'berGemeente1': berGemeente1,
+
+      // ouder 2
       'oVoornaam2': oVoornaam2,
       'oNaam2': oNaam2,
       'beroep2': beroep2,
@@ -444,6 +452,7 @@ class User {
       'berPostcode2': berPostcode2,
       'berGemeente2': berGemeente2,
     }).then((value) {
+
       getUser(id!);
     }).catchError((error) {
       print('Something went wrong while updating parents');
@@ -451,6 +460,7 @@ class User {
     });
   }
 
+  // methode om beroep van user te updaten ( in geval van ouder te zijn geworden)
   Future<void> updateUserProf({
         required String beroep,
     required String berStraat,
@@ -475,6 +485,8 @@ class User {
     });
   }
 
+
+  // methode om user partner te updaten (in geval van ouder te zijn geworden)
   Future<void> updateUserPartner({
     required String  oVoornaam3,
     required String oNaam3,

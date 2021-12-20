@@ -97,11 +97,11 @@ class Registration {
       // schoolLijst
       required this.schoolList});
 
+  // methode om leeftijd uit rijksregister nummer te halen
   static int getAge(String rijksNr) {
     DateTime birthDate = DateFormat('d/M/yyyy').parse(getBDate(rijksNr));
 
-    AgeDuration age;
-    age = Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
+    AgeDuration age = Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
     return age.years;
   }
 
@@ -277,6 +277,8 @@ class Registration {
     return regiList;
   }
 
+  // methode om registratie te verwijderen
+  // geeft string terug om de snackbar weergave op te vullen
   Future<String?> deleteRegi() async {
     String? result;
     await _regiRef.doc(id).delete().then((value) {
@@ -289,6 +291,7 @@ class Registration {
     return result;
   }
 
+  // methode om registratie te updaten
   Future<void> editRegi() async {
     await _regiRef
         .doc(id)
