@@ -9,6 +9,7 @@ import 'package:schooler/dummy_data/data.dart';
 import 'package:like_button/like_button.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:intl/intl.dart';
+import 'package:schooler/widgets/filter_dialog.dart';
 
 import 'custom_like_button.dart';
 
@@ -23,7 +24,8 @@ class SchoolSearch extends StatefulWidget {
 
 class _SchoolSearchState extends State<SchoolSearch> {
   final floatingSearchBarController = FloatingSearchBarController();
-  bool favoList = false;
+  bool favoListActive = false;
+  bool filterActive = false;
 
   List<SchoolObject> resultList = [];
 
@@ -65,20 +67,86 @@ class _SchoolSearchState extends State<SchoolSearch> {
       return;
     }
     setState(() {
-      if (favoList == false) {
-        favoList = true;
+      if (favoListActive == false) {
+        favoListActive = true;
         resultList = thisUser.favoSchoolsList;
       } else {
-        favoList = false;
+        favoListActive = false;
         resultList = schools;
       }
     });
   }
 
+  _filterDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) =>  FilterDialog(applyFilter: _filter,),
+    );
+  }
+
+  _filter() {
+    setState(() {
+      if(FilterDialog.selectedPlace == 'All' && FilterDialog.selectedType == 'All' ) {
+        filterActive = false;
+        resultList = [];
+        resultList = schools;
+        return;
+      }
+
+      if(FilterDialog.selectedPlace != 'All' && FilterDialog.selectedType != 'All' ) {
+        filterActive = true;
+        resultList = [];
+        schools.forEach((element) {
+          if(element.adres.split(',')[1].split(' ')[2] == FilterDialog.selectedPlace && element.type == FilterDialog.selectedType){
+
+
+              resultList.add(element);
+
+          }
+        });
+        return;
+      }
+
+      if(FilterDialog.selectedPlace != 'All') {
+        filterActive = true;
+        resultList = [];
+        schools.forEach((element) {
+          if(element.adres.split(',')[1].split(' ')[2] == FilterDialog.selectedPlace){
+
+
+              resultList.add(element);
+
+          }
+        });
+        return;
+      }
+
+      if(FilterDialog.selectedType != 'All') {
+        filterActive = true;
+        resultList = [];
+        schools.forEach((element) {
+          if(element.type == FilterDialog.selectedType){
+
+
+              resultList.add(element);
+
+          }
+        });
+        return;
+      }
+
+    });
+
+
+
+
+  }
+
   refresh() {
     setState(() {
       if(thisUser.favoSchoolsList.isEmpty) {
-        favoList = false;
+        favoListActive = false;
         resultList = schools;
       }
     });
@@ -111,7 +179,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(30)),
+      borderRadius: const BorderRadius.all(Radius.circular(30)),
       child: Stack(children: [
         Padding(
           padding: const EdgeInsets.only(top: 100.0),
@@ -150,7 +218,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
                                   ),
                                   ClipRRect(
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
+                                        const BorderRadius.all(Radius.circular(30)),
                                     child: Image.asset(
                                       'lib/images/school.png',
                                       width: 30,
@@ -250,11 +318,11 @@ class _SchoolSearchState extends State<SchoolSearch> {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    fixedSize: Size(130, 10),
+                    fixedSize: const Size(130, 10),
                     alignment: Alignment.center,
                     shape: const StadiumBorder(),
-                    primary: favoList
-                        ? Color.fromRGBO(234, 144, 16, 1)
+                    primary: favoListActive
+                        ? const Color.fromRGBO(234, 144, 16, 1)
                         : Colors.grey),
                 onPressed: _showFavoList,
                 child: Text('Show favorite list',
@@ -268,11 +336,13 @@ class _SchoolSearchState extends State<SchoolSearch> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    fixedSize: Size(120, 10),
+                    fixedSize: const Size(120, 10),
                     alignment: Alignment.center,
                     shape: const StadiumBorder(),
-                    primary: Colors.grey),
-                onPressed: () {},
+                    primary: filterActive && !favoListActive
+                        ? const Color.fromRGBO(234, 144, 16, 1)
+                        : Colors.grey),
+                onPressed: _filterDialog,
                 child: Text('Filter',
                     style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.w700,
