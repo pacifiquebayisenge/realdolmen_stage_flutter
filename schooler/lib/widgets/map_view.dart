@@ -1,12 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/classes/school.dart';
 import 'package:schooler/services/directions_model.dart';
 import 'package:schooler/services/directions_repository.dart';
+import 'package:schooler/services/globals.dart';
+import 'package:geocoding/geocoding.dart';
 
 const LatLng SOURCE_LOCATION = LatLng(50.8454872, 4.3570163);
 const LatLng DEST_LOCATION = LatLng(42.744421, -71.1698939);
@@ -26,7 +28,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   late Marker _origin;
   late Marker _destination;
   late Directions? _info;
@@ -39,11 +41,19 @@ class _MapViewState extends State<MapView> {
   double infoBarPosition = INFO_BAR_VISIBLE;
   double distanceBarPos = DISTANCE_BAR_INVISIBLE;
 
-  List<String> resultList = [];
+  List<SchoolObject> resultList = [];
   final floatingSearchBarController = FloatingSearchBarController();
+  CameraPosition initialCameraPosition = const CameraPosition(
+      zoom: CAMERA_ZOOM,
+      tilt: CAMERA_TILT,
+      bearing: CAMERA_BEARING,
+      target: SOURCE_LOCATION);
+
+  late SchoolObject? selectedSchool;
 
   @override
   void initState() {
+    resultList = schools;
     super.initState();
   }
 
@@ -94,11 +104,33 @@ class _MapViewState extends State<MapView> {
     }
   }
 
-  CameraPosition initialCameraPosition = const CameraPosition(
-      zoom: CAMERA_ZOOM,
-      tilt: CAMERA_TILT,
-      bearing: CAMERA_BEARING,
-      target: SOURCE_LOCATION);
+  _resultClick(SchoolObject school) async {
+// als er al een marker in de lijst zit
+    // bepaal aankomst punt
+    List<Location> locations = await locationFromAddress(school.adres);
+    setState(() {
+      locations.forEach((element) {
+        _markers.clear();
+        selectedSchool = null;
+
+        _destination = Marker(
+            markerId: MarkerId('Destination_${school.naam}'),
+            infoWindow: const InfoWindow(title: 'Destination'),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            position: LatLng(element.latitude, element.longitude),
+            onTap: () {
+              setState(() {
+                selectedSchool = school;
+                infoBarPosition = INFO_BAR_VISIBLE;
+              });
+            });
+
+        _markers.add(_destination);
+      });
+    });
+    print('${locations[0].latitude} ${locations[0].longitude}');
+  }
 
 // methode om zoek resultaten weer te geven
   _queryList(String query) {
@@ -114,10 +146,10 @@ class _MapViewState extends State<MapView> {
 
       // vul resultaten lijst op basis van de gegeven query
       if (query.isEmpty) {
-        resultList = scholen;
+        resultList = schools;
       } else {
-        scholen.forEach((element) {
-          if (element.startsWith(query, 0)) {
+        schools.forEach((element) {
+          if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
         });
@@ -151,11 +183,13 @@ class _MapViewState extends State<MapView> {
                         .toList(),
                   ),
               },
-              onLongPress: _addMarker,
+              //onLongPress: _addMarker,
               onTap: (LatLng loc) {
                 // als men op de map klikt zal de info bar verdwijnen
                 setState(() {
+                  _markers.clear();
                   infoBarPosition = INFO_BAR_INVISIBLE;
+                  distanceBarPos = DISTANCE_BAR_INVISIBLE;
                 });
               },
               onMapCreated: (GoogleMapController controller) {
@@ -164,6 +198,7 @@ class _MapViewState extends State<MapView> {
               },
             ),
           ),
+
           // info over de geklikte destination marker
           AnimatedPositioned(
             left: 0,
@@ -191,12 +226,32 @@ class _MapViewState extends State<MapView> {
                   Container(
                     child: Row(
                       children: [
+                        // school icon
                         ClipOval(
-                          child: Image.asset(
-                            'lib/images/empty_space.gif',
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              const CircleAvatar(
+                                backgroundColor: Color.fromRGBO(
+                                    234, 144, 16, 1),
+                                radius: 25,
+                              ),
+                              const CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 23,
+                              ),
+                              ClipRRect(
+                                borderRadius:
+                                const BorderRadius.all(
+                                    Radius.circular(30)),
+                                child: Image.asset(
+                                  'lib/images/school.png',
+                                  width: 30,
+                                  height: 30,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -205,16 +260,16 @@ class _MapViewState extends State<MapView> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children:  [
                               Text(
-                                'Schoolnaam',
+                                selectedSchool != null ?  selectedSchool!.naam :'Schoolnaam',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
-                              Text('Straatnaan 12\nstadnaam postcode',
-                                  style: TextStyle(fontSize: 11)),
-                              Text('100 km  away',
+                              Text(selectedSchool != null ?  '${selectedSchool!.adres.split(',')[0]}\n${selectedSchool!.adres.split(',')[1].trim()}' :'Straatnaan 12\nstadnaam postcode',
+                                  style: const TextStyle(fontSize: 11)),
+                              const Text('100 km  away',
                                   style: TextStyle(fontSize: 11))
                             ],
                           ),
@@ -335,39 +390,105 @@ class _MapViewState extends State<MapView> {
               ),
             ],
             builder: (context, transition) {
+              // zoek resultaten lijst
               return ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(30)),
                 child: Container(
                   color: Colors.white,
                   child: Column(
                     children: List.generate(resultList.length, (index) {
-                      return Center(
-                        child: Container(
-                          child: Material(
-                            child: InkWell(
-                              splashColor: Colors.grey,
-                              onTap: () {
-                                //_addToList(resultList[index]);
-
-                                floatingSearchBarController.close();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 20.0, left: 20.0),
-                                child: SizedBox(
-                                  height: 112,
-                                  child: Center(
-                                      child: Text(
-                                    resultList[index],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 20.0),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30)),
+                          child: Container(
+                            child: Material(
+                              child: InkWell(
+                                overlayColor:
+                                    MaterialStateProperty.all(Colors.grey),
+                                onTap: () {
+                                  //_addToList(resultList[index]);
+                                  _resultClick(resultList[index]);
+                                  floatingSearchBarController.close();
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      // verticaal centreren van circle avatar
+                                      // https://stackoverflow.com/questions/55168962/listtile-heading-trailing-are-not-centered
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // school icon
+                                        ClipOval(
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              const CircleAvatar(
+                                                backgroundColor: Color.fromRGBO(
+                                                    234, 144, 16, 1),
+                                                radius: 25,
+                                              ),
+                                              const CircleAvatar(
+                                                backgroundColor: Colors.white,
+                                                radius: 23,
+                                              ),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(30)),
+                                                child: Image.asset(
+                                                  'lib/images/school.png',
+                                                  width: 30,
+                                                  height: 30,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Flexible(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(
+                                            resultList[index].naam,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            resultList[index].adres,
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.black45,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              color: Colors.transparent,
                             ),
-                            color: Colors.transparent,
+                            color: Colors.white,
                           ),
-                          color: Colors.white,
                         ),
                       );
                     }),
