@@ -7,6 +7,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/classes/school.dart';
 import 'package:schooler/dummy_data/data.dart';
 import 'package:like_button/like_button.dart';
+import 'package:schooler/pages/school_detail.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:intl/intl.dart';
 import 'package:schooler/widgets/filter_dialog.dart';
@@ -34,6 +35,8 @@ class _SchoolSearchState extends State<SchoolSearch> {
     resultList = schools;
     super.initState();
   }
+
+
 
   // methode om zoek resultaten weer te geven
   _queryList(String query) {
@@ -78,11 +81,23 @@ class _SchoolSearchState extends State<SchoolSearch> {
   }
 
   _filterDialog() {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SchoolDetailPage(),
+      ),
+    );
+
+    /*
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) =>  FilterDialog(applyFilter: _filter,),
     );
+
+     */
   }
 
   _filter() {
@@ -143,7 +158,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
 
   }
 
-  refresh() {
+  _refresh() {
     setState(() {
       if(thisUser.favoSchoolsList.isEmpty) {
         favoListActive = false;
@@ -255,7 +270,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
                         ),
                         CustomLikeButton(
                           school: resultList[index],
-                          refresh: refresh,
+                          refresh: _refresh,
                         )
                       ],
                     ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,10 @@ import 'package:schooler/services/directions_model.dart';
 import 'package:schooler/services/directions_repository.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart' as myLocation;
+
+
+// bron: tutotrial : https://www.youtube.com/watch?v=Zz5hMvgiWmY&t=5s
 
 const LatLng SOURCE_LOCATION = LatLng(50.8454872, 4.3570163);
 const LatLng DEST_LOCATION = LatLng(42.744421, -71.1698939);
@@ -35,10 +40,11 @@ class _MapViewState extends State<MapView> {
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
   Set<Marker> _markers = Set<Marker>();
+  late myLocation.PermissionStatus? _permissionGranted = null;
 
-  late LatLng currentLocation;
+   late LatLng currentLocation;
   late LatLng destinationLocation;
-  double infoBarPosition = INFO_BAR_VISIBLE;
+  double infoBarPosition = INFO_BAR_INVISIBLE;
   double distanceBarPos = DISTANCE_BAR_INVISIBLE;
 
   List<SchoolObject> resultList = [];
@@ -49,12 +55,72 @@ class _MapViewState extends State<MapView> {
       bearing: CAMERA_BEARING,
       target: SOURCE_LOCATION);
 
-  late SchoolObject? selectedSchool;
+   SchoolObject? selectedSchool = null;
 
   @override
-  void initState() {
+  void initState()  {
     resultList = schools;
+
+    getLocationPermission();
+
+
     super.initState();
+  }
+
+
+  getRoute() async {
+
+    getLocationPermission();
+    setState(() {
+      _info = null;
+      _origin = Marker(
+        markerId: const MarkerId('origin'),
+        infoWindow: const InfoWindow(title: 'Origin'),
+        icon:
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        position: currentLocation,
+      );
+
+      _markers.add(_origin);
+    });
+
+
+    // get directions
+    final directions = await DirectionsRepository().getDirections(
+        origin: _origin.position, destination: _destination.position);
+    setState(() {
+      _info = directions!;
+      distanceBarPos = DISTANCE_BAR_VISIBLE;
+    });
+
+  }
+
+
+
+  getLocationPermission() async {
+
+    if(_permissionGranted == myLocation.PermissionStatus.granted) return;
+
+    bool serviceEnabled = await myLocation.Location.instance.serviceEnabled();
+
+    if(!serviceEnabled) {
+      serviceEnabled = await myLocation.Location.instance.requestService();
+    }
+
+    _permissionGranted = await myLocation.Location.instance.hasPermission();
+
+    if (_permissionGranted == myLocation.PermissionStatus.denied) {
+
+      _permissionGranted = await myLocation.Location.instance.requestPermission();
+
+      if (_permissionGranted != myLocation.PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    var pos = await myLocation.Location.instance.getLocation();
+    currentLocation = LatLng(50.8454872,  4.3570163);
+    print(currentLocation);
   }
 
   void _addMarker(LatLng pos) async {
@@ -132,7 +198,7 @@ class _MapViewState extends State<MapView> {
     print('${locations[0].latitude} ${locations[0].longitude}');
   }
 
-// methode om zoek resultaten weer te geven
+  // methode om zoek resultaten weer te geven
   _queryList(String query) {
     setState(() {
       // maak de eerste letter van de query een hoofdletter
@@ -185,12 +251,7 @@ class _MapViewState extends State<MapView> {
               },
               //onLongPress: _addMarker,
               onTap: (LatLng loc) {
-                // als men op de map klikt zal de info bar verdwijnen
-                setState(() {
-                  _markers.clear();
-                  infoBarPosition = INFO_BAR_INVISIBLE;
-                  distanceBarPos = DISTANCE_BAR_INVISIBLE;
-                });
+
               },
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
@@ -269,7 +330,9 @@ class _MapViewState extends State<MapView> {
                               ),
                               Text(selectedSchool != null ?  '${selectedSchool!.adres.split(',')[0]}\n${selectedSchool!.adres.split(',')[1].trim()}' :'Straatnaan 12\nstadnaam postcode',
                                   style: const TextStyle(fontSize: 11)),
-                              const Text('100 km  away',
+                               Text( _markers.length == 2 && _info != null
+                                  ? '${_info!.totalDistance}, ${_info!.totalDuration}'
+                                  : '',
                                   style: TextStyle(fontSize: 11))
                             ],
                           ),
@@ -280,7 +343,7 @@ class _MapViewState extends State<MapView> {
                             size: 30,
                             color: Colors.indigo.shade800,
                           ),
-                          onPressed: () {},
+                          onPressed: getRoute,
                           style: ButtonStyle(
                               overlayColor: MaterialStateProperty.all(
                             Colors.indigo.shade800.withOpacity(0.2),
@@ -293,6 +356,7 @@ class _MapViewState extends State<MapView> {
               ),
             ),
           ),
+
           // info over de afstand en duurtijd
           AnimatedPositioned(
             duration: const Duration(milliseconds: 500),
@@ -330,7 +394,10 @@ class _MapViewState extends State<MapView> {
                       splashColor: Colors.red,
                       onTap: () {
                         setState(() {
+
+
                           distanceBarPos = DISTANCE_BAR_INVISIBLE;
+                          infoBarPosition = INFO_BAR_INVISIBLE;
 
                           _info = null;
                           _markers.clear();
