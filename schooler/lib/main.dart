@@ -11,6 +11,7 @@ import 'package:schooler/pages/new.dart';
 import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:schooler/pages/webview.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/profile_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
@@ -41,6 +42,7 @@ Future<void> main() async {
     ),
     home: App(),
     routes: {
+
       'login': (context) => Login(),
       'home': (context) => Home(),
       'new': (context) => New(),
@@ -67,10 +69,12 @@ class _AppState extends State<App> {
     try {
       // wachten tot firebase init
       await Firebase.initializeApp();
+      await FirebaseAuth.instance.signOut();
       setState(() {
         _initialized = true;
         userState();
         print("FIRE");
+
       });
     } catch (e) {
       // bij firebase init error
@@ -84,7 +88,7 @@ class _AppState extends State<App> {
   @override
    initState()  {
     initializeFlutterFire();
-    FirebaseAuth.instance.signOut();
+
     super.initState();
 
   }
@@ -143,35 +147,7 @@ class _AppState extends State<App> {
       switch (index) {
         case 0:
           {
-            Random r = new Random();
-            Registration.newRegi(
-                voornaam: '${r.nextInt(100)}',
-                naam: 'Pokers',
-                rijksNr: '97042025942',
-                straat: 'Winkelstraat',
-                huisNr: 15,
-                busNr: '',
-                postcode: 1500,
-                gemeente: 'Halle',
-                oVoornaam1: 'Felicien',
-                oNaam1: 'Brabant',
-                beroep1: 'Bakker',
-                berStraat1: 'Bakkerstaat',
-                berHuisNr1: 13,
-                berBusNr1: '',
-                berPostcode1: 1500,
-                berGemeente1: 'Halle',
-                oVoornaam2: 'Melina',
-                oNaam2: 'Hangover',
-                beroep2: 'Tandarts',
-                berStraat2: 'Ziekelaan',
-                berHuisNr2: 12,
-                berBusNr2: '',
-                berPostcode2: 1500,
-                berGemeente2: 'Halle',
-                vraagGOK: true,
-                vraagTN: true,
-                schoolList: ['school 1', 'school 2', 'school 3']);
+
 
             print("Open home page");
             // Navigator.pushReplacementNamed(context, '/');
@@ -215,7 +191,8 @@ class _AppState extends State<App> {
     });
   }
 
-  // TODO: properly name this
+
+  // aangepaste appbar
   PreferredSizeWidget? _customAppBar() {
     if (_selectedIndex == 2 || _selectedIndex == 4) {
       return null;
@@ -252,7 +229,8 @@ class _AppState extends State<App> {
     );
   }
 
-  void handleClick(String value) {
+  // wat te doen met de geklikte menu buttons
+  Future<void> handleClick(String value) async {
 
     switch (value)
     {
@@ -261,12 +239,13 @@ class _AppState extends State<App> {
       }
       break;
       case 'Log out': {
-        FirebaseAuth.instance.signOut();
+        await FirebaseAuth.instance.signOut();
       }
       break;
     }
   }
 
+  // aangepaste navigatie bar
   Widget? _customBottomNavBar() {
     if (_selectedIndex == 4) {
       return null;
@@ -319,7 +298,7 @@ class _AppState extends State<App> {
   final screens = [
     const Home(),
     const New(),
-    Notifications(),
+     Notifications(),
     const Schools(),
     const Login(),
   ];
@@ -358,50 +337,4 @@ class _AppState extends State<App> {
   }
 }
 
-/*
-Container(
-        padding: const EdgeInsets.only(bottom: 20.0),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              spreadRadius: -5,
-              blurRadius: 15,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(30.0)),
-            child: BottomNavigationBar(
 
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add_circle),
-                  label: 'New',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications),
-                  label: 'Notifications',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.school_sharp),
-                  label: 'Schools',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Colors.blueAccent,
-              onTap: _onItemTapped,
-            ),
-          ),
-        ),
-      ),
- */

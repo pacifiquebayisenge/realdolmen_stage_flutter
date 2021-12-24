@@ -39,15 +39,12 @@ class New extends StatelessWidget {
             },
             icon: const Icon(Icons.close),
           ),
-          title: Padding(
-            padding: const EdgeInsets.only(left: 40.0),
-            child: Text(
-              'New Registration',
-              style: GoogleFonts.montserrat(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white),
-            ),
+          title: Text(
+            'New Registration',
+            style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white),
           ),
         ),
         // Voorkomen dat knoppen mee omhoog springen door het toetstebord

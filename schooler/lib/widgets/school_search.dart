@@ -1,24 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delayed_display/delayed_display.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:schooler/classes/school.dart';
-import 'package:schooler/dummy_data/data.dart';
-import 'package:like_button/like_button.dart';
 import 'package:schooler/pages/school_detail.dart';
 import 'package:schooler/services/globals.dart';
-import 'package:intl/intl.dart';
-import 'package:schooler/widgets/filter_dialog.dart';
+import 'package:schooler/widgets/widgets.dart';
 
-import 'custom_like_button.dart';
 
 class SchoolSearch extends StatefulWidget {
   const SchoolSearch({Key? key, required this.modeChanger}) : super(key: key);
 
+
   final Function modeChanger;
   static List<String> schoolList = [];
+  static late Function redirect;
   @override
   _SchoolSearchState createState() => _SchoolSearchState();
 }
@@ -32,6 +28,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
 
   @override
   void initState() {
+    SchoolSearch.redirect = widget.modeChanger;
     resultList = schools;
     super.initState();
   }
@@ -53,9 +50,9 @@ class _SchoolSearchState extends State<SchoolSearch> {
       // als query leeg is , geef alle scholen weer
       // anders geef resultaten beginend met de query
       if (query.isEmpty) {
-        resultList = scholen2;
+        resultList = schools;
       } else {
-        scholen2.forEach((element) {
+        schools.forEach((element) {
           if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
@@ -82,22 +79,16 @@ class _SchoolSearchState extends State<SchoolSearch> {
 
   _filterDialog() {
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            SchoolDetailPage(),
-      ),
-    );
 
-    /*
+
+
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) =>  FilterDialog(applyFilter: _filter,),
     );
 
-     */
+
   }
 
   _filter() {
@@ -169,6 +160,16 @@ class _SchoolSearchState extends State<SchoolSearch> {
 
   }
 
+  _schoolInfo(SchoolObject school) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SchoolDetailPage(school: school,),
+      ),
+    );
+  }
+
   // snackbar widget om verwijdering van de registratie te bevestigen
   _showSnackbar(String text) {
     final snackBar = SnackBar(
@@ -207,8 +208,8 @@ class _SchoolSearchState extends State<SchoolSearch> {
                       const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
                   child: InkWell(
                     overlayColor: MaterialStateProperty.all(Colors.grey),
-                    onTap: () {
-                      print('info');
+                    onLongPress: () {
+                      _schoolInfo(resultList[index]);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

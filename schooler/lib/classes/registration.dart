@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:schooler/classes/school.dart';
 import 'package:schooler/services/globals.dart';
 import 'package:age/age.dart';
 import 'package:intl/intl.dart';
@@ -217,6 +218,7 @@ class Registration {
   }
 
 // statische methode om lijst van registraties op te halen uit de database
+  /*
   static Future<List<Registration>> getRegiList() async {
     List<Registration> regiList = [];
 
@@ -267,7 +269,7 @@ class Registration {
             vraagGOK: doc['vraagGOK'],
             vraagTN: doc['vraagTN'],
 
-            // schoolLijst
+            // schoolLijst : scholen id
             schoolList: ['schoolList']);
 
         regiList.add(regi);
@@ -276,6 +278,8 @@ class Registration {
 
     return regiList;
   }
+
+   */
 
   // methode om registratie te verwijderen
   // geeft string terug om de snackbar weergave op te vullen
@@ -434,6 +438,9 @@ class Registration {
 
   // methode om firestore object om te zette naar een Registratie klas object
   static Registration toRegi(String id, Map<String, dynamic> data) {
+
+
+
     return Registration(
         id: id,
 

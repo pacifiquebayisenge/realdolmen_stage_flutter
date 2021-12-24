@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:schooler/dummy_data/data.dart';
+import 'package:schooler/classes/school.dart';
+import 'package:schooler/pages/school_detail.dart';
+import 'package:schooler/services/globals.dart';
 
 class SchoolList extends StatefulWidget {
-  static List<String> schoolList = [];
+  static List<SchoolObject> schoolList = [];
   SchoolList({Key? key}) : super(key: key);
 
   @override
@@ -16,26 +18,26 @@ class _SchoolListState extends State<SchoolList> {
 
   final floatingSearchBarController = FloatingSearchBarController();
 
-  List<String> resultList = [];
+  List<SchoolObject> resultList = [];
 
   @override
   initState() {
     SchoolList.schoolList = [];
-    resultList = scholen;
+    resultList = schools;
     super.initState();
   }
 
 
 
   // methode om nieuwe item in de lijst toe te voegen
-  _addToList(String school) {
+  _addToList(SchoolObject school) {
     setState(() {
       SchoolList.schoolList.add(school);
     });
   }
 
   // methode om item uit de lijst te verwijderen
-  _deleteInList(String school) {
+  _deleteInList(SchoolObject school) {
     setState(() {
       SchoolList.schoolList.removeAt(SchoolList.schoolList.indexOf(school));
     });
@@ -47,7 +49,7 @@ class _SchoolListState extends State<SchoolList> {
       newIndex -= 1;
     }
 
-    String school = SchoolList.schoolList.removeAt(oldIndex);
+    SchoolObject school = SchoolList.schoolList.removeAt(oldIndex);
 
     SchoolList.schoolList.insert(newIndex, school);
   }
@@ -67,10 +69,10 @@ class _SchoolListState extends State<SchoolList> {
       // als query leeg is , geef alle scholen weer
       // anders geef resultaten beginend met de query
       if (query.isEmpty) {
-        resultList = scholen;
+        resultList = schools;
       } else {
-        scholen.forEach((element) {
-          if (element.startsWith(query, 0)) {
+        schools.forEach((element) {
+          if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
         });
@@ -78,6 +80,15 @@ class _SchoolListState extends State<SchoolList> {
     });
   }
 
+  _schoolInfo(SchoolObject school) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SchoolDetailPage(school: school,),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +116,7 @@ class _SchoolListState extends State<SchoolList> {
 
             for (var i = 0; i < SchoolList.schoolList.length; i++)
               Padding(
-                key: ValueKey(SchoolList.schoolList[i]),
+                key: ValueKey(SchoolList.schoolList[i].naam),
                 padding: const EdgeInsets.symmetric (horizontal: 8.0, vertical: 15),
                 child: Container(
                   color: Colors.white,
@@ -148,7 +159,7 @@ class _SchoolListState extends State<SchoolList> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Text(SchoolList.schoolList[i],
+                                Text(SchoolList.schoolList[i].naam,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts
@@ -159,7 +170,7 @@ class _SchoolListState extends State<SchoolList> {
                                       fontWeight:
                                       FontWeight
                                           .w500),),
-                                 Text('Straatnaan 12, stadnaam postcode',
+                                 Text(SchoolList.schoolList[i].adres,
                                   style: GoogleFonts
                                       .montserrat(
                                       color: Colors.black45,
@@ -316,7 +327,7 @@ class _SchoolListState extends State<SchoolList> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
-                                        Text(resultList[index],
+                                        Text(resultList[index].naam,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts
@@ -327,7 +338,7 @@ class _SchoolListState extends State<SchoolList> {
                                               fontWeight:
                                               FontWeight
                                                   .w500),),
-                                         Text('Straatnaan 12, stadnaam postcode',
+                                         Text(resultList[index].adres,
                                           style: GoogleFonts
                                               .montserrat(
                                               color: Colors.black45,
@@ -361,36 +372,4 @@ class _SchoolListState extends State<SchoolList> {
   }
 }
 
-/*
 
- height: 112,
-
-
-
-* List.generate(widget.strings.length * 2, (index) {
-          if (index.isEven) {
-            return Flexible(
-              flex: 3,
-              child: BulletPoint(
-                text: widget.strings[index ~/ 2],
-
-              ),
-            );
-          } else {
-            return Spacer(
-              flex: 1,
-            );
-          }
-        }),
-*
-*
-* scholen.map((t) {
-              return InkWell(
-                onTap: () {print(t);},
-                child: Container(
-                    color: Colors.transparent,
-                    height: 112,
-                    child: Center(child: Text(t))),
-              );
-            }).toList(),
-* */

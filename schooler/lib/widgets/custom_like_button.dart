@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:schooler/classes/school.dart';
-import 'package:schooler/dummy_data/data.dart';
 import 'package:schooler/services/globals.dart';
 
 class CustomLikeButton extends StatefulWidget {

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
+import 'package:schooler/classes/school.dart';
+import 'package:schooler/services/globals.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 class CardDetail extends StatefulWidget {
@@ -16,6 +18,11 @@ class CardDetail extends StatefulWidget {
 
 class _CardDetailState extends State<CardDetail>
     with SingleTickerProviderStateMixin {
+
+  late ScrollController _scrollController;
+  double textOpacitiy = 1;
+
+  // gender icoon op basis van rijksregisterunmmer
   Icon genderIcon() {
     if (widget.card.registration.getGender() == 'vrouw') {
       widget.card.registration.getGender();
@@ -25,6 +32,7 @@ class _CardDetailState extends State<CardDetail>
     return const Icon(Icons.male);
   }
 
+  // menu buttons
   void handleClick(String value) {
     switch (value) {
       case 'Edit':
@@ -47,8 +55,17 @@ class _CardDetailState extends State<CardDetail>
     }
   }
 
-  late ScrollController _scrollController;
-  double textOpacitiy = 1;
+  SchoolObject getSchool(String schoolId) {
+
+    late SchoolObject school;
+    schools.forEach((element) {
+      if(element.id! == schoolId) school =  element;
+    });
+
+    return school;
+  }
+
+
 
   @override
   void initState() {

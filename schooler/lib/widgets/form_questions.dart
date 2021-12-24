@@ -77,6 +77,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   bool regiSucces = false;
 
+  // update bools zodat men weet of er data wordt aangepast
   bool updateUserProfile = false;
   bool updateUserAdres = false;
   bool updateUserProf = false;
@@ -84,6 +85,7 @@ class _FormQuestionsState extends State<FormQuestions> {
   bool updateUserParent = false;
   bool isParent = false;
 
+  // bool om de knoppen weer te geven of niet
   bool showBackBtn = true;
   bool showNextBtn = true;
   bool showFinishBtn = false;
@@ -169,27 +171,9 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
   }
 
-  // TODO: delete this
-  void t() {
-    FirebaseFirestore.instance
-        .collection('registrations')
-        .orderBy('date', descending: true)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        Timestamp timestamp;
-        timestamp = doc['date'];
 
-        if (timestamp.toDate().day == 1) {
-          FirebaseFirestore.instance
-              .collection('registrations')
-              .doc(doc.id)
-              .delete();
-        }
-      });
-    });
-  }
 
+  // methode om aan te duiden of het om een ouder of een student gaat
   void userTypeBtn(String type) {
     setState(() {
       secParent = false;
@@ -233,10 +217,11 @@ class _FormQuestionsState extends State<FormQuestions> {
     nextStep();
   }
 
+  // methode om de form pagina's automatisch aan te vullen met gekende data
   void autoFormData() {
     if (widget.editRegi != null) return;
 
-
+    // adres van de gebruiker
     if (thisUser.straat != "") {
       straat.text = thisUser.straat;
       huisNr.text = thisUser.huisNr.toString();
@@ -244,11 +229,13 @@ class _FormQuestionsState extends State<FormQuestions> {
       gemeente.text = thisUser.gemeente;
     }
 
+    // als het een ouder is vul  naam in bij de ouders pagina
     if (isParent) {
       oVoornaam1.text = thisUser.voornaam;
       oNaam1.text = thisUser.naam;
     }
 
+    // als beroep gekend is vul die in
     if (isParent && thisUser.beroep != "" && thisUser.beroep != null) {
       beroep1.text = thisUser.beroep!;
       berStraat1.text = thisUser.berStraat!;
@@ -258,14 +245,14 @@ class _FormQuestionsState extends State<FormQuestions> {
       berGemeente1.text = thisUser.berGemeente!;
     }
 
+    // als het student is vull basis gegevens in
     if (!isParent) {
       voornaam.text = thisUser.voornaam;
       naam.text = thisUser.naam;
       rijksNr.text = thisUser.rijksNr;
     }
 
-
-
+    // als de eerste ouder gekend is vul in
     if (!isParent && thisUser.oVoornaam1 != "") {
       oVoornaam1.text = thisUser.oVoornaam1!;
       oNaam1.text = thisUser.oNaam1!;
@@ -277,6 +264,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       berGemeente1.text = thisUser.berGemeente1!;
     }
 
+    // als 2e ouder gekend is, toon 2e ouderpagina en vul aan
     if (!isParent && thisUser.oVoornaam2 != "") {
       setState(() {
         secParent = true;
@@ -293,8 +281,12 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
   }
 
+  // methode om aan te duiden dat adres moet worden aangepast
+  // enkel te updaten als gebruiker een ouder is en adres nog niet gekend is
+  // of als het om een student gaat
   _editAdressCheck() {
     if (updateUserAdres == true) return;
+
 
     if (isParent && thisUser.straat == '') {
       setState(() {
@@ -307,44 +299,44 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
   }
 
+  // methode om basis gegevens aan te passen
+  // enkel als het om een student zelf gaat
   _editProfileCheck() {
-
-    if(isParent && updateUserProfile) return;
+    if (isParent || updateUserProfile) return;
 
     setState(() {
       updateUserProfile = true;
     });
   }
 
-  _editProfCheck(){
-
-    if(isParent == false|| updateUserProf) return;
+  // methode om beroep van zichzelf up te daten
+  _editProfCheck() {
+    if (isParent == false || updateUserProf) return;
 
     setState(() {
       updateUserProf = true;
     });
-
   }
 
-  _editPartnerCheck(){
-
-    if(isParent == false|| updateUserPartner) return;
+  // methode om partner up te daten
+  _editPartnerCheck() {
+    if (isParent == false || updateUserPartner) return;
 
     setState(() {
       updateUserPartner = true;
     });
-
   }
 
+  // metohde om ouders up te daten
   _editParentCheck() {
-
-    if (isParent == true  || updateUserParent) return;
+    if (isParent == true || updateUserParent) return;
 
     setState(() {
       updateUserParent = true;
     });
   }
 
+  // methode om 2e ouder verlden leeg te maken
   void removeParent() {
     setState(() {
       oVoornaam2.clear();
@@ -373,14 +365,14 @@ class _FormQuestionsState extends State<FormQuestions> {
           vraagGOK = index != 0;
 
           nextStep();
-          print("vraagGOK $vraagGOK");
+
         }
         break;
       case 6:
         {
           vraagTN = index != 0;
           nextStep();
-          print("vraagTN $vraagTN");
+
         }
         break;
       default:
@@ -392,15 +384,15 @@ class _FormQuestionsState extends State<FormQuestions> {
   }
 
   // methode om de pagina hoogte aan te passen naar gelang de pagina nummer
+  // en dymaiek van de wizard toe te passen
   void setpageHeight(int page) {
-    print('THIS IS THE ACTUAL PAGE NUMBER $page');
+
 
     setState(() {
       switch (page) {
         case 0:
           {
             showGokTnBtn = showBackBtn = showNextBtn = false;
-
 
             if (widget.editRegi != null) {
               nextStep();
@@ -409,15 +401,12 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
         case 1:
           {
-
             showBackBtn = showNextBtn = true;
             if (widget.editRegi != null) showBackBtn = false;
           }
           break;
         case 2:
           {
-
-
             if (showBackBtn == false) showBackBtn = true;
           }
           break;
@@ -427,8 +416,6 @@ class _FormQuestionsState extends State<FormQuestions> {
             showNextBtn = true;
             pageHeight = 480;
             if (Registration.getAge(rijksNr.text) >= 24) nextStep();
-
-
           }
           break;
         case 4:
@@ -441,7 +428,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         case 5:
           {
             showGokTnBtn = true;
-            showNextBtn  = false;
+            showNextBtn = false;
             pageHeight = 450;
             if (widget.editRegi != null ||
                 Registration.getAge(rijksNr.text) >= 24) nextStep();
@@ -473,7 +460,8 @@ class _FormQuestionsState extends State<FormQuestions> {
           }
           break;
         case 9:
-          { showBackBtn = showNextBtn = false;
+          {
+            showBackBtn = showNextBtn = false;
           }
           break;
 
@@ -556,22 +544,31 @@ class _FormQuestionsState extends State<FormQuestions> {
   // Methode om naar volgende stap te gaan
   // ALs laatste stap is verstuur data naar server
   Future<void> nextStep() async {
-    t();
 
-    // TODO: reenable this
+
+
     // als form op deze pagina niet juist is ingevoerd dan kan men niet verder
-    //if (!checkStep()) return;
+    if (!checkStep()) return;
 
     bool isLastStep =
         _currentStep == _slider.currentState!.widget.pages.length - 2;
 
-    // als het de laatste stap is, vervoledig de wizart
+    // als het de laatste stap is, vervoledig de wizard
     if (isLastStep) {
-      print('Completed!');
+
       _thisForm.currentState!.save();
 
+      List<String> schoolNames = [];
+
+      SchoolList.schoolList.forEach((element) {
+        schoolNames.add(element.naam);
+      });
+
+      // als er een registratie te updaten is
       if (widget.editRegi != null) {
-        // update registration in de server
+
+
+
         Registration regi1 = Registration(
 
             // basis info voor de ingeschrevende
@@ -613,8 +610,9 @@ class _FormQuestionsState extends State<FormQuestions> {
             vraagTN: vraagTN,
 
             // schoolLijst
-            schoolList: SchoolList.schoolList,
+            schoolList: schoolNames,
             id: widget.editRegi!.id);
+
         await regi1.editRegi().then((value) {
           setState(() {
             _currentStep += 1;
@@ -622,7 +620,7 @@ class _FormQuestionsState extends State<FormQuestions> {
             regiSucces = true;
           });
 
-          //Timer(const Duration(milliseconds: 5500 ), () {Navigator.pop(context); });
+
         }).catchError((value) {
           print(value);
           setState(() {
@@ -676,7 +674,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                 vraagTN: vraagTN,
 
                 // schoolLijst
-                schoolList: SchoolList.schoolList)
+                schoolList: schoolNames)
             .then((value) {
           setState(() {
             _currentStep += 1;
@@ -695,13 +693,16 @@ class _FormQuestionsState extends State<FormQuestions> {
         });
       }
 
+      // update methodes
+
       if (updateUserProfile) {
-        await thisUser.updateUserProfile(voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text).then((value) {
+        await thisUser
+            .updateUserProfile(
+                voornaam: voornaam.text, naam: naam.text, rijksNr: rijksNr.text)
+            .then((value) {
           setState(() {
             updateUserProfile = false;
           });
-
-
         }).catchError((value) {
           print('Something went wrong while updating user profile');
           print(value);
@@ -709,15 +710,19 @@ class _FormQuestionsState extends State<FormQuestions> {
       }
 
       if (updateUserProf) {
-        await thisUser.updateUserProf(
-          // info over ouder 1
-         
-          beroep: beroep1.text,
-          berStraat: berStraat1.text,
-          berHuisNr: berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
-          berBusNr: berBusNr1.text,
-          berPostcode:  berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
-          berGemeente: berGemeente1.text).then((value) {
+        await thisUser
+            .updateUserProf(
+                // info over ouder 1
+
+                beroep: beroep1.text,
+                berStraat: berStraat1.text,
+                berHuisNr:
+                    berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
+                berBusNr: berBusNr1.text,
+                berPostcode:
+                    berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
+                berGemeente: berGemeente1.text)
+            .then((value) {
           setState(() {
             updateUserAdres = false;
           });
@@ -730,14 +735,19 @@ class _FormQuestionsState extends State<FormQuestions> {
       }
 
       if (updateUserPartner) {
-        await thisUser.updateUserPartner( oVoornaam3: oVoornaam2.text,
-            oNaam3: oNaam2.text,
-            beroep3: beroep2.text,
-            berStraat3: berStraat2.text,
-            berHuisNr3: berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
-            berBusNr3: berBusNr2.text,
-            berPostcode3:  berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
-            berGemeente3: berGemeente2.text).then((value) {
+        await thisUser
+            .updateUserPartner(
+                oVoornaam3: oVoornaam2.text,
+                oNaam3: oNaam2.text,
+                beroep3: beroep2.text,
+                berStraat3: berStraat2.text,
+                berHuisNr3:
+                    berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
+                berBusNr3: berBusNr2.text,
+                berPostcode3:
+                    berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
+                berGemeente3: berGemeente2.text)
+            .then((value) {
           setState(() {
             updateUserPartner = false;
           });
@@ -748,14 +758,16 @@ class _FormQuestionsState extends State<FormQuestions> {
           print(value);
         });
       }
-      
+
       if (updateUserAdres) {
-        await thisUser.updateUserAdress(
-            straat: straat.text,
-            huisNr: huisNr.text != '' ? int.parse(huisNr.text) : 0,
-            busNr: busNr.text,
-            postcode: postcode.text != '' ? int.parse(postcode.text) : 0,
-            gemeente: gemeente.text).then((value) {
+        await thisUser
+            .updateUserAdress(
+                straat: straat.text,
+                huisNr: huisNr.text != '' ? int.parse(huisNr.text) : 0,
+                busNr: busNr.text,
+                postcode: postcode.text != '' ? int.parse(postcode.text) : 0,
+                gemeente: gemeente.text)
+            .then((value) {
           setState(() {
             updateUserAdres = false;
           });
@@ -776,9 +788,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                 oNaam1: oNaam1.text,
                 beroep1: beroep1.text,
                 berStraat1: berStraat1.text,
-                berHuisNr1: berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
+                berHuisNr1:
+                    berHuisNr1.text != '' ? int.parse(berHuisNr1.text) : 0,
                 berBusNr1: berBusNr1.text,
-                berPostcode1:  berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
+                berPostcode1:
+                    berPostcode1.text != '' ? int.parse(berPostcode1.text) : 0,
                 berGemeente1: berGemeente1.text,
 
                 // info over ouder 2
@@ -786,9 +800,11 @@ class _FormQuestionsState extends State<FormQuestions> {
                 oNaam2: oNaam2.text,
                 beroep2: beroep2.text,
                 berStraat2: berStraat2.text,
-                berHuisNr2: berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
+                berHuisNr2:
+                    berHuisNr2.text != '' ? int.parse(berHuisNr2.text) : 0,
                 berBusNr2: berBusNr2.text,
-                berPostcode2:  berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
+                berPostcode2:
+                    berPostcode2.text != '' ? int.parse(berPostcode2.text) : 0,
                 berGemeente2: berGemeente2.text)
             .then((value) {
           setState(() {
@@ -802,13 +818,11 @@ class _FormQuestionsState extends State<FormQuestions> {
         });
       }
 
-      
-
       Timer(const Duration(milliseconds: 4500), () {
         Navigator.pop(context);
       });
     }
-    //// Waneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
+    // Wanneer maar 1 ouder werd aangeduid verberg 2é ouder invul pagina
     else if (_currentStep == 3 && secParent == false) {
       setState(() => _currentStep += 2);
 
@@ -824,8 +838,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
     setpageHeight(_currentStep);
 
-    print(
-        '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
+
   }
 
   // Methode om naar vorige stap te gaan
@@ -853,12 +866,10 @@ class _FormQuestionsState extends State<FormQuestions> {
       _slider.currentState!.previous();
       _slider.currentState!.previous();
       _slider.currentState!.previous();
-
-    }else if (_currentStep == 7 ) {
+    } else if (_currentStep == 7) {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
       _slider.currentState!.previous();
-
     } else if (_currentStep == 4 && Registration.getAge(rijksNr.text) >= 24) {
       setState(() => _currentStep -= 2);
       _slider.currentState!.previous();
@@ -872,8 +883,6 @@ class _FormQuestionsState extends State<FormQuestions> {
     print(
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
-
-
 
   // methode om terug te gaan naar de pagina waar men de informatie wilt wijzigen
   void overzichtEdit(String page) {
@@ -1119,7 +1128,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Firstname'),
                                   onChanged: (String? value) {
-                                    if (value != thisUser.voornaam ) _editProfileCheck();
+                                    if (value != thisUser.voornaam)
+                                      _editProfileCheck();
 
                                     return;
                                   },
@@ -1140,7 +1150,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Lastname'),
                                   onChanged: (String? value) {
-                                    if (value != thisUser.naam ) _editProfileCheck();
+                                    if (value != thisUser.naam)
+                                      _editProfileCheck();
 
                                     return;
                                   },
@@ -1164,7 +1175,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                             decoration: const InputDecoration(
                                 labelText: 'National Insurance number'),
                             onChanged: (String? value) {
-                              if (value != thisUser.rijksNr ) _editProfileCheck();
+                              if (value != thisUser.rijksNr)
+                                _editProfileCheck();
 
                               return;
                             },
@@ -1255,7 +1267,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   labelText: 'House number'),
                               onChanged: (String? value) {
                                 if (value != '' &&
-                                    int.parse(value!) != thisUser.huisNr) _editParentCheck();
+                                    int.parse(value!) != thisUser.huisNr)
+                                  _editParentCheck();
 
                                 return;
                               },
@@ -1396,7 +1409,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Parent firstname'),
                                   onChanged: (String? value) {
-                                    if (value != thisUser.oVoornaam1) _editParentCheck();
+                                    if (value != thisUser.oVoornaam1)
+                                      _editParentCheck();
 
                                     return;
                                   },
@@ -1417,7 +1431,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Parent lastname'),
                                   onChanged: (String? value) {
-                                    if (value != thisUser.oNaam1) _editParentCheck();
+                                    if (value != thisUser.oNaam1)
+                                      _editParentCheck();
 
                                     return;
                                   },
@@ -1438,8 +1453,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                             decoration:
                                 const InputDecoration(labelText: 'Profession'),
                             onChanged: (String? value) {
-                              if (!isParent && value != thisUser.beroep1) _editParentCheck();
-                              if (isParent && value != thisUser.beroep1) _editProfCheck();
+                              if (!isParent && value != thisUser.beroep1)
+                                _editParentCheck();
+                              if (isParent && value != thisUser.beroep1)
+                                _editProfCheck();
 
                               return;
                             },
@@ -1457,8 +1474,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                             decoration:
                                 const InputDecoration(labelText: 'Street'),
                             onChanged: (String? value) {
-                              if (!isParent && value != thisUser.berStraat1) _editParentCheck();
-                              if (isParent && value != thisUser.berStraat1) _editProfCheck();
+                              if (!isParent && value != thisUser.berStraat1)
+                                _editParentCheck();
+                              if (isParent && value != thisUser.berStraat1)
+                                _editProfCheck();
 
                               return;
                             },
@@ -1479,11 +1498,15 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 decoration: const InputDecoration(
                                     labelText: 'House number'),
                                 onChanged: (String? value) {
-                                  if (!isParent && value != '' &&
-                                      int.parse(value!) != thisUser.berHuisNr1) _editParentCheck();
+                                  if (!isParent &&
+                                      value != '' &&
+                                      int.parse(value!) != thisUser.berHuisNr1)
+                                    _editParentCheck();
 
-                                  if (isParent && value != '' &&
-                                      int.parse(value!) != thisUser.berHuisNr1) _editProfCheck();
+                                  if (isParent &&
+                                      value != '' &&
+                                      int.parse(value!) != thisUser.berHuisNr1)
+                                    _editProfCheck();
 
                                   return;
                                 },
@@ -1509,8 +1532,10 @@ class _FormQuestionsState extends State<FormQuestions> {
                                 decoration: const InputDecoration(
                                     labelText: 'Additional'),
                                 onChanged: (String? value) {
-                                  if (!isParent && value != thisUser.berBusNr1) _editParentCheck();
-                                  if (isParent &&value != thisUser.berBusNr1) _editProfCheck();
+                                  if (!isParent && value != thisUser.berBusNr1)
+                                    _editParentCheck();
+                                  if (isParent && value != thisUser.berBusNr1)
+                                    _editProfCheck();
 
                                   return;
                                 },
@@ -1530,8 +1555,16 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Postal code'),
                                   onChanged: (String? value) {
-                                    if (!isParent && value != '' && int.parse(value!) != thisUser.berPostcode1) _editParentCheck();
-                                    if (isParent && value != '' && int.parse(value!) != thisUser.berPostcode1) _editProfCheck();
+                                    if (!isParent &&
+                                        value != '' &&
+                                        int.parse(value!) !=
+                                            thisUser.berPostcode1)
+                                      _editParentCheck();
+                                    if (isParent &&
+                                        value != '' &&
+                                        int.parse(value!) !=
+                                            thisUser.berPostcode1)
+                                      _editProfCheck();
 
                                     return;
                                   },
@@ -1563,8 +1596,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     decoration: const InputDecoration(
                                         labelText: 'City'),
                                     onChanged: (String? value) {
-                                      if (!isParent && value != thisUser.berGemeente1) _editParentCheck();
-                                      if (isParent && value != thisUser.berGemeente1) _editProfCheck();
+                                      if (!isParent &&
+                                          value != thisUser.berGemeente1)
+                                        _editParentCheck();
+                                      if (isParent &&
+                                          value != thisUser.berGemeente1)
+                                        _editProfCheck();
 
                                       return;
                                     },
@@ -1633,11 +1670,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     decoration: const InputDecoration(
                                         labelText: 'Parent firstname'),
                                     onChanged: (String? value) {
-                                      if (isParent == false && value != thisUser.oVoornaam2) {
+                                      if (isParent == false &&
+                                          value != thisUser.oVoornaam2) {
                                         _editParentCheck();
                                       }
 
-                                      if (isParent == true && value != thisUser.oVoornaam3) {
+                                      if (isParent == true &&
+                                          value != thisUser.oVoornaam3) {
                                         _editPartnerCheck();
                                       }
 
@@ -1662,11 +1701,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     decoration: const InputDecoration(
                                         labelText: 'Parent lastname'),
                                     onChanged: (String? value) {
-                                      if (isParent == false && value != thisUser.oNaam2) {
+                                      if (isParent == false &&
+                                          value != thisUser.oNaam2) {
                                         _editParentCheck();
                                       }
 
-                                      if (isParent == true && value != thisUser.oNaam3) {
+                                      if (isParent == true &&
+                                          value != thisUser.oNaam3) {
                                         _editPartnerCheck();
                                       }
 
@@ -1690,11 +1731,13 @@ class _FormQuestionsState extends State<FormQuestions> {
                               decoration: const InputDecoration(
                                   labelText: 'Profession'),
                               onChanged: (String? value) {
-                                if (isParent == false && value != thisUser.beroep2) {
+                                if (isParent == false &&
+                                    value != thisUser.beroep2) {
                                   _editParentCheck();
                                 }
 
-                                if (isParent == true && value != thisUser.beroep3) {
+                                if (isParent == true &&
+                                    value != thisUser.beroep3) {
                                   _editPartnerCheck();
                                 }
                                 return;
@@ -1713,10 +1756,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                               decoration:
                                   const InputDecoration(labelText: 'Street'),
                               onChanged: (String? value) {
-                                if (isParent == false && value != thisUser.berStraat2) {
+                                if (isParent == false &&
+                                    value != thisUser.berStraat2) {
                                   _editParentCheck();
                                 }
-                                if (isParent == true && value != thisUser.berStraat3) {
+                                if (isParent == true &&
+                                    value != thisUser.berStraat3) {
                                   _editPartnerCheck();
                                 }
 
@@ -1739,12 +1784,14 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'House number'),
                                   onChanged: (String? value) {
-                                    if (isParent == false && value != '' &&
+                                    if (isParent == false &&
+                                        value != '' &&
                                         int.parse(value!) !=
                                             thisUser.berHuisNr2) {
                                       _editParentCheck();
                                     }
-                                    if (isParent == true && value != '' &&
+                                    if (isParent == true &&
+                                        value != '' &&
                                         int.parse(value!) !=
                                             thisUser.berHuisNr3) {
                                       _editPartnerCheck();
@@ -1776,10 +1823,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                   decoration: const InputDecoration(
                                       labelText: 'Additional'),
                                   onChanged: (String? value) {
-                                    if (isParent == false && value != thisUser.berBusNr2) {
+                                    if (isParent == false &&
+                                        value != thisUser.berBusNr2) {
                                       _editParentCheck();
                                     }
-                                    if (isParent == true && value != thisUser.berBusNr3) {
+                                    if (isParent == true &&
+                                        value != thisUser.berBusNr3) {
                                       _editPartnerCheck();
                                     }
 
@@ -1802,12 +1851,14 @@ class _FormQuestionsState extends State<FormQuestions> {
                                     decoration: const InputDecoration(
                                         labelText: 'Postal code'),
                                     onChanged: (String? value) {
-                                      if (isParent == false && value != '' &&
+                                      if (isParent == false &&
+                                          value != '' &&
                                           int.parse(value!) !=
                                               thisUser.berPostcode2) {
                                         _editParentCheck();
                                       }
-                                      if (isParent == true && value != '' &&
+                                      if (isParent == true &&
+                                          value != '' &&
                                           int.parse(value!) !=
                                               thisUser.berPostcode3) {
                                         _editPartnerCheck();
@@ -1844,10 +1895,12 @@ class _FormQuestionsState extends State<FormQuestions> {
                                       decoration: const InputDecoration(
                                           labelText: 'City'),
                                       onChanged: (String? value) {
-                                        if (isParent == false && value != thisUser.berGemeente2) {
+                                        if (isParent == false &&
+                                            value != thisUser.berGemeente2) {
                                           _editParentCheck();
                                         }
-                                        if (isParent == true && value != thisUser.berGemeente3) {
+                                        if (isParent == true &&
+                                            value != thisUser.berGemeente3) {
                                           _editPartnerCheck();
                                         }
 
@@ -1898,12 +1951,9 @@ class _FormQuestionsState extends State<FormQuestions> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Expanded(
+                       Expanded(
                         child: BulletList(
-                          strings: [
-                            'The family has received a school allowance in the 2019-2020 school year and/or in the 2020-2021 school year.',
-                            'The mother of the pupil has a diploma of secondary education or a study certificate of the second year of the third degree of the secondary education or an associated equivalent study certificate.'
-                          ],
+                          strings: vragenGOK,
                         ),
                       ),
                     ],
@@ -1938,13 +1988,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                         ),
                         Container(
                           height: 450,
-                          child: const BulletList(strings: [
-                            'At least a Dutch-language diploma of secondary education or an equivalent Dutch-language study certificate.',
-                            'A Dutch-language certificate of the second year of the third stage of secondary education or an equivalent Dutch-language certificate.',
-                            'Proof of at least sufficient knowledge of Dutch issued by Selor.',
-                            'Proof of that one of them has attended 9 years of regular education in Dutch-language primary and secondary education.',
-                            'Proof that one of them masters Dutch at at least level B2',
-                          ]),
+                          child:  BulletList(strings: vragenTN),
                         ),
                       ],
                     ),
@@ -2243,8 +2287,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                           ),
 
                         //overzicht: school lijst
-                        if (SchoolList.schoolList != null &&
-                            SchoolList.schoolList.isNotEmpty)
+                        if (SchoolList.schoolList.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 40.0),
                             child: FractionallySizedBox(
@@ -2328,7 +2371,8 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                   children: [
                                                     Text(
                                                       SchoolList
-                                                          .schoolList[index],
+                                                          .schoolList[index]
+                                                          .naam,
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -2342,7 +2386,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                                                                       .w500),
                                                     ),
                                                     Text(
-                                                      'Straatnaan 12\nstadnaam postcode',
+                                                      '${SchoolList.schoolList[index].adres.split(',')[0]}\n${SchoolList.schoolList[index].adres.split(',')[1]}',
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -2509,46 +2553,46 @@ class _FormQuestionsState extends State<FormQuestions> {
         // back en next buttons
         //verberg als de registratie voltooid is
 
-          DelayedDisplay(
-            delay: const Duration(milliseconds: 1000),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // verberg back button wanneer men op de eerste pagina is
-                if (showBackBtn)
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        alignment: Alignment.center,
-                        shape: const StadiumBorder(),
-                        primary: Colors.grey),
-                    child: Transform.rotate(
-                        angle: 180 * math.pi / 180,
-                        child: const Icon(Icons.forward)),
-                    onPressed: () => {previousStep()},
-                  ),
-                // verberg next button wanneer men op de voorrangsvragen en de 2 laatste pagina's komt
-                if (showNextBtn)
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        alignment: Alignment.center,
-                        shape: const StadiumBorder(),
-                        primary: Colors.indigo.shade800),
-                    child: const Icon(Icons.forward),
-                    onPressed: () => nextStep(),
-                  ),
-                if (_currentStep == 8)
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        alignment: Alignment.center,
-                        shape: const StadiumBorder(),
-                        primary: Colors.indigo.shade800),
-                    child: const Text('Finish'),
-                    onPressed: () => nextStep(),
-                  ),
-              ],
-            ),
+        DelayedDisplay(
+          delay: const Duration(milliseconds: 1000),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // verberg back button wanneer men op de eerste pagina is
+              if (showBackBtn)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      shape: const StadiumBorder(),
+                      primary: Colors.grey),
+                  child: Transform.rotate(
+                      angle: 180 * math.pi / 180,
+                      child: const Icon(Icons.forward)),
+                  onPressed: () => {previousStep()},
+                ),
+              // verberg next button wanneer men op de voorrangsvragen en de 2 laatste pagina's komt
+              if (showNextBtn)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      shape: const StadiumBorder(),
+                      primary: Colors.indigo.shade800),
+                  child: const Icon(Icons.forward),
+                  onPressed: () => nextStep(),
+                ),
+              if (_currentStep == 8)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      shape: const StadiumBorder(),
+                      primary: Colors.indigo.shade800),
+                  child: const Text('Finish'),
+                  onPressed: () => nextStep(),
+                ),
+            ],
+          ),
 
-            /*Row(
+          /*Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               /*
@@ -2575,7 +2619,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
             ],
           ),*/
-          ),
+        ),
       ],
     );
   }

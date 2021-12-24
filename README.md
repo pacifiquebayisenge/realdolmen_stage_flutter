@@ -1252,3 +1252,66 @@ App, ontwikkeld met Flutter, die de school inschrijvingen voor ouders en/of stud
   * virtual box met macOs gebruiken om ios versie van app op firebase toe te voegen
   * virtual box met macOs gebruiken om ios versie van app op google maps toe te voegen
   * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple)
+
+#### 23/12 Donderdag ####
+
+* Schools map
+  * Google platform budget plan
+  * Scholeln lijst overnamen op de kaart
+  * School route van thuis naar de school
+
+* Flutter location
+  * Device location
+  * Location permissions
+  
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Schools page
+  * Info pagina om scholen info weer te geven
+
+* overweging om al gebruikte adressen popup of weglaten
+
+* Notities & aanwijzingen toepassen  
+  * Nieuwe notities -> 70 %
+
+* overweging om notificaite pagina weg te laten
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app om webview toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app om firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app om google maps toe te voegen
+  * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple) toe te voegen
+
+  #### 24/12 Vrijdag ####
+
+* Schools map
+  * Google platform budget plan
+  * Scholen lijst overnamen op de kaart -> 100%
+  * School route van thuis naar de school -> 100%
+
+* Flutter location
+  * Device location -> 100%
+  * Location permissions -> 100%
+  
+* Notification page
+  * Notificatie setup
+  * Card UI -> nieuwe design zoeken !!!
+
+* Schools page
+  * Info pagina om scholen info weer te geven -> 100%
+
+* overweging om al gebruikte adressen popup of weglaten
+
+* Notities & aanwijzingen toepassen  
+  * Nieuwe notities -> 70 %
+
+* overweging om notificaite pagina weg te laten
+
+* TO DO
+  * virtual box met macOs gebruiken om ios versie van app om webview toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app om firebase toe te voegen
+  * virtual box met macOs gebruiken om ios versie van app om google maps toe te voegen
+  * virtual box met macOs gebruiken om ios versie van third party login (inloggen met apple) toe te voegen
+  

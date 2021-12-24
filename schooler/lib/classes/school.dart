@@ -6,6 +6,8 @@ class SchoolObject {
   late String naam;
   late String adres;
   late String type;
+  late double lat;
+  late double long;
 
   // Firestore collectie reference naar de regstratie collectie
   final CollectionReference _schoolRef = FirebaseFirestore.instance
@@ -18,13 +20,16 @@ class SchoolObject {
       required this.naam,
       required this.adres,
         required this.type,
+        required this.lat,
+        required this.long,
+
      });
 
   // methode om school in favoriete lijst toe te voegen
   Future<void> addSchoolFavo() async {
     await _schoolRef
         .doc(id)
-        .set({'id': id, 'naam': naam, 'adres': adres,  'type': type})
+        .set({'id': id, 'naam': naam, 'adres': adres,  'type': type, 'latitude' : lat, 'longitude' : long})
         .then((value) => print("School succesfully added to Favo list"))
         .catchError(
             (error) => print("Failed to add School to Favo list: $error"));
@@ -42,7 +47,7 @@ class SchoolObject {
 
   // methode om firestore object om te zette naar een school object klas object
   static SchoolObject toSchoolObject(String id, Map<String, dynamic> data) {
-    return SchoolObject(id: id, naam: data['naam'], adres: data['adres'],  type: data['type']);
+    return SchoolObject(id: id, naam: data['naam'], adres: data['adres'],  type: data['type'], lat: data['latitude'], long: data['longitude']);
   }
 
 
