@@ -95,8 +95,9 @@ class _FormQuestionsState extends State<FormQuestions> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      setpageHeight(_currentStep);
       editRegistration();
+      pageDynamic(_currentStep);
+
     });
   }
 
@@ -152,7 +153,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       berPostcode1.text = widget.editRegi!.berPostcode1!.toString();
       berGemeente1.text = widget.editRegi!.berGemeente1!;
 
-      if (widget.editRegi!.oVoornaam2 != null) {
+      if (widget.editRegi!.oVoornaam2 != null && widget.editRegi!.oVoornaam2 != '') {
         secParent = true;
 
         oVoornaam2.text = widget.editRegi!.oVoornaam2!;
@@ -165,7 +166,7 @@ class _FormQuestionsState extends State<FormQuestions> {
         berGemeente2.text = widget.editRegi!.berGemeente2!;
       }
 
-      widget.editRegi!.schoolList.forEach((element) {
+      widget.editRegi!.schoolList!.forEach((element) {
         SchoolList.schoolList.add(element);
       });
     }
@@ -175,6 +176,24 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   // methode om aan te duiden of het om een ouder of een student gaat
   void userTypeBtn(String type) {
+
+    clearAllFields();
+
+
+      if (type == 'parent') {
+        isParent = true;
+
+
+      } else {
+        isParent = false;
+
+      }
+    nextStep();
+    autoFormData();
+
+  }
+
+  void clearAllFields() {
     setState(() {
       secParent = false;
     });
@@ -205,16 +224,6 @@ class _FormQuestionsState extends State<FormQuestions> {
     berBusNr2.clear();
     berPostcode2.clear();
     berGemeente2.clear();
-
-    setState(() {
-      if (type == 'parent') {
-        isParent = true;
-      } else {
-        isParent = false;
-      }
-    });
-    autoFormData();
-    nextStep();
   }
 
   // methode om de form pagina's automatisch aan te vullen met gekende data
@@ -265,7 +274,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     }
 
     // als 2e ouder gekend is, toon 2e ouderpagina en vul aan
-    if (!isParent && thisUser.oVoornaam2 != "") {
+    if (isParent == false && thisUser.oVoornaam2 != "") {
       setState(() {
         secParent = true;
       });
@@ -385,17 +394,17 @@ class _FormQuestionsState extends State<FormQuestions> {
 
   // methode om de pagina hoogte aan te passen naar gelang de pagina nummer
   // en dymaiek van de wizard toe te passen
-  void setpageHeight(int page) {
+  pageDynamic(int page)  {
 
 
-    setState(() {
+   setState(()  {
       switch (page) {
         case 0:
           {
             showGokTnBtn = showBackBtn = showNextBtn = false;
 
-            if (widget.editRegi != null) {
-              nextStep();
+             if (widget.editRegi != null) {
+               nextStep();
             }
           }
           break;
@@ -447,7 +456,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           {
             showGokTnBtn = false;
             showNextBtn = true;
-            pageHeight = 520;
+            pageHeight = 550;
           }
           break;
         case 8:
@@ -482,7 +491,7 @@ class _FormQuestionsState extends State<FormQuestions> {
     switch (_currentStep) {
       case 0:
         {
-          formSucces = _thisForm.currentState!.validate();
+          formSucces = true;
         }
         break;
 
@@ -558,10 +567,10 @@ class _FormQuestionsState extends State<FormQuestions> {
 
       _thisForm.currentState!.save();
 
-      List<String> schoolNames = [];
+      List<String> schoolIds = [];
 
       SchoolList.schoolList.forEach((element) {
-        schoolNames.add(element.naam);
+        schoolIds.add(element.id);
       });
 
       // als er een registratie te updaten is
@@ -610,8 +619,9 @@ class _FormQuestionsState extends State<FormQuestions> {
             vraagTN: vraagTN,
 
             // schoolLijst
-            schoolList: schoolNames,
-            id: widget.editRegi!.id);
+            schoolIDs: schoolIds,
+            id: widget.editRegi!.id,
+            schoolList: null);
 
         await regi1.editRegi().then((value) {
           setState(() {
@@ -674,7 +684,7 @@ class _FormQuestionsState extends State<FormQuestions> {
                 vraagTN: vraagTN,
 
                 // schoolLijst
-                schoolList: schoolNames)
+                schoolIDs: schoolIds)
             .then((value) {
           setState(() {
             _currentStep += 1;
@@ -836,7 +846,7 @@ class _FormQuestionsState extends State<FormQuestions> {
 
       _slider.currentState!.next();
     }
-    setpageHeight(_currentStep);
+    pageDynamic(_currentStep);
 
 
   }
@@ -862,7 +872,8 @@ class _FormQuestionsState extends State<FormQuestions> {
       _slider.currentState!.previous();
       _slider.currentState!.previous();
     } else if (_currentStep == 7 && widget.editRegi != null) {
-      setState(() => _currentStep -= 3);
+      setState(() => _currentStep -= 4);
+      _slider.currentState!.previous();
       _slider.currentState!.previous();
       _slider.currentState!.previous();
       _slider.currentState!.previous();
@@ -879,7 +890,7 @@ class _FormQuestionsState extends State<FormQuestions> {
       _slider.currentState!.previous();
     }
 
-    setpageHeight(_currentStep);
+    pageDynamic(_currentStep);
     print(
         '$_currentStep ${_slider.currentState!.currentPage} | ${_slider.currentState!.widget.pages.length}');
   }
@@ -938,7 +949,7 @@ class _FormQuestionsState extends State<FormQuestions> {
           break;
       }
 
-      setpageHeight(_currentStep);
+      pageDynamic(_currentStep);
     });
   }
 

@@ -8,7 +8,7 @@ import 'package:schooler/services/globals.dart';
 
 class SchoolList extends StatefulWidget {
   static List<SchoolObject> schoolList = [];
-  SchoolList({Key? key}) : super(key: key);
+  const SchoolList({Key? key}) : super(key: key);
 
   @override
   _SchoolListState createState() => _SchoolListState();
@@ -18,7 +18,13 @@ class _SchoolListState extends State<SchoolList> {
 
   final floatingSearchBarController = FloatingSearchBarController();
 
+  bool mapMode = false;
+
   List<SchoolObject> resultList = [];
+
+  Widget currentWidget  = Container();
+
+
 
   @override
   initState() {
@@ -71,11 +77,11 @@ class _SchoolListState extends State<SchoolList> {
       if (query.isEmpty) {
         resultList = schools;
       } else {
-        schools.forEach((element) {
+        for (var element in schools) {
           if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
-        });
+        }
       }
     });
   }
@@ -85,24 +91,49 @@ class _SchoolListState extends State<SchoolList> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            SchoolDetailPage(school: school,),
+            SchoolDetailPage(school: school, hideRouteOption: true,),
       ),
     );
   }
 
+
+  _importFavoList() {
+
+    thisUser.favoSchoolsList.forEach((element) {
+      _addToList(element);
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
+
       Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: SchoolList.schoolList.isEmpty ?
 
          Padding(
            padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10,),
-           child: Text(
-           'Search for the schools you would like to apply for. '
-           'Short press for info, long press to reorder the list',
-           style: GoogleFonts.montserrat(fontSize: 13,fontWeight: FontWeight.bold, color: Colors.black45),
+           child: Column(
+             children: [
+               Text(
+               'Search for the schools you would like to apply for. '
+               'Short press for info, long press to reorder the list',
+               style: GoogleFonts.montserrat(fontSize: 13,fontWeight: FontWeight.bold, color: Colors.black45),
+               ),
+               if(thisUser.favoSchoolsList.isNotEmpty)
+               Padding(
+                 padding: const EdgeInsets.only(top:28.0),
+                 child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                         alignment: Alignment.center,
+                         shape: const StadiumBorder(),
+                         primary: const Color.fromRGBO(234, 144, 16, 0.8)),
+                     onPressed: _importFavoList, child: Text('Import Favorite School List', style: GoogleFonts.montserrat(fontSize: 13,fontWeight: FontWeight.bold))),
+               )
+             ],
            ),
          )
         :
@@ -125,7 +156,7 @@ class _SchoolListState extends State<SchoolList> {
                     child: InkWell(
                       splashColor: Colors.grey,
                       onTap: () {
-                        print('info');
+                        _schoolInfo(SchoolList.schoolList[i]);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,7 +169,7 @@ class _SchoolListState extends State<SchoolList> {
                               // rangschiknummer
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromRGBO(234, 144, 16, 1),
+                                    const Color.fromRGBO(234, 144, 16, 1),
                                 radius: 15,
                                 // rang nummer
                                 child: Text(
@@ -213,6 +244,10 @@ class _SchoolListState extends State<SchoolList> {
           ],
         ),
       ),
+
+
+
+
       FloatingSearchBar(
         backdropColor: Colors.black26,
         closeOnBackdropTap: true,
@@ -241,15 +276,7 @@ class _SchoolListState extends State<SchoolList> {
           ),
         ],
         actions: [
-          FloatingSearchBarAction(
-            showIfOpened: false,
-            child: CircularButton(
-              icon: const Icon(Icons.place),
-              onPressed: () {
-                print('map');
-              },
-            ),
-          ),
+
           FloatingSearchBarAction.searchToClear(
             showIfClosed: false,
           ),

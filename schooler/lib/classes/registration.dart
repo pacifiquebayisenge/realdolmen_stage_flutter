@@ -48,7 +48,9 @@ class Registration {
   late final bool? vraagTN;
 
   // schoolLijst
-  late final List<dynamic> schoolList;
+  late final List<dynamic>? schoolList;
+  // lijst met schools id's
+  late final List<dynamic>? schoolIDs;
 
 // Firestore collectie reference naar de regstratie collectie
   final CollectionReference _regiRef = FirebaseFirestore.instance
@@ -96,7 +98,9 @@ class Registration {
       required this.vraagTN,
 
       // schoolLijst
-      required this.schoolList});
+      required this.schoolList,
+
+       this.schoolIDs});
 
   // methode om leeftijd uit rijksregister nummer te halen
   static int getAge(String rijksNr) {
@@ -168,6 +172,7 @@ class Registration {
     return 'man';
   }
 
+  /*
   @override
   String toString() {
     return '''
@@ -216,6 +221,8 @@ class Registration {
 
         ''';
   }
+  
+   */
 
 // statische methode om lijst van registraties op te halen uit de database
   /*
@@ -336,8 +343,8 @@ class Registration {
           'vraagGOK': vraagGOK,
           'vraagTN': vraagTN,
 
-          // schoolLijst
-          'schoolList': schoolList
+          // schoolLijst : school ids
+          'schoolIDs': schoolIDs
         })
         .then((value) => print("Registration succesfully updated "))
         .catchError((error) => print("Failed to update Registration: $error"));
@@ -384,7 +391,7 @@ class Registration {
       required vraagTN,
 
       // schoolLijst
-      required schoolList}) async {
+      required schoolIDs}) async {
     // gebruk de collectie reference van registratie om de nieuwe registratie toe te voegen
     await FirebaseFirestore.instance
         .collection('users')
@@ -429,8 +436,8 @@ class Registration {
           'vraagGOK': vraagGOK,
           'vraagTN': vraagTN,
 
-          // schoolLijst
-          'schoolList': schoolList
+          // schoolLijst: schools ids
+          'schoolIDs': schoolIDs
         })
         .then((value) => print("Registration succesfully added "))
         .catchError((error) => print("Failed to add Registration: $error"));
@@ -438,6 +445,8 @@ class Registration {
 
   // methode om firestore object om te zette naar een Registratie klas object
   static Registration toRegi(String id, Map<String, dynamic> data) {
+
+    List<SchoolObject> listSchools = SchoolObject.searchById(data['schoolIDs'] as  List<dynamic>);
 
 
 
@@ -481,6 +490,6 @@ class Registration {
         vraagTN: data['vraagTN'],
 
         // schoolLijst
-        schoolList: data['schoolList']);
+        schoolList: listSchools);
   }
 }

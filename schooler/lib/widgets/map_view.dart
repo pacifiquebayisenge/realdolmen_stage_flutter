@@ -19,15 +19,20 @@ const LatLng DEST_LOCATION = LatLng(42.744421, -71.1698939);
 const double CAMERA_ZOOM = 11;
 const double CAMERA_TILT = 80;
 const double CAMERA_BEARING = 0;
+
 const double INFO_BAR_VISIBLE = 70;
 const double INFO_BAR_INVISIBLE = -200;
+
 const double DISTANCE_BAR_VISIBLE = 60;
 const double DISTANCE_BAR_INVISIBLE = -200;
 
+const double LOADING_BAR_VISIBLE = 250;
+const double LOADING_BAR_INVISIBLE = -250;
+
 class MapView extends StatefulWidget {
-  const MapView({Key? key, required this.modeChanger}) : super(key: key);
-  final Function modeChanger;
-  static late  SchoolObject? chosenSchool;
+  const MapView({Key? key,  this.modeChanger}) : super(key: key);
+  final Function? modeChanger;
+  static SchoolObject? chosenSchool = null;
   @override
   _MapViewState createState() => _MapViewState();
 }
@@ -40,12 +45,13 @@ class _MapViewState extends State<MapView> {
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
   Set<Marker> _markers = Set<Marker>();
-  late PermissionStatus? _permissionGranted = null;
+   PermissionStatus? _permissionGranted = null;
 
    late LatLng currentLocation;
   late LatLng destinationLocation;
   double infoBarPosition = INFO_BAR_INVISIBLE;
   double distanceBarPos = DISTANCE_BAR_INVISIBLE;
+  double loadingBar = LOADING_BAR_INVISIBLE;
 
   List<SchoolObject> resultList = [];
   final floatingSearchBarController = FloatingSearchBarController();
@@ -83,7 +89,7 @@ class _MapViewState extends State<MapView> {
   }
 
   getRoute() async {
-
+    loadingBar = LOADING_BAR_VISIBLE;
     getLocationPermission();
     setState(() {
       _info = null;
@@ -105,6 +111,7 @@ class _MapViewState extends State<MapView> {
     setState(() {
       _info = directions!;
       distanceBarPos = DISTANCE_BAR_VISIBLE;
+      loadingBar = LOADING_BAR_INVISIBLE;
     });
 
   }
@@ -138,52 +145,6 @@ class _MapViewState extends State<MapView> {
     print(currentLocation);
   }
 
-  void _addMarker(LatLng pos) async {
-    if (_markers.isEmpty == true || _markers.length == 2) {
-      // als de markers lijst leeg is
-      // bepaal vertrek punt
-      setState(() {
-        distanceBarPos = DISTANCE_BAR_INVISIBLE;
-        _markers.clear();
-        _info = null;
-        _origin = Marker(
-          markerId: const MarkerId('origin'),
-          infoWindow: const InfoWindow(title: 'Origin'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          position: pos,
-        );
-
-        _markers.add(_origin);
-      });
-    } else {
-      // als er al een marker in de lijst zit
-      // bepaal aankomst punt
-      setState(() {
-        _destination = Marker(
-            markerId: const MarkerId('Destination'),
-            infoWindow: const InfoWindow(title: 'Destination'),
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-            position: pos,
-            onTap: () {
-              setState(() {
-                infoBarPosition = INFO_BAR_VISIBLE;
-              });
-            });
-
-        _markers.add(_destination);
-      });
-
-      // get directions
-      final directions = await DirectionsRepository().getDirections(
-          origin: _origin.position, destination: _destination.position);
-      setState(() {
-        _info = directions!;
-        distanceBarPos = DISTANCE_BAR_VISIBLE;
-      });
-    }
-  }
 
   _resultClick(SchoolObject school)  {
 // als er al een marker in de lijst zit
@@ -235,11 +196,11 @@ class _MapViewState extends State<MapView> {
       if (query.isEmpty) {
         resultList = schools;
       } else {
-        schools.forEach((element) {
+        for (var element in schools) {
           if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
-        });
+        }
       }
     });
   }
@@ -347,14 +308,11 @@ class _MapViewState extends State<MapView> {
                                 selectedSchool != null ?  selectedSchool!.naam :'Schoolnaam',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontWeight: FontWeight.w500),
+                                style: const TextStyle(fontWeight: FontWeight.w500),
                               ),
                               Text(selectedSchool != null ?  '${selectedSchool!.adres.split(',')[0]}\n${selectedSchool!.adres.split(',')[1].trim()}' :'Straatnaan 12\nstadnaam postcode',
                                   style: const TextStyle(fontSize: 11)),
-                               Text( _markers.length == 2 && _info != null
-                                  ? '${_info!.totalDistance}, ${_info!.totalDuration}'
-                                  : '',
-                                  style: TextStyle(fontSize: 11))
+
                             ],
                           ),
                         ),
@@ -439,6 +397,44 @@ class _MapViewState extends State<MapView> {
               ),
             ),
           ),
+
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            top: loadingBar,
+            child: Visibility(
+              visible: true,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(30)),
+                child: Container(
+                  color: Colors.black87,
+                  child:  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'lib/images/Globe2.gif',
+                          scale: 4.5,
+                          fit: BoxFit.cover,
+                        ),
+                        Text('Loading...',
+                          style: GoogleFonts
+                              .montserrat(
+                              color: const Color.fromRGBO(234, 144, 16, 1),
+                              fontSize: 15,
+                              fontWeight:
+                              FontWeight
+                                  .w600),),
+                      ],
+                    ),
+                  ),
+
+                ),
+              )
+            ),
+          ),
+
+          // searchbar
           FloatingSearchBar(
             border: const BorderSide(color: Colors.black12),
             backdropColor: Colors.black26,
@@ -470,7 +466,7 @@ class _MapViewState extends State<MapView> {
                 child: CircularButton(
                   icon: const Icon(Icons.list),
                   onPressed: () {
-                    widget.modeChanger();
+                    widget.modeChanger!();
                   },
                 ),
               ),

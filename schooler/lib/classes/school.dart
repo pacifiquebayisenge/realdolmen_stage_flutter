@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schooler/services/globals.dart';
 
 class SchoolObject {
-  late String? id;
+  late String id;
   late String naam;
   late String adres;
   late String type;
@@ -16,7 +16,7 @@ class SchoolObject {
       .collection('favoSchoolsList');
 
   SchoolObject(
-      { this.id,
+      { required this.id,
       required this.naam,
       required this.adres,
         required this.type,
@@ -89,5 +89,21 @@ class SchoolObject {
 
 
     return list;
+  }
+
+  static List<SchoolObject> searchById(List<dynamic> ids) {
+
+    List<SchoolObject> listSchools = [];
+
+    ids.forEach((element) {
+      for(int i = 0; schools.length > i; i++) {
+
+        if(schools[i].id == element) {
+          listSchools.add(schools[i]);
+        }
+      }
+    });
+
+    return listSchools;
   }
 }

@@ -23,8 +23,9 @@ const double DISTANCE_BAR_VISIBLE = 60;
 const double DISTANCE_BAR_INVISIBLE = -200;
 
 class SchoolDetailPage extends StatefulWidget {
-  SchoolDetailPage({Key? key, required this.school}) : super(key: key);
+  SchoolDetailPage({Key? key, required this.school, required this.hideRouteOption}) : super(key: key);
   late SchoolObject school;
+  bool hideRouteOption = false;
 
   @override
   State<SchoolDetailPage> createState() => _SchoolDetailPageState();
@@ -64,6 +65,8 @@ class _SchoolDetailPageState extends State<SchoolDetailPage> {
   }
 
   openWebView() {
+
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -72,10 +75,13 @@ class _SchoolDetailPageState extends State<SchoolDetailPage> {
         ),
       ),
     );
+
+
   }
   
   getRoute() {
-    SchoolSearch.redirect();
+    if(SchoolSearch.redirect == null) return;
+    SchoolSearch.redirect!();
     MapView.chosenSchool = widget.school;
     Navigator.pop(context);
   }
@@ -276,6 +282,7 @@ class _SchoolDetailPageState extends State<SchoolDetailPage> {
                               overlayColor: MaterialStateProperty.all(
                                   Colors.indigo.shade800.withOpacity(0.7))),
                         ),
+                        if(widget.hideRouteOption != true)
                         TextButton(
                           onPressed: getRoute,
                           child: Icon(

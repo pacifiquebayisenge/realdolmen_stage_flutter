@@ -82,7 +82,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
             children: [
               DelayedDisplay(
                 delay: const Duration(milliseconds: 700),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.5,
                   child: FormBuilderTextField(
                     name: 'voornaam',
@@ -100,7 +100,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
               ),
               DelayedDisplay(
                 delay: const Duration(milliseconds: 700),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.5,
                   child: FormBuilderTextField(
                     name: 'naam',
@@ -118,7 +118,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
               ),
               DelayedDisplay(
                 delay: const Duration(milliseconds: 900),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.5,
                   child: FormBuilderTextField(
                     name: 'rijksNr',

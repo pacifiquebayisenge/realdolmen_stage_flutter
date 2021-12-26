@@ -11,9 +11,7 @@ import 'package:schooler/pages/new.dart';
 import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:schooler/pages/webview.dart';
 import 'package:schooler/services/globals.dart';
-import 'package:schooler/widgets/profile_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 import 'classes/registration.dart';

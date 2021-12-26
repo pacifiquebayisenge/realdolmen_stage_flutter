@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:schooler/classes/registration.dart';
 
 class CustomCard extends StatelessWidget {
@@ -96,86 +97,49 @@ class _CardContentState extends State<CardContent> {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
-        '${this.widget._registration.voornaam} ${this.widget._registration.naam}',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        '${widget._registration.voornaam} ${widget._registration.naam}',
+        style: GoogleFonts
+            .montserrat(
+            color: Colors.grey
+                .shade900,
+            fontSize: 15,
+            fontWeight:
+            FontWeight
+                .w700),
       ),
       const SizedBox(height: 5),
       Text(
-        '${this.widget._registration.straat} ${this.widget._registration.huisNr}, ${this.widget._registration.postcode} ${this.widget._registration.gemeente}',
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+        '${widget._registration.straat} ${widget._registration.huisNr}, ${this.widget._registration.postcode} ${widget._registration.gemeente}',
+        style: GoogleFonts
+            .montserrat(
+
+            color: Colors.black54,
+            fontSize: 10,
+            fontWeight:
+            FontWeight
+                .w500),
       ),
       const SizedBox(height: 10),
-      Text('School preferences: ${getRandom()}'),
-      Text('Enrollments state: pending'),
+    Text('School preferences: ${widget._registration.schoolList!.length}', style: GoogleFonts
+        .montserrat(
 
-      /*
-      // ingeschrijving vooruitgang
-      Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        // om de afmetingen te krijgen van de parent widget
-        // bron: https://stackoverflow.com/questions/41558368/how-can-i-layout-widgets-based-on-the-size-of-the-parent
-        child: FractionallySizedBox(
-          widthFactor: 0.8,
-          child: LinearPercentIndicator(
-            padding: EdgeInsets.only(top: 0, bottom: 10),
-            lineHeight: 4.0,
-            percent: getRandom().floorToDouble()/10,
-            animation: true,
-            animationDuration: 1000,
-            linearStrokeCap: LinearStrokeCap.roundAll,
-            backgroundColor: Colors.grey,
-            progressColor: Colors.blue,
-          ),
-        ),
-      ),
+        color: Colors.grey
+            .shade800,
+        fontSize: 12,
+        fontWeight:
+        FontWeight
+            .w500)),
+      Text('Enrollments state: pending', style: GoogleFonts
+          .montserrat(
 
-      // scholen voorkeur
-      Wrap(
-        children: [
-          Chip(
-            avatar: CircleAvatar(
-              radius: 10,
-              backgroundColor: Colors.grey,
-              child: Text(
-                '1',
-                style: TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.w900),
-              ),
-            ),
-            label: Text('Don Bosco'),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Chip(
-              avatar: CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.grey,
-                child: Text(
-                  '2',
-                  style: TextStyle(
-                      color: Colors.black87, fontWeight: FontWeight.w900),
-                ),
-              ),
-              label: Text('Heilig Hart')),
-          SizedBox(
-            width: 5,
-          ),
-          Chip(
-              avatar: CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.grey,
-                child: Text(
-                  '3',
-                  style: TextStyle(
-                      color: Colors.black87, fontWeight: FontWeight.w900),
-                ),
-              ),
-              label: Text('Atheneum')),
-        ],
-      ),
+          color: Colors.grey
+              .shade800,
+          fontSize: 12,
+          fontWeight:
+          FontWeight
+              .w500)),
 
-      */
+
     ]);
   }
 }

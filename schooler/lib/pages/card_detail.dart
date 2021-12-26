@@ -55,15 +55,18 @@ class _CardDetailState extends State<CardDetail>
     }
   }
 
+  /*
   SchoolObject getSchool(String schoolId) {
 
     late SchoolObject school;
     schools.forEach((element) {
-      if(element.id! == schoolId) school =  element;
+      if(element.id == schoolId) school =  element;
     });
 
     return school;
   }
+
+   */
 
 
 
@@ -162,6 +165,8 @@ class _CardDetailState extends State<CardDetail>
                 ),
               ];
             },
+
+
             body: ClipRRect(
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
@@ -172,6 +177,8 @@ class _CardDetailState extends State<CardDetail>
                     children: [
                       Column(
                         children: [
+
+
                           // statements
                           if (_registration.vraagGOK == true ||
                               _registration.vraagTN == true)
@@ -205,6 +212,7 @@ class _CardDetailState extends State<CardDetail>
                                   ),
                               ],
                             ),
+
 
                           // parents
                           if (_registration.oVoornaam1 != "")
@@ -393,9 +401,11 @@ class _CardDetailState extends State<CardDetail>
                               ),
                             ),
 
+
+
                           //school lijst
                           if (
-                              _registration.schoolList.isNotEmpty)
+                              _registration.schoolList!.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 50.0),
                               child: FractionallySizedBox(
@@ -415,7 +425,7 @@ class _CardDetailState extends State<CardDetail>
                               ),
                             ),
                           if (
-                              _registration.schoolList.isNotEmpty)
+                              _registration.schoolList!.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: FractionallySizedBox(
@@ -430,7 +440,7 @@ class _CardDetailState extends State<CardDetail>
                                     padding: const EdgeInsets.all(16),
                                     child: Column(
                                       children: List.generate(
-                                        _registration.schoolList.length,
+                                        _registration.schoolList!.length,
                                             (index) => Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 20.0),
@@ -469,13 +479,11 @@ class _CardDetailState extends State<CardDetail>
                                                 child: Column(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .stretch,
+                                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                                   children: [
                                                     Text(
                                                       _registration
-                                                          .schoolList[index],
+                                                          .schoolList![index].naam,
                                                       maxLines: 2,
                                                       overflow:
                                                       TextOverflow.ellipsis,
@@ -489,7 +497,7 @@ class _CardDetailState extends State<CardDetail>
                                                               .w500),
                                                     ),
                                                     Text(
-                                                      'Straatnaan 12\nstadnaam postcode',
+                                                      '${_registration.schoolList![index].adres.split(',')[0]}\n${_registration.schoolList![index].adres.split(',')[1]}',
                                                       maxLines: 2,
                                                       overflow:
                                                       TextOverflow.ellipsis,

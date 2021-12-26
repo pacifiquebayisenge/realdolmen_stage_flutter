@@ -14,7 +14,7 @@ class SchoolSearch extends StatefulWidget {
 
   final Function modeChanger;
   static List<String> schoolList = [];
-  static late Function redirect;
+  static  Function? redirect;
   @override
   _SchoolSearchState createState() => _SchoolSearchState();
 }
@@ -52,11 +52,11 @@ class _SchoolSearchState extends State<SchoolSearch> {
       if (query.isEmpty) {
         resultList = schools;
       } else {
-        schools.forEach((element) {
+        for (var element in schools) {
           if (element.naam.startsWith(query, 0)) {
             resultList.add(element);
           }
-        });
+        }
       }
     });
   }
@@ -103,42 +103,42 @@ class _SchoolSearchState extends State<SchoolSearch> {
       if(FilterDialog.selectedPlace != 'All' && FilterDialog.selectedType != 'All' ) {
         filterActive = true;
         resultList = [];
-        schools.forEach((element) {
+        for (var element in schools) {
           if(element.adres.split(',')[1].split(' ')[2] == FilterDialog.selectedPlace && element.type == FilterDialog.selectedType){
 
 
               resultList.add(element);
 
           }
-        });
+        }
         return;
       }
 
       if(FilterDialog.selectedPlace != 'All') {
         filterActive = true;
         resultList = [];
-        schools.forEach((element) {
+        for (var element in schools) {
           if(element.adres.split(',')[1].split(' ')[2] == FilterDialog.selectedPlace){
 
 
               resultList.add(element);
 
           }
-        });
+        }
         return;
       }
 
       if(FilterDialog.selectedType != 'All') {
         filterActive = true;
         resultList = [];
-        schools.forEach((element) {
+        for (var element in schools) {
           if(element.type == FilterDialog.selectedType){
 
 
               resultList.add(element);
 
           }
-        });
+        }
         return;
       }
 
@@ -165,7 +165,7 @@ class _SchoolSearchState extends State<SchoolSearch> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            SchoolDetailPage(school: school,),
+            SchoolDetailPage(school: school, hideRouteOption: false,),
       ),
     );
   }
