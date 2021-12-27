@@ -12,6 +12,7 @@ import 'package:schooler/pages/notifications.dart';
 import 'package:schooler/pages/schools.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:schooler/services/globals.dart';
+import 'package:schooler/widgets/comming_soon_dialog.dart';
 import 'package:schooler/widgets/widgets.dart';
 
 import 'classes/registration.dart';
@@ -165,7 +166,16 @@ class _AppState extends State<App> {
 
         case 2:
           {
+
             print("Open notification page");
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) => CommingSoonDialog(),
+            );
+
+           
+
 
             //Navigator.pushReplacementNamed(context, 'notifications');
           }
@@ -202,7 +212,7 @@ class _AppState extends State<App> {
           PopupMenuButton<String>(
                 onSelected: handleClick,
                 itemBuilder: (BuildContext context) {
-                  return {'Account', 'Log out'}.map((String choice) {
+                  return { 'Log out'}.map((String choice) {
                     return PopupMenuItem<String>(
                       value: choice,
                       child: Text(choice),

@@ -55,18 +55,7 @@ class _CardDetailState extends State<CardDetail>
     }
   }
 
-  /*
-  SchoolObject getSchool(String schoolId) {
 
-    late SchoolObject school;
-    schools.forEach((element) {
-      if(element.id == schoolId) school =  element;
-    });
-
-    return school;
-  }
-
-   */
 
 
 
